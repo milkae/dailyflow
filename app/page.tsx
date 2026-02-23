@@ -4,14 +4,18 @@ import { prisma } from "@/lib/prisma";
 export default async function Home() {
   const habits = await prisma.habit.findMany();
   return (
-    <main>
-      <h1>My habits</h1>
+    <div>
+      <h1 className="text-5xl text-center underline decoration-teal-400 py-4 mb-4">
+        My habits
+      </h1>
       <CreateHabitForm />
-      <div>
+      <div className="w-1/2 p-4 m-auto mt-4">
         {habits.map((habit) => (
-          <div key={habit.id}>{habit.name}</div>
+          <div key={habit.id} className="text-lg">
+            {habit.name}
+          </div>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
