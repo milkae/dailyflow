@@ -174,6 +174,7 @@ export type HabitWhereInput = {
   name?: Prisma.StringFilter<"Habit"> | string
   description?: Prisma.StringNullableFilter<"Habit"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
+  entries?: Prisma.EntryListRelationFilter
 }
 
 export type HabitOrderByWithRelationInput = {
@@ -181,6 +182,7 @@ export type HabitOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  entries?: Prisma.EntryOrderByRelationAggregateInput
 }
 
 export type HabitWhereUniqueInput = Prisma.AtLeast<{
@@ -191,6 +193,7 @@ export type HabitWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Habit"> | string
   description?: Prisma.StringNullableFilter<"Habit"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
+  entries?: Prisma.EntryListRelationFilter
 }, "id">
 
 export type HabitOrderByWithAggregationInput = {
@@ -218,6 +221,7 @@ export type HabitCreateInput = {
   name: string
   description?: string | null
   createdAt?: Date | string
+  entries?: Prisma.EntryCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUncheckedCreateInput = {
@@ -225,6 +229,7 @@ export type HabitUncheckedCreateInput = {
   name: string
   description?: string | null
   createdAt?: Date | string
+  entries?: Prisma.EntryUncheckedCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUpdateInput = {
@@ -232,6 +237,7 @@ export type HabitUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  entries?: Prisma.EntryUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateInput = {
@@ -239,6 +245,7 @@ export type HabitUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  entries?: Prisma.EntryUncheckedUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitCreateManyInput = {
@@ -283,6 +290,11 @@ export type HabitMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type HabitScalarRelationFilter = {
+  is?: Prisma.HabitWhereInput
+  isNot?: Prisma.HabitWhereInput
+}
+
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -295,6 +307,93 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type HabitCreateNestedOneWithoutEntriesInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutEntriesInput
+  connect?: Prisma.HabitWhereUniqueInput
+}
+
+export type HabitUpdateOneRequiredWithoutEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutEntriesInput
+  upsert?: Prisma.HabitUpsertWithoutEntriesInput
+  connect?: Prisma.HabitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HabitUpdateToOneWithWhereWithoutEntriesInput, Prisma.HabitUpdateWithoutEntriesInput>, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
+}
+
+export type HabitCreateWithoutEntriesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+}
+
+export type HabitUncheckedCreateWithoutEntriesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+}
+
+export type HabitCreateOrConnectWithoutEntriesInput = {
+  where: Prisma.HabitWhereUniqueInput
+  create: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+}
+
+export type HabitUpsertWithoutEntriesInput = {
+  update: Prisma.XOR<Prisma.HabitUpdateWithoutEntriesInput, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
+  create: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+  where?: Prisma.HabitWhereInput
+}
+
+export type HabitUpdateToOneWithWhereWithoutEntriesInput = {
+  where?: Prisma.HabitWhereInput
+  data: Prisma.XOR<Prisma.HabitUpdateWithoutEntriesInput, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
+}
+
+export type HabitUpdateWithoutEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type HabitUncheckedUpdateWithoutEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type HabitCountOutputType
+ */
+
+export type HabitCountOutputType = {
+  entries: number
+}
+
+export type HabitCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  entries?: boolean | HabitCountOutputTypeCountEntriesArgs
+}
+
+/**
+ * HabitCountOutputType without action
+ */
+export type HabitCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HabitCountOutputType
+   */
+  select?: Prisma.HabitCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * HabitCountOutputType without action
+ */
+export type HabitCountOutputTypeCountEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntryWhereInput
+}
 
 
 export type HabitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -302,6 +401,8 @@ export type HabitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   name?: boolean
   description?: boolean
   createdAt?: boolean
+  entries?: boolean | Prisma.Habit$entriesArgs<ExtArgs>
+  _count?: boolean | Prisma.HabitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["habit"]>
 
 export type HabitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -326,10 +427,18 @@ export type HabitSelectScalar = {
 }
 
 export type HabitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "createdAt", ExtArgs["result"]["habit"]>
+export type HabitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  entries?: boolean | Prisma.Habit$entriesArgs<ExtArgs>
+  _count?: boolean | Prisma.HabitCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type HabitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type HabitIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $HabitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Habit"
-  objects: {}
+  objects: {
+    entries: Prisma.$EntryPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
@@ -729,6 +838,7 @@ readonly fields: HabitFieldRefs;
  */
 export interface Prisma__HabitClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  entries<T extends Prisma.Habit$entriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Habit$entriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -779,6 +889,10 @@ export type HabitFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
+  /**
    * Filter, which Habit to fetch.
    */
   where: Prisma.HabitWhereUniqueInput
@@ -797,6 +911,10 @@ export type HabitFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
+  /**
    * Filter, which Habit to fetch.
    */
   where: Prisma.HabitWhereUniqueInput
@@ -814,6 +932,10 @@ export type HabitFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Habit
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
   /**
    * Filter, which Habit to fetch.
    */
@@ -863,6 +985,10 @@ export type HabitFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
+  /**
    * Filter, which Habit to fetch.
    */
   where?: Prisma.HabitWhereInput
@@ -911,6 +1037,10 @@ export type HabitFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
+  /**
    * Filter, which Habits to fetch.
    */
   where?: Prisma.HabitWhereInput
@@ -953,6 +1083,10 @@ export type HabitCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Habit
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
   /**
    * The data needed to create a Habit.
    */
@@ -999,6 +1133,10 @@ export type HabitUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Habit
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
   /**
    * The data needed to update a Habit.
    */
@@ -1066,6 +1204,10 @@ export type HabitUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
+  /**
    * The filter to search for the Habit to update in case it exists.
    */
   where: Prisma.HabitWhereUniqueInput
@@ -1092,6 +1234,10 @@ export type HabitDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
+  /**
    * Filter which Habit to delete.
    */
   where: Prisma.HabitWhereUniqueInput
@@ -1112,6 +1258,30 @@ export type HabitDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 /**
+ * Habit.entries
+ */
+export type Habit$entriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Entry
+   */
+  select?: Prisma.EntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Entry
+   */
+  omit?: Prisma.EntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntryInclude<ExtArgs> | null
+  where?: Prisma.EntryWhereInput
+  orderBy?: Prisma.EntryOrderByWithRelationInput | Prisma.EntryOrderByWithRelationInput[]
+  cursor?: Prisma.EntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntryScalarFieldEnum | Prisma.EntryScalarFieldEnum[]
+}
+
+/**
  * Habit without action
  */
 export type HabitDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1123,4 +1293,8 @@ export type HabitDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Habit
    */
   omit?: Prisma.HabitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitInclude<ExtArgs> | null
 }

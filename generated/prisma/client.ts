@@ -44,3 +44,8 @@ export { Prisma }
  * 
  */
 export type Habit = Prisma.HabitModel
+/**
+ * Model Entry
+ * 
+ */
+export type Entry = Prisma.EntryModel

@@ -34,3 +34,17 @@ export async function createHabit(
   revalidatePath("/");
   return { formErrors: [], fieldErrors: {} };
 }
+
+export async function setHabitCompleted(id: string, completed: boolean) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (completed) {
+    await prisma.entry.create({ data: { habitId: id, date: today } });
+  } else {
+    await prisma.entry.deleteMany({
+      where: { habitId: id, date: today },
+    });
+  }
+  revalidatePath("/");
+}

@@ -384,7 +384,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Habit: 'Habit'
+  Habit: 'Habit',
+  Entry: 'Entry'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,7 +401,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "habit"
+    modelProps: "habit" | "entry"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +479,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Entry: {
+      payload: Prisma.$EntryPayload<ExtArgs>
+      fields: Prisma.EntryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EntryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EntryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>
+        }
+        findFirst: {
+          args: Prisma.EntryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EntryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>
+        }
+        findMany: {
+          args: Prisma.EntryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>[]
+        }
+        create: {
+          args: Prisma.EntryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>
+        }
+        createMany: {
+          args: Prisma.EntryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EntryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>[]
+        }
+        delete: {
+          args: Prisma.EntryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>
+        }
+        update: {
+          args: Prisma.EntryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>
+        }
+        deleteMany: {
+          args: Prisma.EntryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EntryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EntryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>[]
+        }
+        upsert: {
+          args: Prisma.EntryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntryPayload>
+        }
+        aggregate: {
+          args: Prisma.EntryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEntry>
+        }
+        groupBy: {
+          args: Prisma.EntryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EntryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EntryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EntryCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -522,6 +597,15 @@ export const HabitScalarFieldEnum = {
 } as const
 
 export type HabitScalarFieldEnum = (typeof HabitScalarFieldEnum)[keyof typeof HabitScalarFieldEnum]
+
+
+export const EntryScalarFieldEnum = {
+  id: 'id',
+  habitId: 'habitId',
+  date: 'date'
+} as const
+
+export type EntryScalarFieldEnum = (typeof EntryScalarFieldEnum)[keyof typeof EntryScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -662,6 +746,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   habit?: Prisma.HabitOmit
+  entry?: Prisma.EntryOmit
 }
 
 /* Types for Logging */

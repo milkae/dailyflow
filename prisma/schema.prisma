@@ -17,5 +17,15 @@ model Habit {
   id          String   @id @default(cuid())
   name        String
   description String?
+  entries     Entry[]
   createdAt   DateTime @default(now())
+}
+
+model Entry {
+  id        String   @id @default(cuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  
+  @@unique([habitId, date])
 }
