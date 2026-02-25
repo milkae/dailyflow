@@ -88,7 +88,6 @@ export async function getLastMonthHabits() {
 }
 
 export async function deleteHabit(id: string) {
-  console.log("delete action");
   await prisma.habit.delete({ where: { id } });
   revalidatePath("/");
 }
