@@ -1,9 +1,10 @@
 import { CreateHabitForm } from "@/components/CreateHabitForm";
 import { HabitCard } from "@/components/HabitCard";
-import { prisma } from "@/lib/prisma";
+import { getLastMonthHabits } from "@/lib/actions";
 
 export default async function Home() {
-  const habits = await prisma.habit.findMany({ include: { entries: true } });
+  const habits = await getLastMonthHabits();
+
   return (
     <div>
       <h1 className="text-5xl text-center underline decoration-teal-400 py-4 mb-4">

@@ -3,6 +3,7 @@
 import { prisma } from "./prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { Entry, Habit } from "@/generated/prisma/client";
 
 const schema = z.object({
   name: z.string("Invalid name"),
@@ -47,4 +48,40 @@ export async function setHabitCompleted(id: string, completed: boolean) {
     });
   }
   revalidatePath("/");
+}
+
+const calculateStreaks = (habit: Habit & { entries: Entry[] }) => {
+  let streak = 0;
+
+  for (let i = habit.entries.length - 1; i > 0; i--) {
+    const previousDay = new Date(habit.entries[i].date.getTime());
+    previousDay.setDate(previousDay.getDate() - 1);
+    previousDay.setHours(0, 0, 0, 0);
+    const nextHabitDate = habit.entries[i - 1].date;
+    nextHabitDate.setHours(0, 0, 0, 0);
+
+    if (nextHabitDate.getTime() !== previousDay.getTime()) {
+      break;
+    }
+
+    streak++;
+  }
+
+  return { ...habit, streak };
+};
+
+export async function getLastMonthHabits() {
+  const previousMonth = new Date();
+  previousMonth.setMonth(previousMonth.getMonth() - 1);
+
+  const habits = await prisma.habit.findMany({
+    include: {
+      entries: {
+        where: {
+          date: { gte: previousMonth },
+        },
+      },
+    },
+  });
+  return habits.map(calculateStreaks);
 }
