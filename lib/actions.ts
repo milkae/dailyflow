@@ -83,5 +83,12 @@ export async function getLastMonthHabits() {
       },
     },
   });
+
   return habits.map(calculateStreaks);
+}
+
+export async function deleteHabit(id: string) {
+  console.log("delete action");
+  await prisma.habit.delete({ where: { id } });
+  revalidatePath("/");
 }
