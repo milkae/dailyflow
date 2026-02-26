@@ -1,8 +1,10 @@
 "use client";
 
-import { Flame, Trash2 } from "lucide-react";
+import { Flame, Trash2, Circle, CheckCircle2 } from "lucide-react";
 import { Habit, Entry } from "@/generated/prisma/client";
 import { deleteHabit, setHabitCompleted } from "@/lib/actions";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 export const HabitCard = ({
   habit,
@@ -17,47 +19,57 @@ export const HabitCard = ({
   });
 
   return (
-    <div className="flex justify-between items-center gap-3 border border-teal-400 rounded-sm px-4 py-2 mb-4">
-      <label
-        className="flex items-center relative"
-        onClick={() => setHabitCompleted(habit.id, !isCompletedToday)}
-      >
-        <input
-          type="checkbox"
-          className="peer h-6 w-6 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-teal-400"
-          checked={isCompletedToday}
-          readOnly
-        />
-        <span className="absolute text-red-400 opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-3.5 w-3.5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            stroke="currentColor"
-            strokeWidth="1"
+    <Card className="group p-6 space-y-4 justify-between bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="flex-1 min-w-0 font-semibold text-slate-900 dark:text-slate-50 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+            {habit.name}
+          </h3>
+          {habit.description && (
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
+              {habit.description}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          {habit.streak > 0 && (
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800">
+              <Flame className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+              <span className="text-xs font-bold text-orange-700 dark:text-orange-300">
+                {habit.streak}
+              </span>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={() => deleteHabit(habit.id)}
           >
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            ></path>
-          </svg>
-        </span>
-      </label>
-      <div className="flex items-center gap-0.5 text-red-400">
-        <Flame />
-        <span className="inline-block">{habit.streak}</span>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
-      <div className="w-full">
-        <h4 className="text-lg underline decoration-rose-300 w-full">
-          {habit.name}
-        </h4>
-        <p className="text-sm">{habit.description}</p>
-      </div>
-      <button className="text-red-400" onClick={() => deleteHabit(habit.id)}>
-        <Trash2 />
-      </button>
-    </div>
+      <Button
+        onClick={() => setHabitCompleted(habit.id, !isCompletedToday)}
+        className={
+          isCompletedToday
+            ? "w-full flex items-center px-4 py-2 rounded-sm bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white"
+            : "w-full flex items-center px-4 py-2 rounded-sm border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300"
+        }
+      >
+        {isCompletedToday ? (
+          <>
+            <CheckCircle2 className="h-4 w-4 mr-2" />
+            Done today
+          </>
+        ) : (
+          <>
+            <Circle className="h-4 w-4 mr-2" />
+            Mark as done
+          </>
+        )}
+      </Button>
+    </Card>
   );
 };
