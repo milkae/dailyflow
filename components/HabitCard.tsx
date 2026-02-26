@@ -5,6 +5,7 @@ import { Habit, Entry } from "@/generated/prisma/client";
 import { deleteHabit, setHabitCompleted } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "./ui/badge";
 
 export const HabitCard = ({
   habit,
@@ -33,12 +34,13 @@ export const HabitCard = ({
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {habit.streak > 0 && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800">
-              <Flame className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
-              <span className="text-xs font-bold text-orange-700 dark:text-orange-300">
-                {habit.streak}
-              </span>
-            </div>
+            <Badge className="bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300">
+              <Flame
+                className="text-orange-600 dark:text-orange-400"
+                data-icon="inline-start"
+              />
+              <span className="text-xs font-bold">{habit.streak}</span>
+            </Badge>
           )}
           <Button
             variant="ghost"
