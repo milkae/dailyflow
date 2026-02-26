@@ -6,18 +6,14 @@ import { deleteHabit, setHabitCompleted } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "./ui/badge";
+import { isHabitCompletedToday } from "@/lib/utils";
 
 export const HabitCard = ({
   habit,
 }: {
   habit: Habit & { entries: Entry[]; streak: number };
 }) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const isCompletedToday = habit.entries.some((entry) => {
-    return entry.date.getTime() === today.getTime();
-  });
+  const isCompletedToday = isHabitCompletedToday(habit);
 
   return (
     <Card className="group p-6 space-y-4 justify-between bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md">

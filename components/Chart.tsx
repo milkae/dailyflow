@@ -10,27 +10,10 @@ import {
   CartesianGrid,
 } from "recharts";
 import { Card } from "@/components/ui/card";
+import { getLastWeekHabits } from "@/lib/utils";
 
 export const Chart = ({ habits }: { habits: HabitWithEntries[] }) => {
-  const data = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - 6 + i);
-    date.setHours(0, 0, 0, 0);
-    const count = habits.reduce((acc, val) => {
-      return (
-        acc +
-        val.entries.filter((e) => {
-          const entryDate = new Date(e.date);
-          entryDate.setHours(0, 0, 0, 0);
-          return entryDate.getTime() === date.getTime();
-        }).length
-      );
-    }, 0);
-    return {
-      day: new Intl.DateTimeFormat("fr-FR", { weekday: "short" }).format(date),
-      count,
-    };
-  });
+  const data = getLastWeekHabits(habits, true);
 
   return (
     <Card className="p-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">

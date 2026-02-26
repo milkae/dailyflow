@@ -13,7 +13,10 @@ export const CreateHabitForm = () => {
   });
 
   return (
-    <form action={formAction} className="flex justify-center gap-2">
+    <form
+      action={formAction}
+      className="flex flex-col md:flex-row justify-center gap-2"
+    >
       <TextInput
         name="name"
         placeholder="Habit name"
