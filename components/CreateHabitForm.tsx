@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 import { createHabit } from "@/lib/actions";
 import { TextInput } from "./TextInput";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export const CreateHabitForm = () => {
   const [state, formAction, pending] = useActionState(createHabit, {
@@ -29,13 +31,16 @@ export const CreateHabitForm = () => {
           {e}
         </p>
       ))}
-      <button
+      <Button
         type="submit"
         disabled={pending}
-        className="text-red-400 border-red-400 p-2"
+        className={cn(
+          "bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white",
+          { "opacity-50 cursor-not-allowed": pending },
+        )}
       >
         Add
-      </button>
+      </Button>
     </form>
   );
 };
