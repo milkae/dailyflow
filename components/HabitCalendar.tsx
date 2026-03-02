@@ -1,19 +1,19 @@
 "use client";
 
 import { Calendar } from "@/components/ui/calendar";
-import { setHabitCompleted } from "@/lib/actions";
+import { createHabitEntry } from "@/lib/actions";
 import { HabitWithEntries } from "@/lib/prisma";
 
 export const HabitCalendar = ({ habit }: { habit: HabitWithEntries }) => {
-  const setDate = (_selected?: Date[], triggerDate?: Date) => {
-    setHabitCompleted(habit.id, true, triggerDate);
+  const selectDate = (_selected?: Date[], triggerDate?: Date) => {
+    createHabitEntry(habit.id, triggerDate);
   };
 
   return (
     <Calendar
       mode="multiple"
       selected={habit.entries.map((e) => e.date)}
-      onSelect={setDate}
+      onSelect={selectDate}
       classNames={{
         selected: `rounded-none hover:rounded-none bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white`,
         today: "rounded-full hover:rounded-full bg-slate-600 dark:bg-slate-400",

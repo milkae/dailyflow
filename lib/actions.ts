@@ -36,22 +36,34 @@ export async function createHabit(
   return { formErrors: [], fieldErrors: {} };
 }
 
-export async function setHabitCompleted(
+export async function createHabitEntry(
   id: string,
-  completed: boolean,
   date = new Date(),
+  note?: string,
 ) {
-  const today = date;
-  today.setHours(0, 0, 0, 0);
+  const entryDate = date;
+  entryDate.setHours(0, 0, 0, 0);
 
-  if (completed) {
-    await prisma.entry.create({ data: { habitId: id, date: today } });
-  } else {
-    await prisma.entry.deleteMany({
-      where: { habitId: id, date: today },
-    });
-  }
+  await prisma.entry.create({ data: { habitId: id, date: entryDate, note } });
   revalidatePath("/");
+}
+
+export async function deleteHabitEntry(id: string, date = new Date()) {
+  const entryDate = date;
+  entryDate.setHours(0, 0, 0, 0);
+
+  await prisma.entry.deleteMany({
+    where: { habitId: id, date: entryDate },
+  });
+  revalidatePath("/");
+}
+
+export async function setDailyHabitStatus(id: string, completion: boolean) {
+  if (!completion) {
+    return deleteHabitEntry(id);
+  }
+
+  return createHabitEntry(id);
 }
 
 export async function getLastMonthHabits() {
