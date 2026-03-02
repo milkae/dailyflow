@@ -1,3 +1,4 @@
+import { HabitCalendar } from "@/components/HabitCalendar";
 import { StatCard } from "@/components/StatCard";
 import { prisma } from "@/lib/prisma";
 import { calculateStreaks } from "@/lib/utils";
@@ -55,6 +56,7 @@ export default async function Page({
           <StatCard key={i} {...stat} />
         ))}
       </div>
+      <HabitCalendar habit={habit} />
     </div>
   );
 }
