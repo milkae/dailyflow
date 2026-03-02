@@ -602,7 +602,8 @@ export type HabitScalarFieldEnum = (typeof HabitScalarFieldEnum)[keyof typeof Ha
 export const EntryScalarFieldEnum = {
   id: 'id',
   habitId: 'habitId',
-  date: 'date'
+  date: 'date',
+  note: 'note'
 } as const
 
 export type EntryScalarFieldEnum = (typeof EntryScalarFieldEnum)[keyof typeof EntryScalarFieldEnum]

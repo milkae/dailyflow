@@ -26,6 +26,7 @@ model Entry {
   habitId   String
   habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
   date      DateTime @default(now())
+  note      String?
   
   @@unique([habitId, date])
 }
