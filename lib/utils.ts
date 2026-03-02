@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { HabitWithEntries } from "./prisma";
+import { Entry, Habit } from "@/generated/prisma/client";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -41,3 +42,23 @@ export function getLastWeekHabits(
     };
   });
 }
+
+export const calculateStreaks = (habit: Habit & { entries: Entry[] }) => {
+  let streak = 0;
+
+  for (let i = habit.entries.length - 1; i > 0; i--) {
+    const previousDay = new Date(habit.entries[i].date.getTime());
+    previousDay.setDate(previousDay.getDate() - 1);
+    previousDay.setHours(0, 0, 0, 0);
+    const nextHabitDate = habit.entries[i - 1].date;
+    nextHabitDate.setHours(0, 0, 0, 0);
+
+    if (nextHabitDate.getTime() !== previousDay.getTime()) {
+      break;
+    }
+
+    streak++;
+  }
+
+  return { ...habit, streak };
+};
