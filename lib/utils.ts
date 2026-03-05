@@ -60,5 +60,5 @@ export const calculateStreaks = (habit: Habit & { entries: Entry[] }) => {
     streak++;
   }
 
-  return { ...habit, streak };
+  return streak;
 };

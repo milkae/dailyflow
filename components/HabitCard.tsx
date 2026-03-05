@@ -15,9 +15,8 @@ import {
 } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Badge } from "./ui/badge";
-import { cn, getHabitEntryForToday } from "@/lib/utils";
+import { calculateStreaks, cn, getHabitEntryForToday } from "@/lib/utils";
 import Link from "next/link";
 import {
   Dialog,
@@ -33,13 +32,14 @@ import { TextInput } from "./TextInput";
 export const HabitCard = ({
   habit,
 }: {
-  habit: Habit & { entries: Entry[]; streak: number };
+  habit: Habit & { entries: Entry[] };
 }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const todayEntry = getHabitEntryForToday(habit);
   const isCompletedToday = !!todayEntry;
   const entryNote = todayEntry?.note;
   const submitForm = submitHabitEntryForm.bind(null, habit.id);
+  const streak = calculateStreaks(habit);
 
   return (
     <Card className="group p-6 space-y-4 justify-between bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md">
@@ -58,13 +58,13 @@ export const HabitCard = ({
           )}
         </Link>
         <div className="flex items-center gap-1 shrink-0">
-          {habit.streak > 0 && (
+          {streak > 0 && (
             <Badge className="bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300">
               <Flame
                 className="text-orange-600 dark:text-orange-400"
                 data-icon="inline-start"
               />
-              <span className="text-xs font-bold">{habit.streak}</span>
+              <span className="text-xs font-bold">{streak}</span>
             </Badge>
           )}
           <Button

@@ -3,7 +3,6 @@
 import { prisma } from "./prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { calculateStreaks } from "./utils";
 
 const schema = z.object({
   name: z.string("Invalid name"),
@@ -46,7 +45,7 @@ export async function createHabitEntry(
   date = new Date(),
   note?: string,
 ) {
-  const entryDate = date;
+  const entryDate = new Date(date);
   entryDate.setHours(0, 0, 0, 0);
   const dayEntry = await prisma.entry.findFirst({
     where: { habitId: id, date: entryDate },
@@ -92,7 +91,7 @@ export async function getLastMonthHabits() {
     },
   });
 
-  return habits.map(calculateStreaks);
+  return habits;
 }
 
 export async function deleteHabit(id: string) {

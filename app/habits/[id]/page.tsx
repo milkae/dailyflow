@@ -31,7 +31,7 @@ export default async function Page({
     return;
   }
 
-  const { streak } = calculateStreaks(habit);
+  const streak = calculateStreaks(habit);
 
   const stats = [
     { label: "Streak", icon: <Flame />, stat: streak },
