@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Josefin_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import Link from "next/link";
 
 const josefin_sans = Josefin_Sans({
   subsets: ["latin"],
@@ -28,10 +29,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50">
-            <header className="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-slate-900/60">
-              <h1 className="text-3xl md:text-4xl font-bold py-4">
+            <header className="flex gap-4 items-center px-4 sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-slate-900/60">
+              <Link href="/" className="text-3xl md:text-4xl font-bold py-4">
                 Habit tracker
-              </h1>
+              </Link>
+              <Link href="/dashboard">Dashboard</Link>
             </header>
             <main className="flex-1">{children}</main>
           </div>
