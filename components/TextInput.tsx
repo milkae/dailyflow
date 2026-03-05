@@ -7,13 +7,20 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   errors?: string[];
 }
 
-export const TextInput = ({ name, placeholder, required, errors }: Props) => {
+export const TextInput = ({
+  name,
+  placeholder,
+  required,
+  errors,
+  defaultValue,
+}: Props) => {
   const hasErrors = errors && !!errors.length;
   return (
     <Field data-invalid={hasErrors}>
       <Input
         type="text"
         name={name}
+        defaultValue={defaultValue}
         placeholder={placeholder}
         required={required}
         aria-invalid={hasErrors}

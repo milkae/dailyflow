@@ -4,7 +4,7 @@ import { HabitCard } from "@/components/HabitCard";
 import { StatCard } from "@/components/StatCard";
 import { getLastMonthHabits } from "@/lib/actions";
 import { HabitWithEntries } from "@/lib/prisma";
-import { getLastWeekHabits, isHabitCompletedToday } from "@/lib/utils";
+import { getHabitEntryForToday, getLastWeekHabits } from "@/lib/utils";
 import { CalendarCheck, CalendarDays, WalletCards } from "lucide-react";
 
 function getWeeklyPercentage(habits: HabitWithEntries[]) {
@@ -30,7 +30,7 @@ export default async function Home() {
     {
       label: "Completed today",
       icon: <CalendarCheck />,
-      stat: habits.filter(isHabitCompletedToday).length,
+      stat: habits.filter((h) => !!getHabitEntryForToday(h)).length,
     },
     {
       label: "Weekly completion",

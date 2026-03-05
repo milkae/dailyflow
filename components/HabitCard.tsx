@@ -1,20 +1,45 @@
 "use client";
 
-import { Flame, Trash2, Circle, CheckCircle2 } from "lucide-react";
+import {
+  Flame,
+  Trash2,
+  Circle,
+  CheckCircle2,
+  MessageSquare,
+} from "lucide-react";
 import { Habit, Entry } from "@/generated/prisma/client";
-import { deleteHabit, setDailyHabitStatus } from "@/lib/actions";
+import {
+  deleteHabit,
+  setDailyHabitStatus,
+  submitHabitEntryForm,
+} from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Badge } from "./ui/badge";
-import { cn, isHabitCompletedToday } from "@/lib/utils";
+import { cn, getHabitEntryForToday } from "@/lib/utils";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { TextInput } from "./TextInput";
 
 export const HabitCard = ({
   habit,
 }: {
   habit: Habit & { entries: Entry[]; streak: number };
 }) => {
-  const isCompletedToday = isHabitCompletedToday(habit);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const todayEntry = getHabitEntryForToday(habit);
+  const isCompletedToday = !!todayEntry;
+  const entryNote = todayEntry?.note;
+  const submitForm = submitHabitEntryForm.bind(null, habit.id);
 
   return (
     <Card className="group p-6 space-y-4 justify-between bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md">
@@ -57,7 +82,7 @@ export const HabitCard = ({
       <div className="flex gap-2">
         <Button
           onClick={() => setDailyHabitStatus(habit.id, !isCompletedToday)}
-          className={cn("mt-2 w-full flex items-center px-4 py-2 rounded-sm", {
+          className={cn("flex-1", {
             "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white":
               isCompletedToday,
             "border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300":
@@ -76,7 +101,50 @@ export const HabitCard = ({
             </>
           )}
         </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setDialogOpen(true)}
+          title={entryNote ? "Edit Note" : "Add note"}
+          className={cn({
+            "border-emerald-500 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900":
+              entryNote,
+            "border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400":
+              !entryNote,
+          })}
+        >
+          <MessageSquare
+            className={cn(`h-4 w-4`, { "fill-current": entryNote })}
+          />
+        </Button>
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save daily entry</DialogTitle>
+          </DialogHeader>
+          <form action={submitForm} className="flex flex-col gap-4">
+            <TextInput
+              name="note"
+              placeholder="Add a note to the entry"
+              defaultValue={entryNote ?? undefined}
+            />
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline" className="flex-1">
+                  Close
+                </Button>
+              </DialogClose>
+              <Button
+                className="flex-1 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white"
+                type="submit"
+              >
+                Mark as done
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

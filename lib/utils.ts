@@ -7,11 +7,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function isHabitCompletedToday(habit: HabitWithEntries) {
+export function getHabitEntryForToday(habit: HabitWithEntries) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  return habit.entries.some((entry) => {
+  return habit.entries.find((entry) => {
     return entry.date.getTime() === today.getTime();
   });
 }

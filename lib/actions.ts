@@ -36,6 +36,11 @@ export async function createHabit(
   return { formErrors: [], fieldErrors: {} };
 }
 
+export async function submitHabitEntryForm(id: string, formData: FormData) {
+  const note = formData.get("note") as string;
+  await createHabitEntry(id, undefined, note);
+}
+
 export async function createHabitEntry(
   id: string,
   date = new Date(),
@@ -43,8 +48,15 @@ export async function createHabitEntry(
 ) {
   const entryDate = date;
   entryDate.setHours(0, 0, 0, 0);
+  const dayEntry = await prisma.entry.findFirst({
+    where: { habitId: id, date: entryDate },
+  });
 
-  await prisma.entry.create({ data: { habitId: id, date: entryDate, note } });
+  if (dayEntry) {
+    await prisma.entry.update({ where: { id: dayEntry.id }, data: { note } });
+  } else {
+    await prisma.entry.create({ data: { habitId: id, date: entryDate, note } });
+  }
   revalidatePath("/");
 }
 

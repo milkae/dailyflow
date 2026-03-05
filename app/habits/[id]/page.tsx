@@ -1,8 +1,10 @@
 import { HabitCalendar } from "@/components/HabitCalendar";
 import { StatCard } from "@/components/StatCard";
+import { buttonVariants } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { calculateStreaks } from "@/lib/utils";
 import { CalendarIcon, Flame, PieChart } from "lucide-react";
+import Link from "next/link";
 
 export default async function Page({
   params,
@@ -47,6 +49,12 @@ export default async function Page({
 
   return (
     <div className="p-6 md:p-8 max-w-7xl space-y-8 m-auto">
+      <Link
+        href="/"
+        className={buttonVariants({ variant: "secondary", size: "sm" })}
+      >
+        Back
+      </Link>
       <h1 className="text-3xl md:text-4xl font-bold text-center">
         {habit?.name}
       </h1>
@@ -57,6 +65,16 @@ export default async function Page({
         ))}
       </div>
       <HabitCalendar habit={habit} />
+      <ul className="list-disc marker:text-emerald-600">
+        {habit.entries.map((entry) => (
+          <li key={entry.id}>
+            <div className="flex gap-4">
+              <span>{entry.date.toLocaleDateString()}</span>
+              <span>{entry.note}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
