@@ -1,6 +1,7 @@
 import { HabitCalendar } from "@/components/HabitCalendar";
 import { StatCard } from "@/components/StatCard";
 import { buttonVariants } from "@/components/ui/button";
+import { Heading } from "@/components/ui/typography";
 import { prisma } from "@/lib/prisma";
 import { calculateStreaks } from "@/lib/utils";
 import { CalendarIcon, Flame, PieChart } from "lucide-react";
@@ -55,9 +56,7 @@ export default async function Page({
       >
         Back
       </Link>
-      <h1 className="text-3xl md:text-4xl font-bold text-center">
-        {habit?.name}
-      </h1>
+      <Heading className="text-center">{habit?.name}</Heading>
       <p>{habit?.description}</p>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((stat, i) => (
