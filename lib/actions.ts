@@ -51,11 +51,16 @@ export async function createHabitEntry(
     where: { habitId: id, date: entryDate },
   });
 
+  if (dayEntry && dayEntry.note === note) {
+    return;
+  }
+
   if (dayEntry) {
     await prisma.entry.update({ where: { id: dayEntry.id }, data: { note } });
   } else {
     await prisma.entry.create({ data: { habitId: id, date: entryDate, note } });
   }
+
   revalidatePath("/");
 }
 

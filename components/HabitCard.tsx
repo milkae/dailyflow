@@ -135,12 +135,14 @@ export const HabitCard = ({
                   Close
                 </Button>
               </DialogClose>
-              <Button
-                className="flex-1 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white"
-                type="submit"
-              >
-                Mark as done
-              </Button>
+              <DialogClose asChild>
+                <Button
+                  className="flex-1 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white"
+                  type="submit"
+                >
+                  Mark as done
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </form>
         </DialogContent>
