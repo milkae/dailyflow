@@ -35,7 +35,9 @@ export default function RootLayout({
               </Link>
               <Link href="/dashboard">Dashboard</Link>
             </header>
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 p-6 md:p-8 max-w-7xl space-y-8 m-auto">
+              {children}
+            </main>
           </div>
         </ThemeProvider>
       </body>

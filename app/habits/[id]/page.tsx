@@ -1,3 +1,4 @@
+import { CardsList } from "@/components/CardsList";
 import { HabitCalendar } from "@/components/HabitCalendar";
 import { StatCard } from "@/components/StatCard";
 import { buttonVariants } from "@/components/ui/button";
@@ -14,6 +15,7 @@ export default async function Page({
 }) {
   const { id } = await params;
 
+  // TODO show by month, default this month and on calendar navigation fetch new entries
   const last30days = new Date();
   last30days.setDate(last30days.getDate() - 29);
 
@@ -49,20 +51,14 @@ export default async function Page({
   ];
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl space-y-8 m-auto">
-      <Link
-        href="/"
-        className={buttonVariants({ variant: "secondary", size: "sm" })}
-      >
-        Back
-      </Link>
+    <>
       <Heading className="text-center">{habit?.name}</Heading>
       <p>{habit?.description}</p>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <CardsList>
         {stats.map((stat, i) => (
           <StatCard key={i} {...stat} />
         ))}
-      </div>
+      </CardsList>
       <HabitCalendar habit={habit} />
       <ul className="list-disc marker:text-emerald-600">
         {habit.entries.map((entry) => (
@@ -74,6 +70,6 @@ export default async function Page({
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }
