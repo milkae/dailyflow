@@ -5,7 +5,6 @@ import { HabitWithEntries } from "@/lib/prisma";
 import { getHabitEntryForToday, getLastWeekHabits } from "@/lib/utils";
 import { CalendarCheck, CalendarDays, WalletCards } from "lucide-react";
 import { HabitCard } from "@/components/HabitCard";
-import { CreateHabitForm } from "@/components/CreateHabitForm";
 import { Heading } from "@/components/ui/typography";
 import { CardsList } from "@/components/CardsList";
 
@@ -50,7 +49,6 @@ export default async function Page() {
         ))}
       </CardsList>
       <Chart habits={habits} />
-      <CreateHabitForm />
       <CardsList>
         {habits.map((habit) => (
           <HabitCard key={habit.id} habit={habit} />

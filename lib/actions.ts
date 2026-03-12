@@ -3,10 +3,12 @@
 import { prisma } from "./prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { Frequency } from "@/generated/prisma/enums";
 
 const schema = z.object({
   name: z.string("Invalid name"),
   description: z.string("Invalid description").optional(),
+  frequency: z.enum(Frequency),
 });
 
 export async function createHabit(
@@ -23,10 +25,10 @@ export async function createHabit(
     return z.flattenError(validatedFields.error);
   }
 
-  const { name, description } = validatedFields.data;
+  const { name, description, frequency } = validatedFields.data;
 
   try {
-    await prisma.habit.create({ data: { name, description } });
+    await prisma.habit.create({ data: { name, description, frequency } });
   } catch {
     return { formErrors: ["Failed to create habit"], fieldErrors: {} };
   }

@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Link from "next/link";
 
 import { Geist } from "next/font/google";
+import { HabitForm } from "@/components/HabitForm";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -34,6 +35,9 @@ export default function RootLayout({
                 Habit tracker
               </Link>
               <Link href="/dashboard">Dashboard</Link>
+              <div className="ml-auto">
+                <HabitForm />
+              </div>
             </header>
             <main className="flex-1 p-6 md:p-8 max-w-7xl space-y-8 m-auto">
               {children}
