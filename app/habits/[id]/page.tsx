@@ -1,12 +1,11 @@
 import { CardsList } from "@/components/CardsList";
+import { EntriesList } from "@/components/EntriesList";
 import { HabitCalendar } from "@/components/HabitCalendar";
 import { StatCard } from "@/components/StatCard";
-import { buttonVariants } from "@/components/ui/button";
 import { Heading } from "@/components/ui/typography";
 import { prisma } from "@/lib/prisma";
 import { calculateStreaks } from "@/lib/utils";
 import { CalendarIcon, Flame, PieChart } from "lucide-react";
-import Link from "next/link";
 
 export default async function Page({
   params,
@@ -60,16 +59,11 @@ export default async function Page({
         ))}
       </CardsList>
       <HabitCalendar habit={habit} />
-      <ul className="list-disc marker:text-emerald-600">
-        {habit.entries.map((entry) => (
-          <li key={entry.id}>
-            <div className="flex gap-4">
-              <span>{entry.date.toLocaleDateString()}</span>
-              <span>{entry.note}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+
+      <section className="mt-8">
+        <h2 className="font-semibold mb-2">Journal entries</h2>
+        <EntriesList entries={habit.entries} />
+      </section>
     </>
   );
 }

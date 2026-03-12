@@ -1,13 +1,13 @@
 import "./globals.css";
 
-import { Josefin_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Link from "next/link";
 
-const josefin_sans = Josefin_Sans({
+import { Geist } from "next/font/google";
+
+const geist = Geist({
   subsets: ["latin"],
-  display: "swap",
-  variable: "--font-josefin-sans",
+  variable: "--font-geist",
 });
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${josefin_sans.variable} font-sans antialiased`}
+      className={`${geist.variable} font-sans antialiased`}
     >
       <body>
         <ThemeProvider
