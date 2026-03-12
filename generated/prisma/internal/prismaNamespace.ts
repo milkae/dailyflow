@@ -593,7 +593,8 @@ export const HabitScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  frequency: 'frequency'
 } as const
 
 export type HabitScalarFieldEnum = (typeof HabitScalarFieldEnum)[keyof typeof HabitScalarFieldEnum]
@@ -642,6 +643,13 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'Frequency'
+ */
+export type EnumFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Frequency'>
     
 
 

@@ -53,6 +53,13 @@ export type DateTimeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedDateTimeFilter<$PrismaModel> | Date | string
 }
 
+export type EnumFrequencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.Frequency | Prisma.EnumFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.Frequency[]
+  notIn?: $Enums.Frequency[]
+  not?: Prisma.NestedEnumFrequencyFilter<$PrismaModel> | $Enums.Frequency
+}
+
 export type SortOrderInput = {
   sort: Prisma.SortOrder
   nulls?: Prisma.NullsOrder
@@ -106,6 +113,16 @@ export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
 }
 
+export type EnumFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Frequency | Prisma.EnumFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.Frequency[]
+  notIn?: $Enums.Frequency[]
+  not?: Prisma.NestedEnumFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.Frequency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFrequencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFrequencyFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[]
@@ -143,6 +160,13 @@ export type NestedDateTimeFilter<$PrismaModel = never> = {
   gt?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   gte?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel>
   not?: Prisma.NestedDateTimeFilter<$PrismaModel> | Date | string
+}
+
+export type NestedEnumFrequencyFilter<$PrismaModel = never> = {
+  equals?: $Enums.Frequency | Prisma.EnumFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.Frequency[]
+  notIn?: $Enums.Frequency[]
+  not?: Prisma.NestedEnumFrequencyFilter<$PrismaModel> | $Enums.Frequency
 }
 
 export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -213,6 +237,16 @@ export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeFilter<$PrismaModel>
+}
+
+export type NestedEnumFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Frequency | Prisma.EnumFrequencyFieldRefInput<$PrismaModel>
+  in?: $Enums.Frequency[]
+  notIn?: $Enums.Frequency[]
+  not?: Prisma.NestedEnumFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.Frequency
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFrequencyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFrequencyFilter<$PrismaModel>
 }
 
 

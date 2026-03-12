@@ -14,19 +14,26 @@ datasource db {
 }
 
 model Habit {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
   description String?
   entries     Entry[]
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  frequency   Frequency @default(DAILY)
+}
+
+enum Frequency {
+  DAILY
+  WEEKLY
+  MONTHLY
 }
 
 model Entry {
-  id        String   @id @default(cuid())
-  habitId   String
-  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-  date      DateTime @default(now())
-  note      String?
-  
+  id      String   @id @default(cuid())
+  habitId String
+  habit   Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date    DateTime @default(now())
+  note    String?
+
   @@unique([habitId, date])
 }

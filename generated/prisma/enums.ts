@@ -9,7 +9,10 @@
 * 🟢 You can import this file directly.
 */
 
+export const Frequency = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY'
+} as const
 
-
-// This file is empty because there are no enums in the schema.
-export {}
+export type Frequency = (typeof Frequency)[keyof typeof Frequency]
