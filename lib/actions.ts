@@ -3,9 +3,9 @@
 import { prisma } from "./prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { Frequency } from "@/generated/prisma/enums";
+import { Frequency, MealType } from "@/generated/prisma/enums";
 
-const schema = z.object({
+const habitSchema = z.object({
   name: z.string("Invalid name"),
   description: z.string("Invalid description").optional(),
   frequency: z.enum(Frequency),
@@ -19,7 +19,7 @@ export async function createHabit(
   formData: FormData,
 ) {
   const formDataObj = Object.fromEntries(formData.entries());
-  const validatedFields = schema.safeParse(formDataObj);
+  const validatedFields = habitSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
     return z.flattenError(validatedFields.error);
@@ -104,4 +104,36 @@ export async function getLastMonthHabits() {
 export async function deleteHabit(id: string) {
   await prisma.habit.delete({ where: { id } });
   revalidatePath("/");
+}
+
+const mealSchema = z.object({
+  name: z.string("Invalid name"),
+  type: z.enum(MealType),
+  date: z.coerce.date(),
+});
+
+export async function createMeal(
+  _initialState: {
+    formErrors: string[];
+    fieldErrors: { [i: string]: string[] };
+  },
+  formData: FormData,
+) {
+  const formDataObj = Object.fromEntries(formData.entries());
+  const validatedFields = mealSchema.safeParse(formDataObj);
+
+  if (!validatedFields.success) {
+    return z.flattenError(validatedFields.error);
+  }
+
+  const { name, type, date } = validatedFields.data;
+
+  try {
+    await prisma.meal.create({ data: { name, type, date } });
+  } catch {
+    return { formErrors: ["Failed to create meal"], fieldErrors: {} };
+  }
+
+  revalidatePath("/");
+  return { formErrors: [], fieldErrors: {} };
 }

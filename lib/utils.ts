@@ -62,3 +62,6 @@ export const calculateStreaks = (habit: Habit & { entries: Entry[] }) => {
 
   return streak;
 };
+
+export const capitalize = (string: string) =>
+  string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();

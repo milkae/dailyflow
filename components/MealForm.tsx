@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { createHabit } from "@/lib/actions";
+import { createMeal } from "@/lib/actions";
 import { TextInput } from "./TextInput";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,6 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Frequency } from "@/generated/prisma/enums";
 import {
   Dialog,
   DialogClose,
@@ -22,16 +21,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { MealType } from "@/generated/prisma/enums";
 import { capitalize } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
-const frequencies = Object.values(Frequency).map((v) => ({
+const mealTypes = Object.values(MealType).map((v) => ({
   value: v,
   label: capitalize(v),
 }));
 
-export const HabitForm = () => {
+export const MealForm = () => {
   const [open, setOpen] = useState(false);
-  const [state, formAction, pending] = useActionState(createHabit, {
+  const [state, formAction, pending] = useActionState(createMeal, {
     formErrors: [],
     fieldErrors: {},
   });
@@ -40,42 +41,31 @@ export const HabitForm = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
         <Button variant="outline">
-          <span>Create new Habit</span>
+          <span>Create new Meal</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new Habit</DialogTitle>
+          <DialogTitle>Create a new Meal</DialogTitle>
         </DialogHeader>
 
         <form action={formAction}>
           <FieldGroup>
             <TextInput
               name="name"
-              placeholder="Habit name"
+              placeholder="Meal name"
               required
               errors={state.fieldErrors.name}
             />
-            <TextInput
-              name="description"
-              placeholder="Habit description"
-              required
-              errors={state.fieldErrors.description}
-            />
+            <Input name="date" type="date" />
             <FieldSet>
-              <FieldLegend variant="label">Frequency</FieldLegend>
-              <RadioGroup name="frequency" defaultValue={frequencies[0].value}>
-                {frequencies.map((frequency) => (
-                  <Field orientation="horizontal" key={frequency.value}>
-                    <RadioGroupItem
-                      value={frequency.value}
-                      id={frequency.value}
-                    />
-                    <FieldLabel
-                      htmlFor={frequency.value}
-                      className="font-normal"
-                    >
-                      {frequency.label}
+              <FieldLegend variant="label">Meal type</FieldLegend>
+              <RadioGroup name="type" defaultValue={mealTypes[0].value}>
+                {mealTypes.map((type) => (
+                  <Field orientation="horizontal" key={type.value}>
+                    <RadioGroupItem value={type.value} id={type.value} />
+                    <FieldLabel htmlFor={type.value} className="font-normal">
+                      {type.label}
                     </FieldLabel>
                   </Field>
                 ))}
