@@ -1,6 +1,6 @@
 import { vi, beforeEach, test, expect } from "vitest";
 import { mockDeep, mockReset, DeepMockProxy } from "vitest-mock-extended";
-import { PrismaClient } from "../generated/prisma/client";
+import { Frequency, PrismaClient } from "../generated/prisma/client";
 
 // Mock revalidatePath BEFORE importing actions
 vi.mock("next/cache", () => ({
@@ -143,6 +143,7 @@ test("getLastMonthHabits - fetches habits from last month", async () => {
       description: "Daily exercise",
       createdAt: new Date(),
       entries: [],
+      frequency: Frequency.DAILY,
     },
   ];
 
@@ -167,6 +168,7 @@ test("deleteHabit - removes habit by id", async () => {
     name: "Exercise",
     description: "Daily exercise",
     createdAt: new Date(),
+    frequency: Frequency.DAILY,
   });
 
   await deleteHabit("h-1");

@@ -8,7 +8,7 @@ import { Frequency, MealType } from "@/generated/prisma/enums";
 const habitSchema = z.object({
   name: z.string("Invalid name"),
   description: z.string("Invalid description").optional(),
-  frequency: z.enum(Frequency),
+  frequency: z.enum(Frequency).optional(),
 });
 
 export async function createHabit(
