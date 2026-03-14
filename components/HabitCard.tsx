@@ -42,13 +42,13 @@ export const HabitCard = ({
   const streak = calculateStreaks(habit);
 
   return (
-    <Card className="group p-6 space-y-4 justify-between bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md">
+    <Card className="group p-6 space-y-4 justify-between hover:border-emerald-500 dark:hover:border-emerald-500 transition-all hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <Link
           href={`/habits/${habit.id}`}
           className="flex-1 min-w-0 cursor-pointer"
         >
-          <h3 className="font-semibold text-slate-900 dark:text-slate-50 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+          <h3 className="font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
             {habit.name}
           </h3>
           {habit.description && (
@@ -82,12 +82,12 @@ export const HabitCard = ({
       <div className="flex gap-2">
         <Button
           onClick={() => setDailyHabitStatus(habit.id, !isCompletedToday)}
-          className={cn("flex-1", {
-            "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white":
-              isCompletedToday,
-            "border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300":
-              !isCompletedToday,
-          })}
+          // className={cn("flex-1", {
+          //   // "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white":
+          //   //   isCompletedToday,
+          //   // "border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300":
+          //   //   !isCompletedToday,
+          // })}
         >
           {isCompletedToday ? (
             <>
