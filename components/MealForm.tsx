@@ -31,18 +31,19 @@ const mealTypes = Object.values(MealType).map((v) => ({
   label: capitalize(v),
 }));
 
-export const MealForm = ({ meal }: { meal?: Meal }) => {
+export const MealForm = ({ meal, date }: { meal?: Meal; date?: Date }) => {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(createMeal, {
     formErrors: [],
     fieldErrors: {},
   });
+  const mealDate = meal?.date ?? date ?? new Date();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
         <Button variant="outline">
-          <span>{meal ? "Edit" : "Create new Meal"}</span>
+          <span>{meal ? "Edit" : "Add"}</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -62,11 +63,7 @@ export const MealForm = ({ meal }: { meal?: Meal }) => {
             <Input
               name="date"
               type="date"
-              defaultValue={
-                meal?.date
-                  ? meal.date.toISOString().slice(0, 10)
-                  : undefined
-              }
+              defaultValue={mealDate.toISOString().slice(0, 10)}
             />
             <FieldSet>
               <FieldLegend variant="label">Meal type</FieldLegend>
