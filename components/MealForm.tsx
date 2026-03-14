@@ -24,13 +24,14 @@ import {
 import { MealType } from "@/generated/prisma/enums";
 import { capitalize } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Meal } from "@/generated/prisma/client";
 
 const mealTypes = Object.values(MealType).map((v) => ({
   value: v,
   label: capitalize(v),
 }));
 
-export const MealForm = () => {
+export const MealForm = ({ meal }: { meal?: Meal }) => {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(createMeal, {
     formErrors: [],
@@ -41,7 +42,7 @@ export const MealForm = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
         <Button variant="outline">
-          <span>Create new Meal</span>
+          <span>{meal ? "Edit" : "Create new Meal"}</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -54,13 +55,25 @@ export const MealForm = () => {
             <TextInput
               name="name"
               placeholder="Meal name"
+              defaultValue={meal?.name}
               required
               errors={state.fieldErrors.name}
             />
-            <Input name="date" type="date" />
+            <Input
+              name="date"
+              type="date"
+              defaultValue={
+                meal?.date
+                  ? meal.date.toISOString().slice(0, 10)
+                  : undefined
+              }
+            />
             <FieldSet>
               <FieldLegend variant="label">Meal type</FieldLegend>
-              <RadioGroup name="type" defaultValue={mealTypes[0].value}>
+              <RadioGroup
+                name="type"
+                defaultValue={meal?.type ?? mealTypes[0].value}
+              >
                 {mealTypes.map((type) => (
                   <Field orientation="horizontal" key={type.value}>
                     <RadioGroupItem value={type.value} id={type.value} />
