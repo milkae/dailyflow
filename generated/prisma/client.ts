@@ -49,3 +49,13 @@ export type Habit = Prisma.HabitModel
  * 
  */
 export type Entry = Prisma.EntryModel
+/**
+ * Model Meal
+ * 
+ */
+export type Meal = Prisma.MealModel
+/**
+ * Model Recipe
+ * 
+ */
+export type Recipe = Prisma.RecipeModel

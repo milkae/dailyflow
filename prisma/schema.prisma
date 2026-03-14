@@ -37,3 +37,41 @@ model Entry {
 
   @@unique([habitId, date])
 }
+
+model Meal {
+  id        String   @id @default(cuid())
+  name      String
+  type      MealType
+  date      DateTime
+  recipeId  String?
+  recipe    Recipe?  @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
+
+enum MealType {
+  breakfast
+  lunch
+  dinner
+  snack
+}
+
+model Recipe {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  ingredients  String
+  instructions String
+  prepTime     Int?
+  cookTime     Int?
+  servings     Int      @default(4)
+  imageUrl     String?
+  sourceUrl    String?
+  category     String?
+  meals        Meal[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

@@ -10,4 +10,6 @@
  */
 export type * from './models/Habit'
 export type * from './models/Entry'
+export type * from './models/Meal'
+export type * from './models/Recipe'
 export type * from './commonInputTypes'
