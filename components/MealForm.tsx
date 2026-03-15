@@ -31,13 +31,16 @@ const mealTypes = Object.values(MealType).map((v) => ({
   label: capitalize(v),
 }));
 
+const formatDateForInput = (date: Date) => date.toISOString().slice(0, 10);
+
 export const MealForm = ({ meal, date }: { meal?: Meal; date?: Date }) => {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(createMeal, {
     formErrors: [],
     fieldErrors: {},
   });
-  const mealDate = meal?.date ?? date ?? new Date();
+  const mealDate = meal?.date || date;
+  const today = new Date();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -63,7 +66,8 @@ export const MealForm = ({ meal, date }: { meal?: Meal; date?: Date }) => {
             <Input
               name="date"
               type="date"
-              defaultValue={mealDate.toISOString().slice(0, 10)}
+              defaultValue={formatDateForInput(mealDate || today)}
+              min={formatDateForInput(today)}
             />
             <FieldSet>
               <FieldLegend variant="label">Meal type</FieldLegend>

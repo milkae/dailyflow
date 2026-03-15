@@ -59,7 +59,6 @@ export const HabitForm = () => {
             <TextInput
               name="description"
               placeholder="Habit description"
-              required
               errors={state.fieldErrors.description}
             />
             <FieldSet>
