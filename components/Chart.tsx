@@ -16,7 +16,7 @@ export const Chart = ({ habits }: { habits: HabitWithEntries[] }) => {
   const data = getLastWeekHabits(habits, true);
 
   return (
-    <Card className="p-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+    <Card className="p-6">
       <div>
         <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
           Activity This Week

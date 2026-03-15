@@ -6,6 +6,7 @@ import { Heading } from "@/components/ui/typography";
 import { prisma } from "@/lib/prisma";
 import { calculateStreaks } from "@/lib/utils";
 import { CalendarIcon, Flame, PieChart } from "lucide-react";
+import { notFound } from "next/navigation";
 
 export default async function Page({
   params,
@@ -30,7 +31,7 @@ export default async function Page({
   });
 
   if (!habit) {
-    return;
+    return notFound();
   }
 
   const streak = calculateStreaks(habit);

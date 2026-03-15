@@ -82,12 +82,12 @@ export const HabitCard = ({
       <div className="flex gap-2">
         <Button
           onClick={() => toggleHabitCompletion(habit.id, !isCompletedToday)}
-          // className={cn("flex-1", {
-          //   // "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white":
-          //   //   isCompletedToday,
-          //   // "border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300":
-          //   //   !isCompletedToday,
-          // })}
+          className={cn("flex-1", {
+            "bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white":
+              isCompletedToday,
+            "border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300":
+              !isCompletedToday,
+          })}
         >
           {isCompletedToday ? (
             <>
