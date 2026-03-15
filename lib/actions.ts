@@ -5,10 +5,28 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { Frequency, MealType } from "@/generated/prisma/enums";
 
+const normalizeDate = (date: Date) => {
+  const normalized = new Date(date);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+};
+
 const habitSchema = z.object({
-  name: z.string("Invalid name"),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name must be 100 characters or less"),
   description: z.string("Invalid description").optional(),
   frequency: z.enum(Frequency).optional(),
+});
+
+const mealSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name must be 100 characters or less"),
+  type: z.enum(MealType),
+  date: z.coerce.date(),
 });
 
 export async function createHabit(
@@ -27,18 +45,14 @@ export async function createHabit(
 
   const { name, description, frequency } = validatedFields.data;
 
-  try {
-    await prisma.habit.create({ data: { name, description, frequency } });
-  } catch {
-    return { formErrors: ["Failed to create habit"], fieldErrors: {} };
-  }
+  await prisma.habit.create({ data: { name, description, frequency } });
 
   revalidatePath("/");
   return { formErrors: [], fieldErrors: {} };
 }
 
 export async function submitHabitEntryForm(id: string, formData: FormData) {
-  const note = formData.get("note") as string;
+  const note = (formData.get("note") as string) || "";
   await createHabitEntry(id, undefined, note);
 }
 
@@ -47,28 +61,27 @@ export async function createHabitEntry(
   date = new Date(),
   note?: string,
 ) {
-  const entryDate = new Date(date);
-  entryDate.setHours(0, 0, 0, 0);
-  const dayEntry = await prisma.entry.findFirst({
-    where: { habitId: id, date: entryDate },
+  const entryDate = normalizeDate(date);
+
+  const existingEntry = await prisma.entry.findUnique({
+    where: { habitId_date: { habitId: id, date: entryDate } },
   });
 
-  if (dayEntry && dayEntry.note === note) {
+  if (existingEntry && existingEntry.note === note) {
     return;
   }
 
-  if (dayEntry) {
-    await prisma.entry.update({ where: { id: dayEntry.id }, data: { note } });
-  } else {
-    await prisma.entry.create({ data: { habitId: id, date: entryDate, note } });
-  }
+  await prisma.entry.upsert({
+    where: { habitId_date: { habitId: id, date: entryDate } },
+    update: { note },
+    create: { habitId: id, date: entryDate, note },
+  });
 
   revalidatePath("/");
 }
 
 export async function deleteHabitEntry(id: string, date = new Date()) {
-  const entryDate = date;
-  entryDate.setHours(0, 0, 0, 0);
+  const entryDate = normalizeDate(date);
 
   await prisma.entry.deleteMany({
     where: { habitId: id, date: entryDate },
@@ -76,7 +89,7 @@ export async function deleteHabitEntry(id: string, date = new Date()) {
   revalidatePath("/");
 }
 
-export async function setDailyHabitStatus(id: string, completion: boolean) {
+export async function toggleHabitCompletion(id: string, completion: boolean) {
   if (!completion) {
     return deleteHabitEntry(id);
   }
@@ -106,12 +119,6 @@ export async function deleteHabit(id: string) {
   revalidatePath("/");
 }
 
-const mealSchema = z.object({
-  name: z.string("Invalid name"),
-  type: z.enum(MealType),
-  date: z.coerce.date(),
-});
-
 export async function createMeal(
   _initialState: {
     formErrors: string[];
@@ -128,11 +135,7 @@ export async function createMeal(
 
   const { name, type, date } = validatedFields.data;
 
-  try {
-    await prisma.meal.create({ data: { name, type, date } });
-  } catch {
-    return { formErrors: ["Failed to create meal"], fieldErrors: {} };
-  }
+  await prisma.meal.create({ data: { name, type, date } });
 
   revalidatePath("/");
   return { formErrors: [], fieldErrors: {} };

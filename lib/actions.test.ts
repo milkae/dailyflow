@@ -18,7 +18,7 @@ import {
   createHabitEntry,
   deleteHabit,
   deleteHabitEntry,
-  setDailyHabitStatus,
+  toggleHabitCompletion,
   getLastMonthHabits,
 } from "./actions";
 
@@ -42,21 +42,10 @@ test("createHabit - returns validation errors when name is missing", async () =>
   expect(result.fieldErrors).toHaveProperty("name");
 });
 
-test("createHabit - returns form error when database fails", async () => {
-  mock.habit.create.mockRejectedValue(new Error("DB Error"));
-  const formData = new FormData();
-  formData.append("name", "Test Habit");
-
-  const result = await createHabit(
-    { formErrors: [], fieldErrors: {} },
-    formData,
-  );
-
-  expect(result.formErrors).toContain("Failed to create habit");
-});
-
 test("createHabitEntry - creates new entry when none exists", async () => {
   const testDate = new Date("2024-01-15");
+  testDate.setHours(0, 0, 0, 0);
+
   mock.entry.findFirst.mockResolvedValue(null);
   mock.entry.create.mockResolvedValue({
     id: "e-1",
@@ -67,17 +56,28 @@ test("createHabitEntry - creates new entry when none exists", async () => {
 
   await createHabitEntry("h-1", testDate, "Test note");
 
-  expect(mock.entry.create).toHaveBeenCalledWith({
-    data: {
+  expect(mock.entry.upsert).toHaveBeenCalledWith({
+    create: {
+      date: testDate,
       habitId: "h-1",
-      date: expect.any(Date),
       note: "Test note",
+    },
+    update: {
+      note: "Test note",
+    },
+    where: {
+      habitId_date: {
+        date: testDate,
+        habitId: "h-1",
+      },
     },
   });
 });
 
 test("createHabitEntry - updates existing entry", async () => {
   const testDate = new Date("2024-01-15");
+  testDate.setHours(0, 0, 0, 0);
+
   const existingEntry = {
     id: "e-1",
     habitId: "h-1",
@@ -93,9 +93,21 @@ test("createHabitEntry - updates existing entry", async () => {
 
   await createHabitEntry("h-1", testDate, "New note");
 
-  expect(mock.entry.update).toHaveBeenCalledWith({
-    where: { id: "e-1" },
-    data: { note: "New note" },
+  expect(mock.entry.upsert).toHaveBeenCalledWith({
+    create: {
+      date: testDate,
+      habitId: "h-1",
+      note: "New note",
+    },
+    update: {
+      note: "New note",
+    },
+    where: {
+      habitId_date: {
+        date: testDate,
+        habitId: "h-1",
+      },
+    },
   });
 });
 
@@ -113,15 +125,15 @@ test("deleteHabitEntry - removes entry by habitId and date", async () => {
   });
 });
 
-test("setDailyHabitStatus - calls deleteHabitEntry when completion is false", async () => {
+test("toggleHabitCompletion - calls deleteHabitEntry when completion is false", async () => {
   mock.entry.deleteMany.mockResolvedValue({ count: 1 });
 
-  await setDailyHabitStatus("h-1", false);
+  await toggleHabitCompletion("h-1", false);
 
   expect(mock.entry.deleteMany).toHaveBeenCalled();
 });
 
-test("setDailyHabitStatus - calls createHabitEntry when completion is true", async () => {
+test("toggleHabitCompletion - calls createHabitEntry when completion is true", async () => {
   mock.entry.findFirst.mockResolvedValue(null);
   mock.entry.create.mockResolvedValue({
     id: "e-1",
@@ -130,9 +142,9 @@ test("setDailyHabitStatus - calls createHabitEntry when completion is true", asy
     note: null,
   });
 
-  await setDailyHabitStatus("h-1", true);
+  await toggleHabitCompletion("h-1", true);
 
-  expect(mock.entry.create).toHaveBeenCalled();
+  expect(mock.entry.upsert).toHaveBeenCalled();
 });
 
 test("getLastMonthHabits - fetches habits from last month", async () => {
@@ -192,5 +204,5 @@ test("submitHabitEntryForm - extracts note and creates entry", async () => {
 
   await submitHabitEntryForm("h-1", formData);
 
-  expect(mock.entry.create).toHaveBeenCalled();
+  expect(mock.entry.upsert).toHaveBeenCalled();
 });

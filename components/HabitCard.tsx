@@ -10,7 +10,7 @@ import {
 import { Habit, Entry } from "@/generated/prisma/client";
 import {
   deleteHabit,
-  setDailyHabitStatus,
+  toggleHabitCompletion,
   submitHabitEntryForm,
 } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
@@ -81,7 +81,7 @@ export const HabitCard = ({
       </div>
       <div className="flex gap-2">
         <Button
-          onClick={() => setDailyHabitStatus(habit.id, !isCompletedToday)}
+          onClick={() => toggleHabitCompletion(habit.id, !isCompletedToday)}
           // className={cn("flex-1", {
           //   // "bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white":
           //   //   isCompletedToday,
