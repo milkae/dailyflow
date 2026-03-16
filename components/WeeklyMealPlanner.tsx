@@ -121,6 +121,11 @@ export function WeeklyMealPlanner({ meals }: Props) {
                             <p className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-1">
                               {meal.name}
                             </p>
+                            {meal.notes && (
+                              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
+                                {meal.notes}
+                              </p>
+                            )}
                           </div>
                         </div>
                       ) : (
