@@ -52,7 +52,13 @@ export function AddMealDialog({
             })}
           </DialogDescription>
         </DialogHeader>
-        <form action={formAction} className="space-y-4">
+        <form
+          action={async (formData) => {
+            await formAction(formData);
+            onOpenChange(false);
+          }}
+          className="space-y-4"
+        >
           <div className="space-y-2">
             <TextInput
               name="name"

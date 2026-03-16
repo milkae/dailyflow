@@ -2,12 +2,13 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Croissant, Salad, Cookie, Soup } from "lucide-react";
+import { Plus, Croissant, Salad, Cookie, Soup, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { AddMealDialog } from "@/components/AddMealDialog";
 import { capitalize } from "@/lib/utils";
 import { MealType } from "@/generated/prisma/enums";
 import { Meal } from "@/generated/prisma/client";
+import { deleteMeal } from "@/lib/actions";
 
 type Props = {
   meals: Record<string, Record<string, Meal>>;
@@ -68,17 +69,16 @@ export function WeeklyMealPlanner({ meals }: Props) {
             <Card
               key={date.toISOString()}
               className={`
-                bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800
+                p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800
                 ${isToday(date) ? "ring-2 ring-violet-500 dark:ring-violet-500" : ""}
               `}
             >
-              <div className="p-4">
-                <div className="mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
-                  <div className="font-semibold text-slate-900 dark:text-slate-50">
-                    {date.toLocaleDateString("en-US", { weekday: "short" })}
-                  </div>
-                  <div
-                    className={`
+              <div className="mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="font-semibold text-slate-900 dark:text-slate-50">
+                  {date.toLocaleDateString("en-US", { weekday: "short" })}
+                </div>
+                <div
+                  className={`
                     text-2xl font-bold
                     ${
                       isToday(date)
@@ -86,50 +86,55 @@ export function WeeklyMealPlanner({ meals }: Props) {
                         : "text-slate-900 dark:text-slate-50"
                     }
                   `}
-                  >
-                    {date.getDate()}
-                  </div>
+                >
+                  {date.getDate()}
                 </div>
+              </div>
 
-                <div className="space-y-3">
-                  {mealTypes.map(({ value, label, icon }) => {
-                    const meal = getMeal(date, value);
+              <div className="space-y-3">
+                {mealTypes.map(({ value, label, icon }) => {
+                  const meal = getMeal(date, value);
 
-                    return (
-                      <div key={`${date}-${value}`} className="space-y-1">
-                        <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-                          <span>{icon}</span>
-                          <span>{label}</span>
-                        </div>
+                  return (
+                    <div key={`${date}-${value}`} className="space-y-1">
+                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
+                        <span>{icon}</span>
+                        <span>{label}</span>
+                      </div>
 
-                        {meal ? (
-                          <div className="group relative rounded-lg border border-slate-200 dark:border-slate-700 bg-violet-50 dark:bg-violet-950 p-3 hover:border-violet-500 dark:hover:border-violet-500 transition-colors">
-                            <div
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setSelectedSlot({ date, type: value })
-                              }
-                            >
-                              <p className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-1">
-                                {meal.name}
-                              </p>
-                            </div>
-                          </div>
-                        ) : (
+                      {meal ? (
+                        <div className="group relative rounded-lg border border-slate-200 dark:border-slate-700 bg-violet-50 dark:bg-violet-950 p-3 hover:border-violet-500 dark:hover:border-violet-500 transition-colors">
                           <Button
                             variant="ghost"
+                            size="icon"
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => deleteMeal(meal.id)}
+                          >
+                            <Trash2 />
+                          </Button>
+                          <div
+                            className="cursor-pointer"
                             onClick={() =>
                               setSelectedSlot({ date, type: value })
                             }
-                            className="w-full h-16 border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-violet-500 dark:hover:border-violet-500 hover:bg-violet-50 dark:hover:bg-violet-950 transition-colors"
                           >
-                            <Plus className="h-4 w-4 text-slate-400" />
-                          </Button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                            <p className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-1">
+                              {meal.name}
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          onClick={() => setSelectedSlot({ date, type: value })}
+                          className="w-full h-16 border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-violet-500 dark:hover:border-violet-500 hover:bg-violet-50 dark:hover:bg-violet-950 transition-colors"
+                        >
+                          <Plus className="h-4 w-4 text-slate-400" />
+                        </Button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </Card>
           ))}

@@ -150,3 +150,12 @@ export async function addOrUpdateMeal(
   revalidatePath("/meal-plan");
   return { formErrors: [], fieldErrors: {} };
 }
+
+export async function deleteMeal(mealId: string) {
+  await prisma.meal.delete({
+    where: { id: mealId },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/meal-plan");
+}
