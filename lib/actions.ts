@@ -20,15 +20,6 @@ const habitSchema = z.object({
   frequency: z.enum(Frequency).optional(),
 });
 
-const mealSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .max(100, "Name must be 100 characters or less"),
-  type: z.enum(MealType),
-  date: z.coerce.date(),
-});
-
 export async function createHabit(
   _initialState: {
     formErrors: string[];
@@ -119,13 +110,23 @@ export async function deleteHabit(id: string) {
   revalidatePath("/");
 }
 
-export async function createMeal(
+const mealSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name must be 100 characters or less"),
+});
+
+export async function addOrUpdateMeal(
+  { date, type, id }: { date: Date; type: MealType; id?: string },
   _initialState: {
     formErrors: string[];
     fieldErrors: { [i: string]: string[] };
   },
   formData: FormData,
 ) {
+  const dateOnly = new Date(date);
+  dateOnly.setHours(0, 0, 0, 0);
   const formDataObj = Object.fromEntries(formData.entries());
   const validatedFields = mealSchema.safeParse(formDataObj);
 
@@ -133,10 +134,19 @@ export async function createMeal(
     return z.flattenError(validatedFields.error);
   }
 
-  const { name, type, date } = validatedFields.data;
+  const { name } = validatedFields.data;
 
-  await prisma.meal.create({ data: { name, type, date } });
+  await prisma.meal.upsert({
+    where: { id: id || "" },
+    update: { name },
+    create: {
+      name,
+      type,
+      date: dateOnly,
+    },
+  });
 
   revalidatePath("/");
+  revalidatePath("/meal-plan");
   return { formErrors: [], fieldErrors: {} };
 }
