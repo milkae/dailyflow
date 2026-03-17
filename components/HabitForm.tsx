@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { createHabit } from "@/lib/actions";
 import { TextInput } from "./TextInput";
 import { Button } from "@/components/ui/button";
@@ -30,15 +30,14 @@ const frequencies = Object.values(Frequency).map((v) => ({
 }));
 
 export const HabitForm = () => {
-  const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(createHabit, {
     formErrors: [],
     fieldErrors: {},
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild onClick={() => setOpen(true)}>
+    <Dialog>
+      <DialogTrigger asChild>
         <Button variant="outline">
           <span>Create new Habit</span>
         </Button>

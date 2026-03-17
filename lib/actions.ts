@@ -161,3 +161,53 @@ export async function deleteMeal(mealId: string) {
   revalidatePath("/");
   revalidatePath("/meal-plan");
 }
+
+const recipeSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  ingredients: z.string(),
+  instructions: z.string(),
+  prepTime: z.number().optional(),
+  cookTime: z.number().optional(),
+  sourceUrl: z.string().optional(),
+});
+
+export async function createRecipe(
+  _initialState: {
+    formErrors: string[];
+    fieldErrors: { [i: string]: string[] };
+  },
+  formData: FormData,
+) {
+  const formDataObj = Object.fromEntries(formData.entries());
+  const validatedFields = recipeSchema.safeParse(formDataObj);
+
+  if (!validatedFields.success) {
+    return z.flattenError(validatedFields.error);
+  }
+  const {
+    name,
+    description,
+    ingredients,
+    instructions,
+    prepTime,
+    cookTime,
+    sourceUrl,
+  } = validatedFields.data;
+
+  const recipe = await prisma.recipe.create({
+    data: {
+      name: name,
+      description: description || null,
+      ingredients: ingredients,
+      instructions: instructions,
+      prepTime: prepTime,
+      cookTime: cookTime,
+      sourceUrl: sourceUrl,
+    },
+  });
+
+  revalidatePath("/recipes");
+
+  return { formErrors: [], fieldErrors: {} };
+}

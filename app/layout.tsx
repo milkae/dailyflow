@@ -15,12 +15,16 @@ const navigationData = [
     href: "/",
   },
   {
-    title: "Dashboard",
-    href: "/dashboard",
+    title: "Habit Dashboard",
+    href: "/habit/dashboard",
   },
   {
     title: "Meal plan",
-    href: "/meal-plan",
+    href: "/meal/week-plan",
+  },
+  {
+    title: "Recipes",
+    href: "/meal/recipes",
   },
 ];
 
