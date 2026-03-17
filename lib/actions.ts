@@ -195,7 +195,7 @@ export async function createRecipe(
     sourceUrl,
   } = validatedFields.data;
 
-  const recipe = await prisma.recipe.create({
+  await prisma.recipe.create({
     data: {
       name: name,
       description: description || null,

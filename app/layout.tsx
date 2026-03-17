@@ -16,7 +16,7 @@ const navigationData = [
   },
   {
     title: "Habit Dashboard",
-    href: "/habit/dashboard",
+    href: "/habits/dashboard",
   },
   {
     title: "Meal plan",
