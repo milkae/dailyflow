@@ -14,18 +14,22 @@ datasource db {
 }
 
 model Habit {
-  id          String    @id @default(cuid())
-  name        String
-  description String?
-  entries     Entry[]
-  createdAt   DateTime  @default(now())
-  frequency   Frequency @default(DAILY)
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  entries         Entry[]
+  createdAt       DateTime  @default(now())
+  frequency       Frequency @default(DAILY)
+  frequencyConfig Json?
+  startDate       DateTime  @default(now())
 }
 
 enum Frequency {
   DAILY
   WEEKLY
   MONTHLY
+  SPECIFIC_DAYS
+  INTERVAL
 }
 
 model Entry {

@@ -12,7 +12,9 @@
 export const Frequency = {
   DAILY: 'DAILY',
   WEEKLY: 'WEEKLY',
-  MONTHLY: 'MONTHLY'
+  MONTHLY: 'MONTHLY',
+  SPECIFIC_DAYS: 'SPECIFIC_DAYS',
+  INTERVAL: 'INTERVAL'
 } as const
 
 export type Frequency = (typeof Frequency)[keyof typeof Frequency]
