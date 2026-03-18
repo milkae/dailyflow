@@ -10,10 +10,9 @@ import { Button } from "@/components/ui/button";
 import { addOrUpdateMeal } from "@/lib/actions";
 import { TextInput } from "./TextInput";
 import { Meal } from "@/generated/prisma/client";
-import { capitalize } from "@/lib/utils";
+import { capitalize, cn } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { Field, FieldError } from "@/components/ui/field";
-import { cn } from "@/lib/utils";
 
 type Props = {
   open: boolean;

@@ -16,7 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "./ui/badge";
-import { calculateStreaks, cn, getHabitEntryForToday } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { calculateStreaks, getHabitEntryForToday } from "@/lib/habits";
 import Link from "next/link";
 import {
   Dialog,

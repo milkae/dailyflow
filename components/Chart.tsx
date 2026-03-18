@@ -10,7 +10,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { getLastWeekHabits } from "@/lib/utils";
+import { getLastWeekHabits } from "@/lib/habits";
 
 export const Chart = ({ habits }: { habits: HabitWithEntries[] }) => {
   const data = getLastWeekHabits(habits, true);

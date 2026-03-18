@@ -18,12 +18,32 @@ const habitSchema = z.object({
     .max(100, "Name must be 100 characters or less"),
   description: z.string("Invalid description").optional(),
   frequency: z.enum(Frequency).optional(),
+  config: z.string().optional(),
 });
+
+const getFrequencyConfig = (
+  frequency?: Frequency,
+  config?: number | number[],
+) => {
+  switch (frequency) {
+    case Frequency.DAILY:
+      return null;
+    case Frequency.WEEKLY:
+      return { day: config };
+    case Frequency.INTERVAL:
+      return { interval: config };
+    case Frequency.SPECIFIC_DAYS:
+      return { days: config };
+    case Frequency.MONTHLY:
+      return { day: config };
+  }
+};
 
 export async function createHabit(
   _initialState: {
     formErrors: string[];
     fieldErrors: { [i: string]: string[] };
+    success: boolean;
   },
   formData: FormData,
 ) {
@@ -31,15 +51,19 @@ export async function createHabit(
   const validatedFields = habitSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
-    return z.flattenError(validatedFields.error);
+    return { ...z.flattenError(validatedFields.error), success: false };
   }
 
-  const { name, description, frequency } = validatedFields.data;
+  const { name, description, frequency, config } = validatedFields.data;
+  const frequencyConfig =
+    getFrequencyConfig(frequency, config ? JSON.parse(config) : null) || {};
 
-  await prisma.habit.create({ data: { name, description, frequency } });
+  await prisma.habit.create({
+    data: { name, description, frequency, frequencyConfig },
+  });
 
   revalidatePath("/");
-  return { formErrors: [], fieldErrors: {} };
+  return { formErrors: [], fieldErrors: {}, success: true };
 }
 
 export async function submitHabitEntryForm(id: string, formData: FormData) {

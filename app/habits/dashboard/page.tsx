@@ -2,7 +2,7 @@ import { StatCard } from "@/components/StatCard";
 import { Chart } from "@/components/Chart";
 import { getLastMonthHabits } from "@/lib/actions";
 import { HabitWithEntries } from "@/lib/prisma";
-import { getHabitEntryForToday, getLastWeekHabits } from "@/lib/utils";
+import { getHabitEntryForToday, getLastWeekHabits } from "@/lib/habits";
 import { CalendarCheck, CalendarDays, WalletCards } from "lucide-react";
 import { HabitCard } from "@/components/HabitCard";
 import { Heading } from "@/components/ui/typography";
