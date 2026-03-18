@@ -16,9 +16,7 @@ export const StatCard = ({
         {icon}
         <h4>{label}</h4>
       </div>
-      <div className="text-5xl text-center text-emerald-600 dark:text-emerald-400">
-        {stat}
-      </div>
+      <div className="text-5xl text-center text-primary">{stat}</div>
     </Card>
   );
 };

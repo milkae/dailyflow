@@ -21,7 +21,7 @@ export default async function Home() {
       <Heading className="text-center">Today</Heading>
       <div className="flex items-center justify-between">
         <Heading as="h2">General</Heading>
-        <span className="text-sm text-slate-600 dark:text-slate-400">
+        <span className="text-sm text-muted-foreground">
           {todayHabits.length} {todayHabits.length === 1 ? "habit" : "habits"}
         </span>
       </div>

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { addOrUpdateMeal } from "@/lib/actions";
 import { TextInput } from "./TextInput";
 import { Meal } from "@/generated/prisma/client";
-import { capitalize, cn } from "@/lib/utils";
+import { capitalize } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { Field, FieldError } from "@/components/ui/field";
 
@@ -41,12 +41,12 @@ export function AddMealDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 sm:max-w-175 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-175 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-slate-900 dark:text-slate-50">
+          <DialogTitle className="">
             {existingMeal ? "Edit" : "Add"} {capitalize(mealType)}
           </DialogTitle>
-          <DialogDescription className="text-slate-600 dark:text-slate-400">
+          <DialogDescription className="text-muted-foreground">
             {date.toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -77,14 +77,6 @@ export function AddMealDialog({
                 placeholder="Add notes..."
                 disabled={pending}
                 aria-invalid={!!state.fieldErrors.notes?.length}
-                className={cn(
-                  "border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500",
-                  "focus:border-emerald-500 dark:focus:border-emerald-500  focus:ring-emerald-500 dark:focus:ring-emerald-500",
-                  {
-                    "border-red-500 dark:border-red-400 focus:border-red-500 focus:ring-red-500 dark:focus:border-red-500 dark:focus:ring-red-500":
-                      !!state.fieldErrors.notes?.length,
-                  },
-                )}
               />
               {!!state.fieldErrors.notes?.length && (
                 <div>
@@ -92,7 +84,7 @@ export function AddMealDialog({
                     <FieldError
                       aria-live="polite"
                       key={i}
-                      className="text-sm text-red-600 dark:text-red-400"
+                      className="text-sm text-destructive"
                     >
                       {e}
                     </FieldError>

@@ -18,38 +18,32 @@ export const Chart = ({ habits }: { habits: HabitWithEntries[] }) => {
   return (
     <Card className="p-6">
       <div>
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
-          Activity This Week
-        </h3>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+        <h3 className="text-lg font-semibold">Activity This Week</h3>
+        <p className="text-sm text-muted-foreground mt-1">
           Number of habits completed each day
         </p>
       </div>
       <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={data} className="text-slate-600 dark:text-slate-400">
+        <BarChart data={data} className="text-muted-foreground">
           <CartesianGrid
             strokeDasharray="3 3"
-            className="text-slate-800"
+            className="text-border"
             stroke="currentColor"
             vertical={false}
           />
           <XAxis
             dataKey="day"
             tick={{ fill: "currentColor", fontSize: 12 }}
-            className="text-slate-800"
+            className="text-border"
             stroke="currentColor"
           />
           <YAxis
             allowDecimals={false}
             tick={{ fontSize: 12, fill: "currentColor" }}
-            className="text-slate-800"
+            className="text-border"
             stroke="currentColor"
           />
-          <Bar
-            dataKey="count"
-            className="fill-emerald-600 dark:fill-emerald-500"
-            radius={[4, 4, 0, 0]}
-          />
+          <Bar dataKey="count" className="fill-chart-1" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </Card>

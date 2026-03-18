@@ -18,7 +18,7 @@ type NavigationItem = {
 
 const Navbar = ({ navigationData }: { navigationData: NavigationItem }) => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b backdrop-blur supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-slate-900/60">
+    <header className="sticky top-0 z-50 w-full border-b backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-4 py-7 sm:px-6">
         <div className="text-muted-foreground flex flex-1 items-center gap-8 font-medium md:justify-center lg:gap-16">
           {navigationData.map((item, index) => (

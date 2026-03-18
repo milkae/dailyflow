@@ -53,7 +53,7 @@ export const RecipeForm = () => {
           <div className="space-y-2">
             <Label htmlFor="ingredients">
               Ingredients{" "}
-              <span className="text-slate-500 text-sm font-normal">
+              <span className="text-muted-foreground text-sm font-normal">
                 (one per line)
               </span>
             </Label>

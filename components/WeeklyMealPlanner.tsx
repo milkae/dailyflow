@@ -68,13 +68,10 @@ export function WeeklyMealPlanner({ meals }: Props) {
           {weekDays.map((date) => (
             <Card
               key={date.toISOString()}
-              className={`
-                p-4 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800
-                ${isToday(date) ? "ring-2 ring-violet-500 dark:ring-violet-500" : ""}
-              `}
+              className={`p-4 ${isToday(date) ? "ring-2 ring-violet-500" : ""}`}
             >
-              <div className="mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
-                <div className="font-semibold text-slate-900 dark:text-slate-50">
+              <div className="mb-4 pb-3 border-b">
+                <div className="font-semibold">
                   {date.toLocaleDateString("en-US", { weekday: "short" })}
                 </div>
                 <div
@@ -97,17 +94,17 @@ export function WeeklyMealPlanner({ meals }: Props) {
 
                   return (
                     <div key={`${date}-${value}`} className="space-y-1">
-                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <span>{icon}</span>
                         <span>{label}</span>
                       </div>
 
                       {meal ? (
-                        <div className="group relative rounded-lg border border-slate-200 dark:border-slate-700 bg-violet-50 dark:bg-violet-950 p-3 hover:border-violet-500 dark:hover:border-violet-500 transition-colors">
+                        <div className="p-3 group relative rounded-lg border bg-violet-50 dark:bg-violet-950 hover:border-violet-500 dark:hover:border-violet-500 transition-colors">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-background border opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => deleteMeal(meal.id)}
                           >
                             <Trash2 />
@@ -118,11 +115,11 @@ export function WeeklyMealPlanner({ meals }: Props) {
                               setSelectedSlot({ date, type: value })
                             }
                           >
-                            <p className="text-sm font-medium text-slate-900 dark:text-slate-50 mb-1">
+                            <p className="text-sm font-medium mb-1">
                               {meal.name}
                             </p>
                             {meal.notes && (
-                              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                                 {meal.notes}
                               </p>
                             )}
@@ -132,9 +129,9 @@ export function WeeklyMealPlanner({ meals }: Props) {
                         <Button
                           variant="ghost"
                           onClick={() => setSelectedSlot({ date, type: value })}
-                          className="w-full h-16 border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-violet-500 dark:hover:border-violet-500 hover:bg-violet-50 dark:hover:bg-violet-950 transition-colors"
+                          className="w-full h-16 border-2 border-dashed hover:border-violet-500 dark:hover:border-violet-500 hover:bg-violet-50 dark:hover:bg-violet-950 transition-colors"
                         >
-                          <Plus className="h-4 w-4 text-slate-400" />
+                          <Plus className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       )}
                     </div>
