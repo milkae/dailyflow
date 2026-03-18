@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { createRecipe } from "@/lib/actions";
+import { createOrUpdateRecipe } from "@/lib/actions";
 import { TextInput } from "./TextInput";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
@@ -17,9 +17,14 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
+import { Recipe } from "@/generated/prisma/browser";
+import { Edit } from "lucide-react";
 
-export const RecipeForm = () => {
-  const [state, formAction, pending] = useActionState(createRecipe, {
+export const RecipeForm = ({ recipe }: { recipe?: Recipe }) => {
+  const submitRecipe = createOrUpdateRecipe.bind(null, {
+    id: recipe?.id,
+  });
+  const [state, formAction, pending] = useActionState(submitRecipe, {
     formErrors: [],
     fieldErrors: {},
   });
@@ -27,25 +32,35 @@ export const RecipeForm = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <span>Create new recipe</span>
-        </Button>
+        {recipe ? (
+          <Button variant="outline" size="icon">
+            <Edit />
+          </Button>
+        ) : (
+          <Button variant="outline">
+            <span>Create new recipe</span>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new recipe</DialogTitle>
+          <DialogTitle>
+            {recipe ? `Edit: ${recipe.name}` : "Create a new recipe"}
+          </DialogTitle>
         </DialogHeader>
 
         <form action={formAction}>
           <FieldGroup>
             <TextInput
               name="name"
+              defaultValue={recipe?.name}
               placeholder="Peanut butter noodles"
               required
               errors={state.fieldErrors.name}
             />
             <TextInput
               name="description"
+              defaultValue={recipe?.description || ""}
               placeholder="Rich, creamy, savory, and spicy, they come together in under 20 minute"
               errors={state.fieldErrors.description}
             />
@@ -60,6 +75,7 @@ export const RecipeForm = () => {
             <Textarea
               id="ingredients"
               name="ingredients"
+              defaultValue={recipe?.ingredients}
               placeholder="8oz noodles&#10;1/2 cup peanut butter&#10;3 Tbsp soy sauce&#10;1 Tbsp agave or maple syrup&#10;1 Tbsp white vinegar&#10;..."
               rows={6}
               disabled={pending}
@@ -71,6 +87,7 @@ export const RecipeForm = () => {
             <Textarea
               id="instructions"
               name="instructions"
+              defaultValue={recipe?.instructions}
               placeholder="1. Bring a large pot of water to boil. Cook the noodles according to package instructions.&#10;2. While the noobles cooks, whisk together the peanut butter sauce ingredients...&#10;..."
               rows={8}
               disabled={pending}
@@ -90,7 +107,7 @@ export const RecipeForm = () => {
               </Button>
             </DialogClose>
             <Button type="submit" disabled={pending}>
-              Add
+              {recipe ? "Edit" : "Add"}
             </Button>
           </DialogFooter>
         </form>

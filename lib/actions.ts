@@ -183,7 +183,7 @@ export async function deleteMeal(mealId: string) {
   });
 
   revalidatePath("/");
-  revalidatePath("/meal-plan");
+  revalidatePath("/meal/week-plan");
 }
 
 const recipeSchema = z.object({
@@ -196,7 +196,8 @@ const recipeSchema = z.object({
   sourceUrl: z.string().optional(),
 });
 
-export async function createRecipe(
+export async function createOrUpdateRecipe(
+  { id }: { id?: string },
   _initialState: {
     formErrors: string[];
     fieldErrors: { [i: string]: string[] };
@@ -219,19 +220,38 @@ export async function createRecipe(
     sourceUrl,
   } = validatedFields.data;
 
-  await prisma.recipe.create({
-    data: {
-      name: name,
-      description: description || null,
-      ingredients: ingredients,
-      instructions: instructions,
-      prepTime: prepTime,
-      cookTime: cookTime,
-      sourceUrl: sourceUrl,
+  await prisma.recipe.upsert({
+    where: { id: id || "" },
+    update: {
+      name,
+      description,
+      ingredients,
+      instructions,
+      prepTime,
+      cookTime,
+      sourceUrl,
+    },
+    create: {
+      name,
+      description,
+      ingredients,
+      instructions,
+      prepTime,
+      cookTime,
+      sourceUrl,
     },
   });
 
   revalidatePath("/recipes");
 
   return { formErrors: [], fieldErrors: {} };
+}
+
+export async function deleteRecipe(id: string) {
+  await prisma.recipe.delete({
+    where: { id },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/meal/recipes");
 }
