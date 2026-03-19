@@ -5,38 +5,75 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* ==================== BASE COLORS ==================== */
   --background: var(--color-slate-50);
   --foreground: var(--color-slate-900);
+
+  /* ==================== CARD ==================== */
   --card: var(--color-slate-50);
   --card-foreground: var(--color-slate-900);
+
+  /* ==================== POPOVER ==================== */
   --popover: var(--color-slate-50);
   --popover-foreground: var(--color-slate-900);
+
+  /* ==================== PRIMARY (Habits - Emerald) ==================== */
   --primary: var(--color-emerald-600);
   --primary-foreground: var(--color-slate-50);
+
+  /* ==================== SECONDARY ==================== */
   --secondary: var(--color-slate-100);
   --secondary-foreground: var(--color-slate-900);
+
+  /* ==================== MUTED ==================== */
   --muted: var(--color-slate-100);
   --muted-foreground: var(--color-slate-600);
+
+  /* ==================== ACCENT (Streaks - Orange) ==================== */
   --accent: var(--color-orange-500);
   --accent-foreground: var(--color-slate-50);
+
+  /* ==================== TERTIARY (Meals - Teal) ==================== */
+  --tertiary: var(--color-teal-600);
+  --tertiary-foreground: var(--color-slate-50);
+  --tertiary-muted: var(--color-teal-50);
+  --tertiary-muted-foreground: var(--color-teal-900);
+
+  /* ==================== SUCCESS (Green) ==================== */
+  --success: var(--color-green-500);
+  --success-foreground: var(--color-slate-50);
+  --success-muted: var(--color-green-50);
+  --success-muted-foreground: var(--color-green-900);
+
+  /* ==================== DESTRUCTIVE (Red) ==================== */
   --destructive: var(--color-red-600);
+  --destructive-foreground: var(--color-slate-50);
+  --destructive-muted: var(--color-red-50);
+  --destructive-muted-foreground: var(--color-red-900);
+
+  /* ==================== BORDERS & INPUTS ==================== */
   --border: var(--color-slate-200);
   --input: var(--color-slate-200);
   --ring: var(--color-emerald-600);
+
+  /* ==================== CHARTS ==================== */
   --chart-1: var(--color-emerald-600);
   --chart-2: var(--color-orange-500);
   --chart-3: var(--color-green-500);
-  --chart-4: var(--color-rose-500);
-  --chart-5: var(--color-violet-500);
+  --chart-4: var(--color-teal-500);
+  --chart-5: var(--color-amber-500);
+
+  /* ==================== SIDEBAR ==================== */
   --sidebar: var(--color-slate-50);
   --sidebar-foreground: var(--color-slate-900);
   --sidebar-primary: var(--color-emerald-600);
   --sidebar-primary-foreground: var(--color-slate-50);
   --sidebar-accent: var(--color-slate-100);
   --sidebar-accent-foreground: var(--color-slate-900);
-  --sidebar-border: ovar(--color-slate-200);
+  --sidebar-border: var(--color-slate-200);
   --sidebar-ring: var(--color-emerald-600);
 
+  /* ==================== FONTS ==================== */
   --font-sans:
     "Geist", "Geist Fallback", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
@@ -49,8 +86,10 @@
     "Geist Mono", "Geist Mono Fallback", ui-monospace, SFMono-Regular, Menlo,
     Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
+  /* ==================== RADIUS ==================== */
   --radius: 0.5rem;
 
+  /* ==================== SHADOWS ==================== */
   --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-sm:
@@ -66,29 +105,65 @@
 }
 
 .dark {
+  /* ==================== BASE COLORS ==================== */
   --background: var(--color-slate-950);
   --foreground: var(--color-slate-50);
+
+  /* ==================== CARD ==================== */
   --card: var(--color-slate-900);
   --card-foreground: var(--color-slate-50);
+
+  /* ==================== POPOVER ==================== */
   --popover: var(--color-slate-900);
   --popover-foreground: var(--color-slate-50);
+
+  /* ==================== PRIMARY (Habits - Emerald) ==================== */
   --primary: var(--color-emerald-500);
   --primary-foreground: var(--color-slate-50);
+
+  /* ==================== SECONDARY ==================== */
   --secondary: var(--color-slate-800);
   --secondary-foreground: var(--color-slate-50);
+
+  /* ==================== MUTED ==================== */
   --muted: var(--color-slate-800);
   --muted-foreground: var(--color-slate-400);
+
+  /* ==================== ACCENT (Streaks - Orange) ==================== */
   --accent: var(--color-orange-500);
   --accent-foreground: var(--color-slate-50);
+
+  /* ==================== TERTIARY (Meals - Teal) ==================== */
+  --tertiary: var(--color-teal-500);
+  --tertiary-foreground: var(--color-slate-50);
+  --tertiary-muted: var(--color-teal-950);
+  --tertiary-muted-foreground: var(--color-teal-300);
+
+  /* ==================== SUCCESS (Green) ==================== */
+  --success: var(--color-green-400);
+  --success-foreground: var(--color-slate-50);
+  --success-muted: var(--color-green-950);
+  --success-muted-foreground: var(--color-green-300);
+
+  /* ==================== DESTRUCTIVE (Red) ==================== */
   --destructive: var(--color-red-500);
+  --destructive-foreground: var(--color-slate-50);
+  --destructive-muted: var(--color-red-950);
+  --destructive-muted-foreground: var(--color-red-300);
+
+  /* ==================== BORDERS & INPUTS ==================== */
   --border: var(--color-slate-800);
   --input: var(--color-slate-800);
   --ring: var(--color-emerald-500);
+
+  /* ==================== CHARTS ==================== */
   --chart-1: var(--color-emerald-500);
   --chart-2: var(--color-orange-500);
   --chart-3: var(--color-green-400);
-  --chart-4: var(--color-rose-400);
-  --chart-5: var(--color-violet-400);
+  --chart-4: var(--color-teal-400);
+  --chart-5: var(--color-amber-400);
+
+  /* ==================== SIDEBAR ==================== */
   --sidebar: var(--color-slate-900);
   --sidebar-foreground: var(--color-slate-50);
   --sidebar-primary: var(--color-emerald-500);
@@ -98,6 +173,7 @@
   --sidebar-border: var(--color-slate-800);
   --sidebar-ring: var(--color-emerald-500);
 
+  /* ==================== SHADOWS ==================== */
   --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-sm:
@@ -113,6 +189,7 @@
 }
 
 @theme inline {
+  /* ==================== COLOR MAPPINGS ==================== */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -127,7 +204,25 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
+  /* Tertiary (Meals - Teal) */
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-tertiary-muted: var(--tertiary-muted);
+  --color-tertiary-muted-foreground: var(--tertiary-muted-foreground);
+
+  /* Success (Green) */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-muted: var(--success-muted);
+  --color-success-muted-foreground: var(--success-muted-foreground);
+
+  /* Destructive (Red) */
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-muted: var(--destructive-muted);
+  --color-destructive-muted-foreground: var(--destructive-muted-foreground);
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -145,15 +240,18 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* ==================== FONTS ==================== */
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
 
+  /* ==================== RADIUS ==================== */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  /* ==================== SHADOWS ==================== */
   --shadow-2xs: var(--shadow-2xs);
   --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);

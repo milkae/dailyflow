@@ -1,8 +1,8 @@
-import { RecipeHeader } from "@/components/RecipeHeader";
-import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { RecipeDetail } from "@/components/RecipeDetail";
 
-export default async function Page({
+export default async function RecipeDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -17,13 +17,5 @@ export default async function Page({
     return notFound();
   }
 
-  return (
-    <>
-      <RecipeHeader recipe={recipe} />
-      <div>
-        <div>{recipe.ingredients}</div>
-        <div>{recipe.instructions}</div>
-      </div>
-    </>
-  );
+  return <RecipeDetail recipe={recipe} />;
 }

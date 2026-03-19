@@ -210,6 +210,7 @@ export async function createOrUpdateRecipe(
   if (!validatedFields.success) {
     return z.flattenError(validatedFields.error);
   }
+
   const {
     name,
     description,
@@ -220,38 +221,70 @@ export async function createOrUpdateRecipe(
     sourceUrl,
   } = validatedFields.data;
 
-  await prisma.recipe.upsert({
-    where: { id: id || "" },
-    update: {
-      name,
-      description,
-      ingredients,
-      instructions,
-      prepTime,
-      cookTime,
-      sourceUrl,
-    },
-    create: {
-      name,
-      description,
-      ingredients,
-      instructions,
-      prepTime,
-      cookTime,
-      sourceUrl,
-    },
-  });
+  try {
+    if (id) {
+      const existing = await prisma.recipe.findUnique({
+        where: { id },
+      });
 
-  revalidatePath("/recipes");
+      if (!existing) {
+        return {
+          formErrors: ["Recipe not found"],
+          fieldErrors: {},
+        };
+      }
 
-  return { formErrors: [], fieldErrors: {} };
+      await prisma.recipe.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          ingredients,
+          instructions,
+          prepTime,
+          cookTime,
+          sourceUrl,
+        },
+      });
+
+      revalidatePath(`/meal/recipes/${id}`);
+    } else {
+      await prisma.recipe.create({
+        data: {
+          name,
+          description,
+          ingredients,
+          instructions,
+          prepTime,
+          cookTime,
+          sourceUrl,
+        },
+      });
+    }
+
+    revalidatePath("/meal/recipes");
+    return { formErrors: [], fieldErrors: {} };
+  } catch (error) {
+    console.error("Recipe save error:", error);
+    return {
+      formErrors: ["Failed to save recipe. Please try again."],
+      fieldErrors: {},
+    };
+  }
 }
 
-export async function deleteRecipe(id: string) {
-  await prisma.recipe.delete({
-    where: { id },
+export async function deleteRecipe(recipeId: string) {
+  const recipe = await prisma.recipe.findUnique({
+    where: { id: recipeId },
   });
 
-  revalidatePath("/");
+  if (!recipe) {
+    throw new Error("Unauthorized");
+  }
+
+  await prisma.recipe.delete({
+    where: { id: recipeId },
+  });
+
   revalidatePath("/meal/recipes");
 }

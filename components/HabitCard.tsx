@@ -60,7 +60,7 @@ export const HabitCard = ({
         </Link>
         <div className="flex items-center gap-1 shrink-0">
           {streak > 0 && (
-            <Badge className="bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300">
+            <Badge className="bg-accent/10 text-accent border-accent/20">
               <Flame className="text-accent" data-icon="inline-start" />
               <span className="text-xs font-bold">{streak}</span>
             </Badge>
@@ -68,7 +68,7 @@ export const HabitCard = ({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-slate-400 hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive-muted dark:hover:bg-destructive-muted opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={() => {
               deleteHabit(habit.id);
             }}
@@ -79,12 +79,11 @@ export const HabitCard = ({
       </div>
       <div className="flex gap-2">
         <Button
-          variant="outline"
           onClick={() => toggleHabitCompletion(habit.id, !isCompletedToday)}
           className={cn("flex-1", {
-            "border-emerald-500 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900":
+            "border-primary bg-primary/10 text-primary hover:bg-primary/20":
               isCompletedToday,
-            "border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 hover:text-emerald-700 dark:hover:text-emerald-300":
+            "border-2 bg-card text-muted-foreground hover:border-primary hover:bg-primary/10 hover:text-primary":
               !isCompletedToday,
           })}
         >
@@ -101,14 +100,13 @@ export const HabitCard = ({
           )}
         </Button>
         <Button
-          variant="outline"
           size="icon"
           onClick={() => setDialogOpen(true)}
           title={entryNote ? "Edit Note" : "Add note"}
           className={cn({
-            "border-emerald-500 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900":
+            "border-primary bg-primary/10 text-primary hover:bg-primary/20":
               entryNote,
-            "border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-emerald-500 dark:hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400":
+            "border-2 bg-card text-muted-foreground hover:border-primary hover:bg-primary/10 hover:text-primary":
               !entryNote,
           })}
         >

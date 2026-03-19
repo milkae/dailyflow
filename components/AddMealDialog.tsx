@@ -107,7 +107,7 @@ export function AddMealDialog({
             <Button
               type="submit"
               disabled={pending}
-              className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
+              className="flex-1 bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
             >
               {pending ? "Saving..." : existingMeal ? "Update" : "Add"}
             </Button>

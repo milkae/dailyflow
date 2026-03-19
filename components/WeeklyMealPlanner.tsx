@@ -68,7 +68,7 @@ export function WeeklyMealPlanner({ meals }: Props) {
           {weekDays.map((date) => (
             <Card
               key={date.toISOString()}
-              className={`p-4 ${isToday(date) ? "ring-2 ring-violet-500" : ""}`}
+              className={`p-4 ${isToday(date) ? "ring-2 ring-tertiary" : ""}`}
             >
               <div className="mb-4 pb-3 border-b">
                 <div className="font-semibold">
@@ -77,11 +77,7 @@ export function WeeklyMealPlanner({ meals }: Props) {
                 <div
                   className={`
                     text-2xl font-bold
-                    ${
-                      isToday(date)
-                        ? "text-violet-600 dark:text-violet-400"
-                        : "text-slate-900 dark:text-slate-50"
-                    }
+                    ${isToday(date) ? "text-tertiary" : "text-foreground"}
                   `}
                 >
                   {date.getDate()}
@@ -100,11 +96,11 @@ export function WeeklyMealPlanner({ meals }: Props) {
                       </div>
 
                       {meal ? (
-                        <div className="p-3 group relative rounded-lg border bg-violet-50 dark:bg-violet-950 hover:border-violet-500 dark:hover:border-violet-500 transition-colors">
+                        <div className="p-3 group relative rounded-lg border bg-tertiary-muted hover:border-tertiary transition-colors">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-background border opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full border bg-background hover:bg-destructive/90 dark:hover:bg-destructive/90 text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => deleteMeal(meal.id)}
                           >
                             <Trash2 />
@@ -129,7 +125,7 @@ export function WeeklyMealPlanner({ meals }: Props) {
                         <Button
                           variant="ghost"
                           onClick={() => setSelectedSlot({ date, type: value })}
-                          className="w-full h-16 border-2 border-dashed hover:border-violet-500 dark:hover:border-violet-500 hover:bg-violet-50 dark:hover:bg-violet-950 transition-colors"
+                          className="w-full h-16 border-2 border-dashed hover:border-tertiary hover:bg-tertiary-muted dark:hover:bg-tertiary-muted hover:text-tertiary-muted-foreground transition-colors"
                         >
                           <Plus className="h-4 w-4 text-muted-foreground" />
                         </Button>
