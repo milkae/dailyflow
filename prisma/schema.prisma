@@ -22,6 +22,8 @@ model Habit {
   frequency       Frequency @default(DAILY)
   frequencyConfig Json?
   startDate       DateTime  @default(now())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Frequency {
@@ -52,6 +54,8 @@ model Meal {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([date])
 }
@@ -78,4 +82,15 @@ model Recipe {
   meals        Meal[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  habits    Habit[]
+  recipes   Recipe[]
+  meals     Meal[]
 }

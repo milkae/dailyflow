@@ -37,3 +37,8 @@ export type Meal = Prisma.MealModel
  * 
  */
 export type Recipe = Prisma.RecipeModel
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel

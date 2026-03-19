@@ -54,7 +54,8 @@ export const ModelName = {
   Habit: 'Habit',
   Entry: 'Entry',
   Meal: 'Meal',
-  Recipe: 'Recipe'
+  Recipe: 'Recipe',
+  User: 'User'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -77,7 +78,8 @@ export const HabitScalarFieldEnum = {
   createdAt: 'createdAt',
   frequency: 'frequency',
   frequencyConfig: 'frequencyConfig',
-  startDate: 'startDate'
+  startDate: 'startDate',
+  userId: 'userId'
 } as const
 
 export type HabitScalarFieldEnum = (typeof HabitScalarFieldEnum)[keyof typeof HabitScalarFieldEnum]
@@ -101,7 +103,8 @@ export const MealScalarFieldEnum = {
   recipeId: 'recipeId',
   notes: 'notes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 } as const
 
 export type MealScalarFieldEnum = (typeof MealScalarFieldEnum)[keyof typeof MealScalarFieldEnum]
@@ -120,10 +123,20 @@ export const RecipeScalarFieldEnum = {
   sourceUrl: 'sourceUrl',
   category: 'category',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 } as const
 
 export type RecipeScalarFieldEnum = (typeof RecipeScalarFieldEnum)[keyof typeof RecipeScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  createdAt: 'createdAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
 export const SortOrder = {
