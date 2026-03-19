@@ -7,6 +7,7 @@ import { CalendarCheck, CalendarDays, WalletCards } from "lucide-react";
 import { HabitCard } from "@/components/HabitCard";
 import { Heading } from "@/components/ui/typography";
 import { CardsList } from "@/components/CardsList";
+import { HabitForm } from "@/components/HabitForm";
 
 function getWeeklyPercentage(habits: HabitWithEntries[]) {
   const total = (habits.length || 1) * 7;
@@ -43,6 +44,7 @@ export default async function Page() {
   return (
     <>
       <Heading className="text-center">My dashboard</Heading>
+      <HabitForm />
       <CardsList>
         {stats.map((stat, id) => (
           <StatCard key={id} {...stat} />

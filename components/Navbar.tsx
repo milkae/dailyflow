@@ -1,6 +1,5 @@
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,14 +8,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { HabitForm } from "./HabitForm";
+import SignIn from "./SignIn";
+import { auth } from "@/auth";
+import LogOut from "./LogOut";
 
 type NavigationItem = {
   title: string;
   href: string;
 }[];
 
-const Navbar = ({ navigationData }: { navigationData: NavigationItem }) => {
+const Navbar = async ({
+  navigationData,
+}: {
+  navigationData: NavigationItem;
+}) => {
+  const session = await auth();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-4 py-7 sm:px-6">
@@ -31,9 +38,8 @@ const Navbar = ({ navigationData }: { navigationData: NavigationItem }) => {
             </Link>
           ))}
         </div>
-
+        {session?.user ? <LogOut /> : <SignIn />}
         <div className="flex items-center gap-6">
-          <HabitForm />
           <DropdownMenu>
             <DropdownMenuTrigger className="md:hidden" asChild>
               <Button variant="outline" size="icon">
