@@ -2,42 +2,25 @@ import {
   Item,
   ItemContent,
   ItemDescription,
-  ItemActions,
   ItemTitle,
 } from "@/components/ui/item";
 import { Recipe } from "@/generated/prisma/client";
-import { Button } from "./ui/button";
-import { Trash2 } from "lucide-react";
-import { deleteRecipe } from "@/lib/actions";
-import { RecipeForm } from "./RecipeForm";
+import Link from "next/link";
 
-export function RecipeItem({
-  recipe,
-  onClick,
-}: {
-  recipe: Recipe;
-  onClick: () => void;
-}) {
+export function RecipeItem({ recipe }: { recipe: Recipe }) {
   return (
     <Item
       key={recipe.name}
       variant="outline"
-      className="group hover:border-violet-500 dark:hover:border-violet-500"
+      className="hover:bg-violet-50 dark:hover:bg-violet-950 hover:border-violet-500 dark:hover:border-violet-500"
+      asChild
     >
-      <ItemContent onClick={onClick}>
-        <ItemTitle>{recipe.name}</ItemTitle>
-        <ItemDescription>{recipe.description}</ItemDescription>
-      </ItemContent>
-      <ItemActions className="opacity-0 group-hover:opacity-100 transition-opacity">
-        <RecipeForm recipe={recipe} />
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => deleteRecipe(recipe.id)}
-        >
-          <Trash2 />
-        </Button>
-      </ItemActions>
+      <Link href={`/meal/recipes/${recipe.id}`}>
+        <ItemContent>
+          <ItemTitle>{recipe.name}</ItemTitle>
+          <ItemDescription>{recipe.description}</ItemDescription>
+        </ItemContent>
+      </Link>
     </Item>
   );
 }
