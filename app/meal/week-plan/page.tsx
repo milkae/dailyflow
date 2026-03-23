@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { WeeklyMealPlanner } from "@/components/WeeklyMealPlanner";
 import { Meal } from "@/generated/prisma/client";
 

@@ -3,7 +3,7 @@ import { HabitCard } from "@/components/HabitCard";
 import { HabitForm } from "@/components/HabitForm";
 import { Heading } from "@/components/ui/typography";
 import { isHabitActiveOnDate } from "@/lib/habits";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { CalendarFold } from "lucide-react";
 
 export default async function Home() {

@@ -362,6 +362,7 @@ export type EntryCreateOrConnectWithoutHabitInput = {
 
 export type EntryCreateManyHabitInputEnvelope = {
   data: Prisma.EntryCreateManyHabitInput | Prisma.EntryCreateManyHabitInput[]
+  skipDuplicates?: boolean
 }
 
 export type EntryUpsertWithWhereUniqueWithoutHabitInput = {
@@ -1125,6 +1126,7 @@ export type EntryCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Entries.
    */
   data: Prisma.EntryCreateManyInput | Prisma.EntryCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1143,6 +1145,7 @@ export type EntryCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Entries.
    */
   data: Prisma.EntryCreateManyInput | Prisma.EntryCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

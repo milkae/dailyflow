@@ -3,7 +3,7 @@ import { EntriesList } from "@/components/EntriesList";
 import { HabitCalendar } from "@/components/HabitCalendar";
 import { StatCard } from "@/components/StatCard";
 import { Heading } from "@/components/ui/typography";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { calculateStreaks } from "@/lib/habits";
 import { CalendarIcon, Flame, PieChart } from "lucide-react";
 import { notFound } from "next/navigation";
