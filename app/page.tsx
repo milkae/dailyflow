@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { CardsList } from "@/components/CardsList";
 import { HabitCard } from "@/components/HabitCard";
 import { HabitForm } from "@/components/HabitForm";
@@ -7,7 +8,10 @@ import prisma from "@/lib/prisma";
 import { CalendarFold } from "lucide-react";
 
 export default async function Home() {
+  const session = await auth();
+
   const habits = await prisma.habit.findMany({
+    where: { userId: session?.user?.id },
     include: {
       entries: true,
     },
