@@ -4,6 +4,8 @@ import { prisma } from "./prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { Frequency, MealType } from "@/generated/prisma/enums";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 const normalizeDate = (date: Date) => {
   const normalized = new Date(date);
@@ -47,6 +49,12 @@ export async function createHabit(
   },
   formData: FormData,
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const formDataObj = Object.fromEntries(formData.entries());
   const validatedFields = habitSchema.safeParse(formDataObj);
 
@@ -59,7 +67,13 @@ export async function createHabit(
     getFrequencyConfig(frequency, config ? JSON.parse(config) : null) || {};
 
   await prisma.habit.create({
-    data: { name, description, frequency, frequencyConfig },
+    data: {
+      name,
+      description,
+      frequency,
+      frequencyConfig,
+      userId: session.user.id,
+    },
   });
 
   revalidatePath("/");
@@ -67,6 +81,12 @@ export async function createHabit(
 }
 
 export async function submitHabitEntryForm(id: string, formData: FormData) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const note = (formData.get("note") as string) || "";
   await createHabitEntry(id, undefined, note);
 }
@@ -76,10 +96,19 @@ export async function createHabitEntry(
   date = new Date(),
   note?: string,
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const entryDate = normalizeDate(date);
 
   const existingEntry = await prisma.entry.findUnique({
-    where: { habitId_date: { habitId: id, date: entryDate } },
+    where: {
+      habitId_date: { habitId: id, date: entryDate },
+      habit: { userId: session.user.id },
+    },
   });
 
   if (existingEntry && existingEntry.note === note) {
@@ -87,7 +116,10 @@ export async function createHabitEntry(
   }
 
   await prisma.entry.upsert({
-    where: { habitId_date: { habitId: id, date: entryDate } },
+    where: {
+      habitId_date: { habitId: id, date: entryDate },
+      habit: { userId: session.user.id },
+    },
     update: { note },
     create: { habitId: id, date: entryDate, note },
   });
@@ -96,15 +128,28 @@ export async function createHabitEntry(
 }
 
 export async function deleteHabitEntry(id: string, date = new Date()) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const entryDate = normalizeDate(date);
 
   await prisma.entry.deleteMany({
-    where: { habitId: id, date: entryDate },
+    where: { habitId: id, date: entryDate, habit: { userId: session.user.id } },
   });
+
   revalidatePath("/");
 }
 
 export async function toggleHabitCompletion(id: string, completion: boolean) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   if (!completion) {
     return deleteHabitEntry(id);
   }
@@ -113,10 +158,17 @@ export async function toggleHabitCompletion(id: string, completion: boolean) {
 }
 
 export async function getLastMonthHabits() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const previousMonth = new Date();
   previousMonth.setMonth(previousMonth.getMonth() - 1);
 
   const habits = await prisma.habit.findMany({
+    where: { userId: session.user.id },
     include: {
       entries: {
         where: {
@@ -130,7 +182,13 @@ export async function getLastMonthHabits() {
 }
 
 export async function deleteHabit(id: string) {
-  await prisma.habit.delete({ where: { id } });
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  await prisma.habit.delete({ where: { id, userId: session.user.id } });
   revalidatePath("/");
 }
 
@@ -150,6 +208,12 @@ export async function addOrUpdateMeal(
   },
   formData: FormData,
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const dateOnly = new Date(date);
   dateOnly.setHours(0, 0, 0, 0);
   const formDataObj = Object.fromEntries(formData.entries());
@@ -162,13 +226,14 @@ export async function addOrUpdateMeal(
   const { name, notes } = validatedFields.data;
 
   await prisma.meal.upsert({
-    where: { id: id || "" },
+    where: { id: id || "", userId: session.user.id },
     update: { name, notes },
     create: {
       name,
       notes,
       type,
       date: dateOnly,
+      userId: session.user.id,
     },
   });
 
@@ -178,8 +243,14 @@ export async function addOrUpdateMeal(
 }
 
 export async function deleteMeal(mealId: string) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   await prisma.meal.delete({
-    where: { id: mealId },
+    where: { id: mealId, userId: session.user.id },
   });
 
   revalidatePath("/");
@@ -204,6 +275,12 @@ export async function createOrUpdateRecipe(
   },
   formData: FormData,
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const formDataObj = Object.fromEntries(formData.entries());
   const validatedFields = recipeSchema.safeParse(formDataObj);
 
@@ -224,7 +301,7 @@ export async function createOrUpdateRecipe(
   try {
     if (id) {
       const existing = await prisma.recipe.findUnique({
-        where: { id },
+        where: { id, userId: session.user.id },
       });
 
       if (!existing) {
@@ -235,7 +312,7 @@ export async function createOrUpdateRecipe(
       }
 
       await prisma.recipe.update({
-        where: { id },
+        where: { id, userId: session.user.id },
         data: {
           name,
           description,
@@ -258,6 +335,7 @@ export async function createOrUpdateRecipe(
           prepTime,
           cookTime,
           sourceUrl,
+          userId: session.user.id,
         },
       });
     }
@@ -274,8 +352,14 @@ export async function createOrUpdateRecipe(
 }
 
 export async function deleteRecipe(recipeId: string) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const recipe = await prisma.recipe.findUnique({
-    where: { id: recipeId },
+    where: { id: recipeId, userId: session.user.id },
   });
 
   if (!recipe) {
@@ -283,7 +367,7 @@ export async function deleteRecipe(recipeId: string) {
   }
 
   await prisma.recipe.delete({
-    where: { id: recipeId },
+    where: { id: recipeId, userId: session.user.id },
   });
 
   revalidatePath("/meal/recipes");
