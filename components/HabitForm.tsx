@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
+import { Plus } from "lucide-react";
 
 const frequencies = Object.values(Frequency).map((v) => ({
   value: v,
@@ -72,7 +73,10 @@ export const HabitForm = () => {
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline">Create new Habit</Button>
+        <Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Create new Habit
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
