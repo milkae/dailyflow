@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Geist } from "next/font/google";
 import Navbar from "@/components/Navbar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -46,12 +47,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-screen flex flex-col">
-            <Navbar navigationData={navigationData} />
-            <main className="flex-1 p-6 md:p-8 max-w-7xl space-y-8 m-auto">
-              {children}
-            </main>
-          </div>
+          <TooltipProvider>
+            <div className="min-h-screen flex flex-col">
+              <Navbar navigationData={navigationData} />
+              <main className="flex-1 p-6 md:p-8 max-w-7xl space-y-8 m-auto">
+                {children}
+              </main>
+            </div>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

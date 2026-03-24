@@ -83,7 +83,7 @@ export const HabitCard = ({
           className={cn("flex-1", {
             "border-primary bg-primary/10 text-primary hover:bg-primary/20":
               isCompletedToday,
-            "border-2 bg-card text-muted-foreground hover:border-primary hover:bg-primary/10 hover:text-primary":
+            "border-2 border-border bg-card text-muted-foreground hover:border-primary hover:bg-primary/10 hover:text-primary":
               !isCompletedToday,
           })}
         >
@@ -106,7 +106,7 @@ export const HabitCard = ({
           className={cn({
             "border-primary bg-primary/10 text-primary hover:bg-primary/20":
               entryNote,
-            "border-2 bg-card text-muted-foreground hover:border-primary hover:bg-primary/10 hover:text-primary":
+            "border-2 border-border bg-card text-muted-foreground hover:border-primary hover:bg-primary/10 hover:text-primary":
               !entryNote,
           })}
         >
@@ -127,12 +127,10 @@ export const HabitCard = ({
               defaultValue={entryNote ?? undefined}
             />
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Close</Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button type="submit">Mark as done</Button>
-              </DialogClose>
+              <DialogClose render={<Button variant="outline">Close</Button>} />
+              <DialogClose
+                render={<Button type="submit">Mark as done</Button>}
+              />
             </DialogFooter>
           </form>
         </DialogContent>

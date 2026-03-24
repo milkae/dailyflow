@@ -67,14 +67,18 @@ export function RecipeDetail({ recipe }: Props) {
 
   return (
     <>
-      <main className="container py-8 max-w-4xl">
+      <main className="py-8 max-w-4xl">
         {/* Back button */}
-        <Button variant="ghost" asChild className="mb-6">
-          <Link href="/meal/recipes">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to recipes
-          </Link>
-        </Button>
+        <Button
+          variant="ghost"
+          className="mb-6"
+          render={
+            <Link href="/meal/recipes">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to recipes
+            </Link>
+          }
+        />
 
         {/* Header */}
         <div className="mb-8">

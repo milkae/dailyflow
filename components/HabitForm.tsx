@@ -72,12 +72,14 @@ export const HabitForm = () => {
         }
       }}
     >
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Create new Habit
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Create new Habit
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a new Habit</DialogTitle>
@@ -197,11 +199,13 @@ export const HabitForm = () => {
           ))}
 
           <DialogFooter className="flex justify-between gap-4">
-            <DialogClose asChild>
-              <Button variant="outline" size="lg">
-                Cancel
-              </Button>
-            </DialogClose>
+            <DialogClose
+              render={
+                <Button variant="outline" size="lg">
+                  Cancel
+                </Button>
+              }
+            />
             <Button type="submit" disabled={pending}>
               Add
             </Button>
