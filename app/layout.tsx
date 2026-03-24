@@ -11,7 +11,7 @@ const geist = Geist({
 
 const navigationData = [
   {
-    title: "Home",
+    title: "Today",
     href: "/",
   },
   {

@@ -1,19 +1,27 @@
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { CardsList } from "@/components/CardsList";
 import { HabitCard } from "@/components/HabitCard";
 import { HabitForm } from "@/components/HabitForm";
-import { Heading } from "@/components/ui/typography";
-import { isHabitActiveOnDate } from "@/lib/habits";
+import { getHabitEntryForToday, isHabitActiveOnDate } from "@/lib/habits";
 import prisma from "@/lib/prisma";
 import { CalendarFold } from "lucide-react";
+import { Heading } from "@/components/ui/typography";
 
 export default async function Home() {
   const session = await auth();
 
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
   const habits = await prisma.habit.findMany({
-    where: { userId: session?.user?.id },
+    where: { userId: session.user.id },
     include: {
-      entries: true,
+      entries: {
+        orderBy: { date: "desc" },
+        take: 30,
+      },
     },
   });
 
@@ -22,36 +30,56 @@ export default async function Home() {
     isHabitActiveOnDate(habit, today),
   );
 
-  return (
-    <section className="space-y-4">
-      <Heading className="text-center">Today</Heading>
+  const completedToday = todayHabits.filter(getHabitEntryForToday).length;
 
-      {!!todayHabits.length ? (
-        <>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              {todayHabits.length}{" "}
-              {todayHabits.length === 1 ? "habit" : "habits"}
-            </span>
-          </div>
+  return (
+    <>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <Heading className="mb-2">
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+
+              month: "long",
+              day: "numeric",
+            })}
+          </Heading>
+          <p className="text-muted-foreground">
+            {todayHabits.length > 0
+              ? `${completedToday} of ${todayHabits.length} habits completed`
+              : "Start your day"}
+          </p>
+        </div>
+        <HabitForm />
+      </div>
+      <section className="space-y-4">
+        <Heading as="h2">Habits</Heading>
+        {todayHabits.length > 0 ? (
           <CardsList>
             {todayHabits.map((habit) => (
               <HabitCard key={habit.id} habit={habit} />
             ))}
           </CardsList>
-        </>
-      ) : (
-        <div className="text-center py-16">
-          <div className="rounded-full bg-primary/20 w-20 h-20 flex items-center justify-center mx-auto mb-4">
-            <CalendarFold className="h-10 w-10 text-primary" />
-          </div>
-          <h3 className="text-xl font-semibold mb-2">No habits for today</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Start creating new habits to improve your day.
-          </p>
-          <HabitForm />
-        </div>
-      )}
-    </section>
+        ) : (
+          <EmptyHabits />
+        )}
+      </section>
+    </>
+  );
+}
+
+function EmptyHabits() {
+  return (
+    <div className="rounded-lg border-2 border-dashed bg-muted/20 p-12 text-center">
+      <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+        <CalendarFold className="h-8 w-8 text-primary" />
+      </div>
+      <Heading as="h3" className="mb-2">
+        No habits for today
+      </Heading>
+      <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+        Create your first habit to start tracking your progress
+      </p>
+    </div>
   );
 }

@@ -17,7 +17,7 @@ export default async function RecipesPage() {
   });
 
   return (
-    <main className="container py-8 max-w-7xl">
+    <main className="py-8 max-w-7xl">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold">My Recipes</h1>

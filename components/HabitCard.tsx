@@ -43,8 +43,8 @@ export const HabitCard = ({
   const streak = calculateStreaks(habit);
 
   return (
-    <Card className="group p-6 space-y-4 justify-between hover:border-primary transition-all hover:shadow-md">
-      <div className="flex items-start justify-between gap-3">
+    <Card className="group p-6 space-y-4 hover:border-primary transition-all flex flex-col">
+      <div className="flex-1 flex items-start justify-between gap-3">
         <Link
           href={`/habits/${habit.id}`}
           className="flex-1 min-w-0 cursor-pointer"
@@ -77,7 +77,7 @@ export const HabitCard = ({
           </Button>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 mt-auto">
         <Button
           onClick={() => toggleHabitCompletion(habit.id, !isCompletedToday)}
           className={cn("flex-1", {

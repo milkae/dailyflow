@@ -38,7 +38,9 @@ const Navbar = async ({
             </Link>
           ))}
         </div>
-        {session?.user ? <LogOut /> : <SignIn />}
+        <div className="max-md:hidden">
+          {session?.user ? <LogOut /> : <SignIn />}
+        </div>
         <div className="flex items-center gap-6">
           <DropdownMenu>
             <DropdownMenuTrigger className="md:hidden" asChild>
@@ -55,6 +57,7 @@ const Navbar = async ({
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuGroup>
+              {session?.user ? <LogOut /> : <SignIn />}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
