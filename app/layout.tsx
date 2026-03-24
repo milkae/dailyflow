@@ -2,7 +2,7 @@ import "./globals.css";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Geist } from "next/font/google";
-import Navbar from "@/components/Navbar";
+import { Navbar } from "@/components/Navbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geist = Geist({
