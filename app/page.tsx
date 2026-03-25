@@ -9,8 +9,9 @@ import {
   parseHabit,
 } from "@/lib/habits";
 import prisma from "@/lib/prisma";
-import { CalendarFold } from "lucide-react";
+import { CalendarFold, Plus } from "lucide-react";
 import { Heading } from "@/components/ui/typography";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await auth();
@@ -60,7 +61,14 @@ export default async function Home() {
           <Heading as="h2" className="flex-1 border-b-0">
             Habits
           </Heading>
-          <HabitForm responsive />
+          <HabitForm
+            trigger={
+              <Button>
+                <Plus className="h-4 w-4 md:mr-2" />
+                <span className="max-md:hidden">Create new Habit</span>
+              </Button>
+            }
+          />
         </div>
 
         {todayHabits.length > 0 ? (

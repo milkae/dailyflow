@@ -1,7 +1,13 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, useState } from "react";
-import { createHabit } from "@/lib/actions";
+import {
+  ReactElement,
+  startTransition,
+  useActionState,
+  useEffect,
+  useState,
+} from "react";
+import { createOrUpdateHabit } from "@/lib/actions";
 import { TextInput } from "./TextInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
@@ -24,9 +30,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { Plus } from "lucide-react";
+import { TypedHabit } from "@/lib/types";
 
 const frequencies = Object.values(Frequency).map((v) => ({
   value: v,
@@ -43,16 +49,26 @@ const dayNames = [
   { value: 7, label: "Sunday", short: "Sun" },
 ];
 
-export const HabitForm = () => {
-  const [state, formAction, pending] = useActionState(createHabit, {
+export const HabitForm = ({
+  habit,
+  trigger,
+}: {
+  habit?: TypedHabit;
+  trigger?: ReactElement;
+}) => {
+  const [state, formAction, pending] = useActionState(createOrUpdateHabit, {
     formErrors: [],
     fieldErrors: {},
     success: false,
   });
   const [selectedFrequency, setFrequency] = useState<Frequency>(
-    Frequency.DAILY,
+    habit?.frequency || Frequency.DAILY,
   );
-  const [selectedDays, setSelectedDays] = useState<number[]>();
+  const [selectedDays, setSelectedDays] = useState<number[]>(
+    (habit?.frequency === Frequency.SPECIFIC_DAYS &&
+      habit.frequencyConfig.days) ||
+      [],
+  );
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -68,25 +84,32 @@ export const HabitForm = () => {
         setOpen(next);
         if (!next) {
           setFrequency(Frequency.DAILY);
-          setSelectedDays(undefined);
+          setSelectedDays([]);
         }
       }}
     >
       <DialogTrigger
         render={
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Create new Habit
-          </Button>
+          trigger ?? (
+            <Button>
+              <Plus className="h-4 w-4 md:mr-2" />
+              Create new Habit
+            </Button>
+          )
         }
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new Habit</DialogTitle>
+          <DialogTitle>
+            {habit ? "Edit habit" : "Create a new Habit"}
+          </DialogTitle>
         </DialogHeader>
 
         <form
           action={(formData) => {
+            if (habit) {
+              formData.append("id", habit.id);
+            }
             if (selectedDays) {
               formData.append("config", JSON.stringify(selectedDays));
             }
@@ -98,6 +121,7 @@ export const HabitForm = () => {
               <Field>
                 <TextInput
                   name="name"
+                  defaultValue={habit?.name}
                   placeholder="Habit name"
                   required
                   errors={state.fieldErrors.name}
@@ -106,6 +130,7 @@ export const HabitForm = () => {
               <Field>
                 <TextInput
                   name="description"
+                  defaultValue={habit?.description || ""}
                   placeholder="Habit description"
                   errors={state.fieldErrors.description}
                 />
@@ -114,7 +139,7 @@ export const HabitForm = () => {
                 <FieldLabel>Frequency</FieldLabel>
                 <Select
                   name="frequency"
-                  defaultValue={frequencies[0].value}
+                  defaultValue={habit?.frequency || frequencies[0].value}
                   onValueChange={(value) => setFrequency(value as Frequency)}
                 >
                   <SelectTrigger>
@@ -133,7 +158,14 @@ export const HabitForm = () => {
               {selectedFrequency === Frequency.WEEKLY && (
                 <Field>
                   <FieldLabel>Day of week</FieldLabel>
-                  <Select defaultValue="1" name="config">
+                  <Select
+                    defaultValue={
+                      habit?.frequency === Frequency.WEEKLY
+                        ? habit?.frequencyConfig?.day
+                        : 1
+                    }
+                    name="config"
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -181,14 +213,34 @@ export const HabitForm = () => {
               {selectedFrequency === Frequency.INTERVAL && (
                 <Field>
                   <FieldLabel>Repeat every (days)</FieldLabel>
-                  <Input type="number" min="1" max="30" name="config" />
+                  <Input
+                    type="number"
+                    min="1"
+                    max="30"
+                    name="config"
+                    defaultValue={
+                      habit?.frequency === Frequency.INTERVAL
+                        ? habit?.frequencyConfig?.interval
+                        : 1
+                    }
+                  />
                 </Field>
               )}
 
               {selectedFrequency === Frequency.MONTHLY && (
                 <Field>
                   <FieldLabel>Day of the month</FieldLabel>
-                  <Input type="number" min="1" max="31" name="config" />
+                  <Input
+                    type="number"
+                    min="1"
+                    max="31"
+                    name="config"
+                    defaultValue={
+                      habit?.frequency === Frequency.MONTHLY
+                        ? habit?.frequencyConfig?.day
+                        : 1
+                    }
+                  />
                 </Field>
               )}
               {state.fieldErrors.config && (

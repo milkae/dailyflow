@@ -41,7 +41,7 @@ export default async function Page() {
   ];
 
   return (
-    <section>
+    <>
       <Heading className="text-center">Habits dashboard</Heading>
       <Tabs defaultValue="charts" className="md:w-4xl space-y-2">
         <TabsList variant="line">
@@ -68,6 +68,6 @@ export default async function Page() {
           <HabitsList habits={habits} />
         </TabsContent>
       </Tabs>
-    </section>
+    </>
   );
 }

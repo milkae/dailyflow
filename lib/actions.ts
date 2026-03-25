@@ -15,6 +15,7 @@ const normalizeDate = (date: Date) => {
 };
 
 const habitSchema = z.object({
+  id: z.string().optional(),
   name: z
     .string()
     .min(1, "Name is required")
@@ -42,7 +43,7 @@ const getFrequencyConfig = (
   }
 };
 
-export async function createHabit(
+export async function createOrUpdateHabit(
   _initialState: {
     formErrors: string[];
     fieldErrors: { [i: string]: string[] };
@@ -63,13 +64,15 @@ export async function createHabit(
     return { ...z.flattenError(validatedFields.error), success: false };
   }
 
-  const { name, description, frequency, config } = validatedFields.data;
+  const { name, description, frequency, config, id } = validatedFields.data;
   const frequencyConfig =
     getFrequencyConfig(frequency, config ? JSON.parse(config) : null) ||
     undefined;
 
-  await prisma.habit.create({
-    data: {
+  await prisma.habit.upsert({
+    where: { id, userId: session.user.id },
+    update: { name, description, frequency, frequencyConfig },
+    create: {
       name,
       description,
       frequency,

@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { HabitForm } from "./HabitForm";
-import { Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import { TypedHabit } from "@/lib/types";
 
 export const HabitsList = ({ habits }: { habits: TypedHabit[] }) => {
@@ -23,6 +23,7 @@ export const HabitsList = ({ habits }: { habits: TypedHabit[] }) => {
           <TableRow>
             <TableHead>Habit</TableHead>
             <TableHead>Description</TableHead>
+            <TableHead>Frequency</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -31,11 +32,24 @@ export const HabitsList = ({ habits }: { habits: TypedHabit[] }) => {
             <TableRow key={habit.id}>
               <TableCell className="font-medium">{habit.name}</TableCell>
               <TableCell>{habit.description}</TableCell>
-              <TableCell className="text-right">
+              <TableCell>{habit.frequency}</TableCell>
+              <TableCell className="text-right gap-2">
+                <HabitForm
+                  habit={habit}
+                  trigger={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 mr-2"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  }
+                />
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive-muted dark:hover:bg-destructive-muted transition-opacity"
+                  className="h-8 w-8 hover:text-destructive hover:bg-destructive-muted dark:hover:bg-destructive-muted"
                   onClick={() => {
                     deleteHabit(habit.id);
                   }}
