@@ -1,51 +1,41 @@
 "use client";
 
 import { HabitWithEntries } from "@/lib/prisma";
-import {
-  Bar,
-  BarChart,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Card } from "@/components/ui/card";
 import { getLastWeekHabits } from "@/lib/habits";
+import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { Heading } from "./ui/typography";
+
+const chartConfig = {
+  count: {
+    color: "var(--chart-1)",
+  },
+} satisfies ChartConfig;
 
 export const Chart = ({ habits }: { habits: HabitWithEntries[] }) => {
   const data = getLastWeekHabits(habits, true);
 
   return (
-    <Card className="p-6">
+    <Card className="p-4">
       <div>
-        <h3 className="text-lg font-semibold">Activity This Week</h3>
+        <Heading as="h3">Activity This Week</Heading>
         <p className="text-sm text-muted-foreground mt-1">
           Number of habits completed each day
         </p>
       </div>
-      <ResponsiveContainer width="100%" height={280}>
-        <BarChart data={data} className="text-muted-foreground">
-          <CartesianGrid
-            strokeDasharray="3 3"
-            className="text-border"
-            stroke="currentColor"
-            vertical={false}
+      <ChartContainer config={chartConfig} className="min-h-20">
+        <BarChart accessibilityLayer data={data} responsive>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey="day" />
+          <YAxis allowDecimals={false} width={20} />
+          <Bar
+            dataKey="count"
+            radius={[4, 4, 0, 0]}
+            className="fill-(--color-count)"
           />
-          <XAxis
-            dataKey="day"
-            tick={{ fill: "currentColor", fontSize: 12 }}
-            className="text-border"
-            stroke="currentColor"
-          />
-          <YAxis
-            allowDecimals={false}
-            tick={{ fontSize: 12, fill: "currentColor" }}
-            className="text-border"
-            stroke="currentColor"
-          />
-          <Bar dataKey="count" className="fill-chart-1" radius={[4, 4, 0, 0]} />
         </BarChart>
-      </ResponsiveContainer>
+      </ChartContainer>
     </Card>
   );
 };
