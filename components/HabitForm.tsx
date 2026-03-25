@@ -4,7 +4,7 @@ import { startTransition, useActionState, useEffect, useState } from "react";
 import { createHabit } from "@/lib/actions";
 import { TextInput } from "./TextInput";
 import { Button } from "@/components/ui/button";
-import { FieldGroup, FieldLegend, FieldSet } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Frequency } from "@/generated/prisma/enums";
 import {
   Dialog,
@@ -93,60 +93,67 @@ export const HabitForm = () => {
             formAction(formData);
           }}
         >
-          <FieldGroup>
-            <TextInput
-              name="name"
-              placeholder="Habit name"
-              required
-              errors={state.fieldErrors.name}
-            />
-            <TextInput
-              name="description"
-              placeholder="Habit description"
-              errors={state.fieldErrors.description}
-            />
-            <FieldSet>
-              <FieldLegend variant="label">Frequency</FieldLegend>
-              <Select
-                name="frequency"
-                defaultValue={frequencies[0].value}
-                onValueChange={(value) => setFrequency(value as Frequency)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {frequencies.map((frequency) => (
-                    <SelectItem value={frequency.value} key={frequency.value}>
-                      {frequency.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FieldSet>
-
-            {selectedFrequency === Frequency.WEEKLY && (
-              <div className="space-y-2">
-                <Label>Day of week</Label>
-                <Select defaultValue="1" name="config">
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <TextInput
+                  name="name"
+                  placeholder="Habit name"
+                  required
+                  errors={state.fieldErrors.name}
+                />
+              </Field>
+              <Field>
+                <TextInput
+                  name="description"
+                  placeholder="Habit description"
+                  errors={state.fieldErrors.description}
+                />
+              </Field>
+              <Field>
+                <FieldLabel>Frequency</FieldLabel>
+                <Select
+                  name="frequency"
+                  defaultValue={frequencies[0].value}
+                  onValueChange={(value) => setFrequency(value as Frequency)}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {dayNames.map((day) => (
-                      <SelectItem key={day.value} value={day.value.toString()}>
-                        {day.label}
+                    {frequencies.map((frequency) => (
+                      <SelectItem value={frequency.value} key={frequency.value}>
+                        {frequency.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            )}
+              </Field>
 
-            {selectedFrequency === Frequency.SPECIFIC_DAYS && (
-              <div className="space-y-2">
-                <Label>Select days</Label>
-                <div>
+              {selectedFrequency === Frequency.WEEKLY && (
+                <Field>
+                  <FieldLabel>Day of week</FieldLabel>
+                  <Select defaultValue="1" name="config">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {dayNames.map((day) => (
+                        <SelectItem
+                          key={day.value}
+                          value={day.value.toString()}
+                        >
+                          {day.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
+
+              {selectedFrequency === Frequency.SPECIFIC_DAYS && (
+                <Field>
+                  <FieldLabel>Select days</FieldLabel>
                   {dayNames.map((day) => {
                     return (
                       <div key={day.value} className="flex items-center gap-2">
@@ -168,29 +175,29 @@ export const HabitForm = () => {
                       </div>
                     );
                   })}
-                </div>
-              </div>
-            )}
+                </Field>
+              )}
 
-            {selectedFrequency === Frequency.INTERVAL && (
-              <div>
-                <Label>Repeat every (days)</Label>
-                <Input type="number" min="1" max="30" name="config" />
-              </div>
-            )}
+              {selectedFrequency === Frequency.INTERVAL && (
+                <Field>
+                  <FieldLabel>Repeat every (days)</FieldLabel>
+                  <Input type="number" min="1" max="30" name="config" />
+                </Field>
+              )}
 
-            {selectedFrequency === Frequency.MONTHLY && (
-              <div>
-                <Label>Day of the month</Label>
-                <Input type="number" min="1" max="31" name="config" />
-              </div>
-            )}
-            {state.fieldErrors.config && (
-              <p className="text-sm text-destructive">
-                {state.fieldErrors.config}
-              </p>
-            )}
-          </FieldGroup>
+              {selectedFrequency === Frequency.MONTHLY && (
+                <Field>
+                  <FieldLabel>Day of the month</FieldLabel>
+                  <Input type="number" min="1" max="31" name="config" />
+                </Field>
+              )}
+              {state.fieldErrors.config && (
+                <p className="text-sm text-destructive">
+                  {state.fieldErrors.config}
+                </p>
+              )}
+            </FieldGroup>
+          </FieldSet>
 
           {state.formErrors.map((e, i) => (
             <p aria-live="polite" key={i}>
@@ -198,14 +205,8 @@ export const HabitForm = () => {
             </p>
           ))}
 
-          <DialogFooter className="flex justify-between gap-4">
-            <DialogClose
-              render={
-                <Button variant="outline" size="lg">
-                  Cancel
-                </Button>
-              }
-            />
+          <DialogFooter className="flex justify-between gap-4 mt-4">
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <Button type="submit" disabled={pending}>
               Add
             </Button>

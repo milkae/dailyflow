@@ -7,11 +7,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createOrUpdateRecipe } from "@/lib/actions";
 import { Loader2 } from "lucide-react";
 import { Recipe } from "@/generated/prisma/browser";
+import { Field, FieldGroup, FieldLabel } from "./ui/field";
 
 type Props = {
   open: boolean;
@@ -36,10 +36,10 @@ export function RecipeFormDialog({ open, onOpenChange, recipe }: Props) {
         </DialogHeader>
 
         <form action={formAction} className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="recipe-name">
+          <Field>
+            <FieldLabel htmlFor="recipe-name">
               Recipe Name <span className="text-destructive">*</span>
-            </Label>
+            </FieldLabel>
             <Input
               id="recipe-name"
               name="name"
@@ -48,15 +48,15 @@ export function RecipeFormDialog({ open, onOpenChange, recipe }: Props) {
               placeholder="Peanut butter noodles"
               disabled={pending}
             />
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="recipe-description">
+          <Field>
+            <FieldLabel htmlFor="recipe-description">
               Description{" "}
               <span className="text-muted-foreground text-sm font-normal">
                 (optional)
               </span>
-            </Label>
+            </FieldLabel>
             <Textarea
               id="recipe-description"
               name="description"
@@ -66,11 +66,11 @@ export function RecipeFormDialog({ open, onOpenChange, recipe }: Props) {
               disabled={pending}
               className="resize-none"
             />
-          </div>
+          </Field>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="prep-time">Prep (min)</Label>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="prep-time">Prep (min)</FieldLabel>
               <Input
                 id="prep-time"
                 type="number"
@@ -79,9 +79,9 @@ export function RecipeFormDialog({ open, onOpenChange, recipe }: Props) {
                 placeholder="15"
                 disabled={pending}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cook-time">Cook (min)</Label>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="cook-time">Cook (min)</FieldLabel>
               <Input
                 id="cook-time"
                 type="number"
@@ -90,16 +90,16 @@ export function RecipeFormDialog({ open, onOpenChange, recipe }: Props) {
                 placeholder="20"
                 disabled={pending}
               />
-            </div>
-          </div>
+            </Field>
+          </FieldGroup>
 
-          <div className="space-y-2">
-            <Label htmlFor="ingredients">
+          <Field>
+            <FieldLabel htmlFor="ingredients">
               Ingredients{" "}
               <span className="text-muted-foreground text-sm font-normal">
                 (one per line)
               </span>
-            </Label>
+            </FieldLabel>
             <Textarea
               id="ingredients"
               name="ingredients"
@@ -109,10 +109,10 @@ export function RecipeFormDialog({ open, onOpenChange, recipe }: Props) {
               disabled={pending}
               className="font-mono text-sm"
             />
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="instructions">Instructions</Label>
+          <Field>
+            <FieldLabel htmlFor="instructions">Instructions</FieldLabel>
             <Textarea
               id="instructions"
               name="instructions"
@@ -121,7 +121,7 @@ export function RecipeFormDialog({ open, onOpenChange, recipe }: Props) {
               rows={8}
               disabled={pending}
             />
-          </div>
+          </Field>
 
           {state.formErrors.map((e, i) => (
             <p

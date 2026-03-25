@@ -12,7 +12,7 @@ import { TextInput } from "./TextInput";
 import { Meal } from "@/generated/prisma/client";
 import { capitalize } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
-import { Field, FieldError } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 
 type Props = {
   open: boolean;
@@ -56,20 +56,22 @@ export function AddMealDialog({
         </DialogHeader>
         <form
           action={async (formData) => {
-            await formAction(formData);
+            formAction(formData);
             onOpenChange(false);
           }}
           className="space-y-4"
         >
-          <div className="space-y-2">
-            <TextInput
-              name="name"
-              placeholder="Meal name"
-              defaultValue={existingMeal?.name}
-              required
-              disabled={pending}
-              errors={state.fieldErrors.name}
-            />
+          <FieldGroup>
+            <Field>
+              <TextInput
+                name="name"
+                placeholder="Meal name"
+                defaultValue={existingMeal?.name}
+                required
+                disabled={pending}
+                errors={state.fieldErrors.name}
+              />
+            </Field>
             <Field data-invalid={!!state.fieldErrors.notes?.length}>
               <Textarea
                 name="notes"
@@ -92,7 +94,7 @@ export function AddMealDialog({
                 </div>
               )}
             </Field>
-          </div>
+          </FieldGroup>
 
           <div className="flex gap-2 pt-2">
             <Button
