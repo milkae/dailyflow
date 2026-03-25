@@ -44,13 +44,13 @@ export default async function Page() {
   return (
     <>
       <Heading className="text-center">My dashboard</Heading>
-      <HabitForm />
       <CardsList>
         {stats.map((stat, id) => (
           <StatCard key={id} {...stat} />
         ))}
       </CardsList>
       <Chart habits={habits} />
+      <HabitForm />
       <CardsList>
         {habits.map((habit) => (
           <HabitCard key={habit.id} habit={habit} />

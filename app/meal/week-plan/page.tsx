@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { WeeklyMealPlanner } from "@/components/WeeklyMealPlanner";
 import { Meal } from "@/generated/prisma/client";
+import { Heading } from "@/components/ui/typography";
 
 export default async function MealPlanPage() {
   const meals = await prisma.meal.findMany({
@@ -21,9 +22,11 @@ export default async function MealPlanPage() {
   );
 
   return (
-    <main>
-      <h1>Weekly Meal Plan</h1>
-      <p>Plan your meals for the week ahead</p>
+    <main className="space-y-4">
+      <Heading>Weekly Meal Plan</Heading>
+      <p className="text-muted-foreground">
+        Plan your meals for the week ahead
+      </p>
       <WeeklyMealPlanner meals={mealsByDateAndType} />
     </main>
   );
