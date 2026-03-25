@@ -1,13 +1,12 @@
-import { StatCard } from "@/components/StatCard";
 import { Chart } from "@/components/Chart";
 import { getLastMonthHabits } from "@/lib/actions";
 import { TypedHabitWithEntries } from "@/lib/types";
 import { getHabitEntryForToday, getLastWeekHabits } from "@/lib/habits";
 import { CalendarCheck, CalendarDays, WalletCards } from "lucide-react";
-import { HabitCard } from "@/components/HabitCard";
 import { Heading } from "@/components/ui/typography";
-import { CardsList } from "@/components/CardsList";
-import { HabitForm } from "@/components/HabitForm";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
+import { HabitsList } from "@/components/HabitsList";
 
 function getWeeklyPercentage(habits: TypedHabitWithEntries[]) {
   const total = (habits.length || 1) * 7;
@@ -42,20 +41,33 @@ export default async function Page() {
   ];
 
   return (
-    <>
-      <Heading className="text-center">My dashboard</Heading>
-      <CardsList>
-        {stats.map((stat, id) => (
-          <StatCard key={id} {...stat} />
-        ))}
-      </CardsList>
-      <Chart habits={habits} />
-      <HabitForm />
-      <CardsList>
-        {habits.map((habit) => (
-          <HabitCard key={habit.id} habit={habit} />
-        ))}
-      </CardsList>
-    </>
+    <section>
+      <Heading className="text-center">Habits dashboard</Heading>
+      <Tabs defaultValue="charts" className="md:w-4xl space-y-2">
+        <TabsList variant="line">
+          <TabsTrigger value="charts">Charts</TabsTrigger>
+          <TabsTrigger value="list">Habits list</TabsTrigger>
+        </TabsList>
+        <TabsContent value="charts" className="space-y-4">
+          <div className="grid gap-2 md:gap-4 grid-cols-3 auto-rows-fr">
+            {stats.map((stat, id) => (
+              <Card className="p-2 gap-2 md:gap-4 text-center md:p-6" key={id}>
+                <div className="flex items-center md:gap-3">
+                  <span className="max-md:hidden">{stat.icon}</span>
+                  <h4>{stat.label}</h4>
+                </div>
+                <div className="text-2xl md:text-5xl text-center text-primary">
+                  {stat.stat}
+                </div>
+              </Card>
+            ))}
+          </div>
+          <Chart habits={habits} />
+        </TabsContent>
+        <TabsContent value="list" className="space-y-4">
+          <HabitsList habits={habits} />
+        </TabsContent>
+      </Tabs>
+    </section>
   );
 }

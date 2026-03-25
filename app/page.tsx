@@ -54,10 +54,15 @@ export default async function Home() {
               : "Start your day"}
           </p>
         </div>
-        <HabitForm />
       </div>
       <section className="space-y-4">
-        <Heading as="h2">Habits</Heading>
+        <div className="flex justify-between border-b">
+          <Heading as="h2" className="flex-1 border-b-0">
+            Habits
+          </Heading>
+          <HabitForm responsive />
+        </div>
+
         {todayHabits.length > 0 ? (
           <CardsList>
             {todayHabits.map((habit) => (
