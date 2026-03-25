@@ -18,7 +18,3 @@ const prisma =
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default prisma;
-
-export type HabitWithEntries = Prisma.HabitGetPayload<{
-  include: { entries: true };
-}>;

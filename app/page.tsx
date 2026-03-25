@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 import { CardsList } from "@/components/CardsList";
 import { HabitCard } from "@/components/HabitCard";
 import { HabitForm } from "@/components/HabitForm";
-import { getHabitEntryForToday, isHabitActiveOnDate } from "@/lib/habits";
+import {
+  getHabitEntryForToday,
+  isHabitActiveOnDate,
+  parseHabit,
+} from "@/lib/habits";
 import prisma from "@/lib/prisma";
 import { CalendarFold } from "lucide-react";
 import { Heading } from "@/components/ui/typography";
@@ -26,9 +30,9 @@ export default async function Home() {
   });
 
   const today = new Date();
-  const todayHabits = habits.filter((habit) =>
-    isHabitActiveOnDate(habit, today),
-  );
+  const todayHabits = habits
+    .filter((habit) => isHabitActiveOnDate(habit, today))
+    .map(parseHabit);
 
   const completedToday = todayHabits.filter(getHabitEntryForToday).length;
 

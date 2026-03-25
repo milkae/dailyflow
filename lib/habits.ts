@@ -1,5 +1,6 @@
-import { HabitWithEntries } from "./prisma";
-import { Entry, Frequency, Habit } from "@/generated/prisma/browser";
+import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
+import { habitSchema } from "./validators";
+import { TypedHabitWithEntries } from "./types";
 
 export function isHabitActiveOnDate(habit: Habit, date: Date) {
   switch (habit.frequency) {
@@ -41,7 +42,7 @@ export function isHabitActiveOnDate(habit: Habit, date: Date) {
   }
 }
 
-export function getHabitEntryForToday(habit: HabitWithEntries) {
+export function getHabitEntryForToday(habit: TypedHabitWithEntries) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -51,7 +52,7 @@ export function getHabitEntryForToday(habit: HabitWithEntries) {
 }
 
 export function getLastWeekHabits(
-  habits: HabitWithEntries[],
+  habits: TypedHabitWithEntries[],
   fromToday: boolean = false,
 ) {
   return Array.from({ length: 7 }, (_, i) => {
@@ -96,3 +97,19 @@ export const calculateStreaks = (habit: Habit & { entries: Entry[] }) => {
 
   return streak;
 };
+
+export function parseHabit(
+  habit: Prisma.HabitGetPayload<{
+    include: { entries: true };
+  }>,
+): TypedHabitWithEntries {
+  const parsed = habitSchema.parse({
+    frequency: habit.frequency,
+    frequencyConfig: habit.frequencyConfig,
+  });
+
+  return {
+    ...habit,
+    ...parsed,
+  };
+}

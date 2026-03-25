@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { Frequency, MealType } from "@/generated/prisma/enums";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { parseHabit } from "./habits";
 
 const normalizeDate = (date: Date) => {
   const normalized = new Date(date);
@@ -64,7 +65,8 @@ export async function createHabit(
 
   const { name, description, frequency, config } = validatedFields.data;
   const frequencyConfig =
-    getFrequencyConfig(frequency, config ? JSON.parse(config) : null) || {};
+    getFrequencyConfig(frequency, config ? JSON.parse(config) : null) ||
+    undefined;
 
   await prisma.habit.create({
     data: {
@@ -178,7 +180,7 @@ export async function getLastMonthHabits() {
     },
   });
 
-  return habits;
+  return habits.map(parseHabit);
 }
 
 export async function deleteHabit(id: string) {

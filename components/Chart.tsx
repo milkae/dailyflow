@@ -1,11 +1,11 @@
 "use client";
 
-import { HabitWithEntries } from "@/lib/prisma";
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Card } from "@/components/ui/card";
 import { getLastWeekHabits } from "@/lib/habits";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { Heading } from "./ui/typography";
+import { TypedHabitWithEntries } from "@/lib/types";
 
 const chartConfig = {
   count: {
@@ -13,7 +13,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const Chart = ({ habits }: { habits: HabitWithEntries[] }) => {
+export const Chart = ({ habits }: { habits: TypedHabitWithEntries[] }) => {
   const data = getLastWeekHabits(habits, true);
 
   return (

@@ -2,9 +2,9 @@
 
 import { Calendar } from "@/components/ui/calendar";
 import { createHabitEntry } from "@/lib/actions";
-import { HabitWithEntries } from "@/lib/prisma";
+import { TypedHabitWithEntries } from "@/lib/types";
 
-export const HabitCalendar = ({ habit }: { habit: HabitWithEntries }) => {
+export const HabitCalendar = ({ habit }: { habit: TypedHabitWithEntries }) => {
   const selectDate = (_selected?: Date[], triggerDate?: Date) => {
     createHabitEntry(habit.id, triggerDate);
   };

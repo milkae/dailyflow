@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   MessageSquare,
 } from "lucide-react";
-import { Habit, Entry } from "@/generated/prisma/client";
 import {
   deleteHabit,
   toggleHabitCompletion,
@@ -29,12 +28,9 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { TextInput } from "./TextInput";
+import { TypedHabitWithEntries } from "@/lib/types";
 
-export const HabitCard = ({
-  habit,
-}: {
-  habit: Habit & { entries: Entry[] };
-}) => {
+export const HabitCard = ({ habit }: { habit: TypedHabitWithEntries }) => {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const todayEntry = getHabitEntryForToday(habit);
   const isCompletedToday = !!todayEntry;

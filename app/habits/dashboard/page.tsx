@@ -1,7 +1,7 @@
 import { StatCard } from "@/components/StatCard";
 import { Chart } from "@/components/Chart";
 import { getLastMonthHabits } from "@/lib/actions";
-import { HabitWithEntries } from "@/lib/prisma";
+import { TypedHabitWithEntries } from "@/lib/types";
 import { getHabitEntryForToday, getLastWeekHabits } from "@/lib/habits";
 import { CalendarCheck, CalendarDays, WalletCards } from "lucide-react";
 import { HabitCard } from "@/components/HabitCard";
@@ -9,7 +9,7 @@ import { Heading } from "@/components/ui/typography";
 import { CardsList } from "@/components/CardsList";
 import { HabitForm } from "@/components/HabitForm";
 
-function getWeeklyPercentage(habits: HabitWithEntries[]) {
+function getWeeklyPercentage(habits: TypedHabitWithEntries[]) {
   const total = (habits.length || 1) * 7;
   const lastWeekHabits = getLastWeekHabits(habits);
   const habitCompletedCount = lastWeekHabits.reduce(
