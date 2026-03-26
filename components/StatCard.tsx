@@ -1,22 +1,36 @@
-import { ReactNode } from "react";
-import { Card } from "./ui/card";
+import { Card } from "@/components/ui/card";
+import { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export const StatCard = ({
-  label,
-  icon,
-  stat,
-}: {
+type Props = {
   label: string;
-  icon: ReactNode;
-  stat: number | string;
-}) => {
+  value: string | number;
+  icon: LucideIcon;
+  colorClass?: string;
+  footer?: React.ReactNode;
+};
+
+export function StatCard({
+  label,
+  value,
+  icon: Icon,
+  colorClass = "bg-primary/10 text-primary",
+  footer,
+}: Props) {
   return (
-    <Card className="p-6">
-      <div className="flex items-center gap-3">
-        {icon}
-        <h4>{label}</h4>
+    <Card className="p-4 transition-all hover:shadow-md gap-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            {label}
+          </p>
+          <p className="text-3xl font-bold mt-1">{value}</p>
+        </div>
+        <div className={cn("rounded-full p-3", colorClass)}>
+          <Icon className="h-5 w-5" />
+        </div>
       </div>
-      <div className="text-5xl text-center text-primary">{stat}</div>
+      {footer}
     </Card>
   );
-};
+}

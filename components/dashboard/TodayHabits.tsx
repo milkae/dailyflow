@@ -1,53 +1,73 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, ArrowRight } from "lucide-react";
+import { Plus, ArrowRight, CalendarFold } from "lucide-react";
 import Link from "next/link";
 import { TypedHabitWithEntries } from "@/lib/types";
-import { HabitCard } from "../habits/HabitCard";
-import { HabitForm } from "../HabitForm";
+import { HabitCheckInCard } from "@/components/habits/HabitCheckInCard";
+import { HabitForm } from "@/components/HabitForm";
 import { buttonVariants } from "@/lib/utils";
 import { Heading } from "../ui/typography";
 
 export function TodayHabits({ habits }: { habits: TypedHabitWithEntries[] }) {
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <Heading as="h2">Today&apos;s Habits</Heading>
-        <Link
-          href="/habits"
-          className={buttonVariants({ variant: "ghost", size: "sm" })}
-        >
-          View All
-          <ArrowRight className="h-4 w-4 ml-2" />
-        </Link>
-      </div>
-
-      {habits.length > 0 ? (
-        <div className="space-y-3">
-          {habits.slice(0, 5).map((habit) => (
-            <HabitCard key={habit.id} habit={habit} compact />
-          ))}
-          {habits.length > 5 && (
-            <p className="text-sm text-muted-foreground text-center pt-2">
-              +{habits.length - 5} more habits
-            </p>
-          )}
-        </div>
-      ) : (
-        <div className="text-center py-8 text-muted-foreground">
-          <p className="text-sm">No habits for today</p>
+    <section className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Heading as="h2" className="text-2xl font-bold">
+          Habits
+        </Heading>
+        <div className="flex items-center gap-2">
           <HabitForm
             trigger={
-              <Button size="sm" className="mt-4">
+              <Button size="sm">
                 <Plus className="h-4 w-4 mr-2" />
-                Create Habit
+                New
               </Button>
             }
           />
+          <Link
+            href="/habits"
+            className={buttonVariants({ variant: "ghost", size: "sm" })}
+          >
+            View All
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Link>
         </div>
+      </div>
+
+      {habits.length > 0 ? (
+        <div className="space-y-2">
+          {habits.map((habit) => (
+            <HabitCheckInCard key={habit.id} habit={habit} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState />
       )}
-    </Card>
+    </section>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="rounded-lg border-2 border-dashed bg-muted/20 p-12 text-center">
+      <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+        <CalendarFold className="h-8 w-8 text-primary" />
+      </div>
+      <Heading as="h3" className="text-lg mb-2">
+        No habits for today
+      </Heading>
+      <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6">
+        Create your first habit to start tracking your progress
+      </p>
+      <HabitForm
+        trigger={
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Habit
+          </Button>
+        }
+      />
+    </div>
   );
 }
