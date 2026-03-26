@@ -1,19 +1,11 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { CardsList } from "@/components/CardsList";
-import { HabitCard } from "@/components/HabitCard";
-import { HabitForm } from "@/components/HabitForm";
-import {
-  getHabitEntryForToday,
-  isHabitActiveOnDate,
-  parseHabit,
-} from "@/lib/habits";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { TodayHabits } from "@/components/dashboard/TodayHabits";
+import { isHabitActiveOnDate, parseHabit } from "@/lib/habits";
 import prisma from "@/lib/prisma";
-import { CalendarFold, Plus } from "lucide-react";
-import { Heading } from "@/components/ui/typography";
-import { Button } from "@/components/ui/button";
 
-export default async function Home() {
+export default async function Page() {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -31,72 +23,16 @@ export default async function Home() {
   });
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const todayHabits = habits
     .filter((habit) => isHabitActiveOnDate(habit, today))
     .map(parseHabit);
 
-  const completedToday = todayHabits.filter(getHabitEntryForToday).length;
-
   return (
-    <>
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <Heading className="mb-2">
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-
-              month: "long",
-              day: "numeric",
-            })}
-          </Heading>
-          <p className="text-muted-foreground">
-            {todayHabits.length > 0
-              ? `${completedToday} of ${todayHabits.length} habits completed`
-              : "Start your day"}
-          </p>
-        </div>
-      </div>
-      <section className="space-y-4">
-        <div className="flex justify-between border-b">
-          <Heading as="h2" className="flex-1 border-b-0">
-            Habits
-          </Heading>
-          <HabitForm
-            trigger={
-              <Button>
-                <Plus className="h-4 w-4 md:mr-2" />
-                <span className="max-md:hidden">Create new Habit</span>
-              </Button>
-            }
-          />
-        </div>
-
-        {todayHabits.length > 0 ? (
-          <CardsList>
-            {todayHabits.map((habit) => (
-              <HabitCard key={habit.id} habit={habit} />
-            ))}
-          </CardsList>
-        ) : (
-          <EmptyHabits />
-        )}
-      </section>
-    </>
-  );
-}
-
-function EmptyHabits() {
-  return (
-    <div className="rounded-lg border-2 border-dashed bg-muted/20 p-12 text-center">
-      <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-        <CalendarFold className="h-8 w-8 text-primary" />
-      </div>
-      <Heading as="h3" className="mb-2">
-        No habits for today
-      </Heading>
-      <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-        Create your first habit to start tracking your progress
-      </p>
+    <div className="space-y-6">
+      <DashboardHeader />
+      <TodayHabits habits={todayHabits} />
     </div>
   );
 }

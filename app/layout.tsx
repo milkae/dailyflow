@@ -11,22 +11,9 @@ const geist = Geist({
 });
 
 const navigationData = [
-  {
-    title: "Today",
-    href: "/",
-  },
-  {
-    title: "Habit Dashboard",
-    href: "/habits/dashboard",
-  },
-  {
-    title: "Meal plan",
-    href: "/meal/week-plan",
-  },
-  {
-    title: "Recipes",
-    href: "/meal/recipes",
-  },
+  { title: "Dashboard", href: "/" },
+  { title: "Habits", href: "/habits" },
+  { title: "Meals", href: "/meals" },
 ];
 
 export default function RootLayout({
@@ -52,7 +39,7 @@ export default function RootLayout({
               <Navbar navigationData={navigationData} />
               <main className="flex-1 w-full">
                 <div className="container py-6 md:py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {children}
+                  {children}
                 </div>
               </main>
               <footer className="border-t border-border bg-card mt-auto">

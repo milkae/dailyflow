@@ -78,7 +78,7 @@ export function getLastWeekHabits(
   });
 }
 
-export const calculateStreaks = (habit: Habit & { entries: Entry[] }) => {
+export const calculateStreak = (habit: Habit & { entries: Entry[] }) => {
   let streak = 0;
 
   for (let i = habit.entries.length - 1; i > 0; i--) {

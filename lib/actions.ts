@@ -70,7 +70,7 @@ export async function createOrUpdateHabit(
     undefined;
 
   await prisma.habit.upsert({
-    where: { id, userId: session.user.id },
+    where: { id: id || "", userId: session.user.id },
     update: { name, description, frequency, frequencyConfig },
     create: {
       name,

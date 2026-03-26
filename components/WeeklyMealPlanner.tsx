@@ -24,10 +24,6 @@ import {
 } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type Props = {
-  meals: Record<string, Record<string, Meal>>;
-};
-
 const MealIcons = {
   [MealType.breakfast]: <Croissant />,
   [MealType.lunch]: <Salad />,
@@ -57,7 +53,7 @@ const getWeekDays = () => {
   });
 };
 
-export function WeeklyMealPlanner({ meals }: Props) {
+export function WeeklyMealPlanner({ meals }: { meals: Meal[] }) {
   const [selectedSlot, setSelectedSlot] = useState<{
     date: Date;
     type: MealType;
@@ -65,9 +61,19 @@ export function WeeklyMealPlanner({ meals }: Props) {
   const isMobile = useIsMobile();
   const weekDays = getWeekDays();
 
+  const mealsByDateAndType = meals.reduce(
+    (acc, meal) => {
+      const dateKey = new Date(meal.date).toISOString().split("T")[0];
+      if (!acc[dateKey]) acc[dateKey] = {};
+      acc[dateKey][meal.type] = meal;
+      return acc;
+    },
+    {} as Record<string, Record<string, Meal>>,
+  );
+
   const getMeal = (date: Date, type: string) => {
     const dateKey = date.toISOString().split("T")[0];
-    return meals[dateKey]?.[type];
+    return mealsByDateAndType[dateKey]?.[type];
   };
 
   const isToday = (date: Date) => {
