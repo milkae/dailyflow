@@ -50,9 +50,18 @@ export default function RootLayout({
           <TooltipProvider>
             <div className="min-h-screen flex flex-col">
               <Navbar navigationData={navigationData} />
-              <main className="flex-1 p-6 md:p-8 max-w-7xl space-y-8 m-auto">
+              <main className="flex-1 w-full">
+                <div className="container py-6 md:py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {children}
+                </div>
               </main>
+              <footer className="border-t border-border bg-card mt-auto">
+                <div className="container py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <p className="text-center text-sm text-muted-foreground">
+                    Built with Next.js, Prisma, and Tailwind CSS
+                  </p>
+                </div>
+              </footer>
             </div>
           </TooltipProvider>
         </ThemeProvider>

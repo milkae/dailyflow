@@ -9,12 +9,12 @@ type NavigationItem = {
 
 export const NavLink = ({
   item,
-  mdHidden,
   onNavigate,
+  className,
 }: {
   item: NavigationItem;
-  mdHidden?: boolean;
   onNavigate?: () => void;
+  className?: string;
 }) => {
   const pathname = usePathname();
 
@@ -22,10 +22,13 @@ export const NavLink = ({
     <Link
       href={item.href}
       onNavigate={onNavigate}
-      className={cn("hover:text-primary hover:underline", {
-        "underline text-primary": pathname === item.href,
-        "max-md:hidden": mdHidden,
-      })}
+      className={cn(
+        "font-medium hover:text-primary transition-colors",
+        {
+          "underline text-primary": pathname === item.href,
+        },
+        className,
+      )}
     >
       {item.title}
     </Link>

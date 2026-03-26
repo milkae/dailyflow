@@ -30,24 +30,24 @@ export const MobileNav = ({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
-        className="md:hidden"
         render={
-          <Button variant="outline" size="icon">
-            <MenuIcon />
+          <Button variant="ghost" size="icon" className="md:hidden">
+            <MenuIcon className="h-5 w-5" />
             <span className="sr-only">Menu</span>
           </Button>
         }
       />
-      <SheetContent className="w-56">
+      <SheetContent side="right" className="w-75 sm:w-100">
         <SheetHeader>
-          <SheetTitle>Menu</SheetTitle>
+          <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>
-        <nav className="flex flex-col gap-4 p-4">
+        <nav className="flex flex-col gap-4 pl-4">
           {navigationData.map((item, index) => (
             <NavLink
               key={index}
               item={item}
               onNavigate={() => setOpen(false)}
+              className="text-lg"
             />
           ))}
         </nav>

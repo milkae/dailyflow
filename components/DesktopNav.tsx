@@ -19,11 +19,15 @@ export const DesktopNav = ({
 }) => {
   return (
     <>
-      <div className="text-muted-foreground flex flex-1 items-center gap-8 font-medium md:justify-center lg:gap-16">
+      <nav className="hidden md:flex items-center gap-6">
         {navigationData.map((item, index) => (
-          <NavLink key={index} item={item} mdHidden />
+          <NavLink
+            key={index}
+            item={item}
+            className="text-sm text-muted-foreground"
+          />
         ))}
-      </div>
+      </nav>
       <div className="max-md:hidden">
         {isLoggedIn ? (
           <Button variant="outline" onClick={() => signOut()}>
