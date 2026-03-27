@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { MealType } from "@/generated/prisma/enums";
 import { Cookie, Croissant, Salad, Soup } from "lucide-react";
 import { Meal } from "@/generated/prisma/browser";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const mealConfig = {
   [MealType.breakfast]: { label: "Breakfast", icon: Croissant },
@@ -24,39 +24,40 @@ export function MealSlot({ type, meal, onClick }: Props) {
     <div
       onClick={onClick}
       className={cn(
-        "rounded-lg border p-3 transition-all",
+        "rounded-lg border p-3.5 transition-all duration-200",
         meal
-          ? "bg-tertiary-muted/30 border-tertiary/30"
-          : "border-dashed border-border/50 bg-muted/10",
-        onClick &&
-          "cursor-pointer hover:border-tertiary hover:bg-tertiary-muted/50",
+          ? "bg-tertiary/5 border-tertiary/30 hover:border-tertiary/50 hover:bg-tertiary/10 cursor-pointer hover:shadow-sm"
+          : "border-dashed border-border/50 bg-muted/5",
+        onClick && "cursor-pointer",
       )}
     >
       <div className="flex items-center gap-3">
-        <div className="rounded-full p-3 bg-tertiary/10 text-tertiary">
+        <div className="text-3xl shrink-0 drop-shadow-sm">
           <Icon />
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-60">
             {config.label}
           </p>
 
           {meal ? (
             <>
-              <p className="font-medium text-sm truncate">{meal.name}</p>
+              <p className="font-semibold text-sm text-foreground truncate leading-tight mt-1">
+                {meal.name}
+              </p>
               {meal.recipeId && (
                 <Link
                   href={`/meals/recipes/${meal.recipeId}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] text-tertiary hover:underline flex items-center gap-1 mt-1"
+                  className="text-[11px] text-tertiary hover:underline flex items-center gap-1 mt-1.5 font-medium"
                 >
                   View recipe
                 </Link>
               )}
             </>
           ) : (
-            <p className="text-sm text-muted-foreground italic">Not planned</p>
+            <p className="text-sm text-muted-foreground mt-1">Not planned</p>
           )}
         </div>
       </div>

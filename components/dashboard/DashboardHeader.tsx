@@ -14,7 +14,7 @@ export function DashboardHeader({
   const today = new Date();
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <Heading>
         {today.toLocaleDateString("en-US", {
           weekday: "long",
@@ -23,7 +23,7 @@ export function DashboardHeader({
         })}
       </Heading>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-base text-muted-foreground">
         {totalCount > 0 && (
           <>
             <div className="flex items-center gap-2">
