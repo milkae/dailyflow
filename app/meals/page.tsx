@@ -11,7 +11,6 @@ export default async function MealsPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  // Get current week's meals
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const startOfWeek = new Date(today);
@@ -26,16 +25,15 @@ export default async function MealsPage() {
       userId: session.user.id,
       date: { gte: startOfWeek, lt: endOfWeek },
     },
-    include: { recipe: true },
     orderBy: [{ date: "asc" }, { type: "asc" }],
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <Heading>Weekly meals plan</Heading>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-2">
             Plan your week and manage your recipes
           </p>
         </div>

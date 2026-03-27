@@ -119,7 +119,7 @@ export function WeeklyMealPlanner({ meals }: { meals: Meal[] }) {
                       </div>
 
                       {meal ? (
-                        <div className="p-3 group relative rounded-lg border bg-tertiary-muted hover:border-tertiary transition-colors">
+                        <div className="p-3 group relative rounded-lg border bg-tertiary/5 hover:border-tertiary transition-colors">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -193,7 +193,7 @@ export function WeeklyMealPlanner({ meals }: { meals: Meal[] }) {
                       </div>
 
                       {meal ? (
-                        <div className="p-3 group relative rounded-lg border bg-tertiary-muted hover:border-tertiary transition-colors">
+                        <div className="p-3 group relative rounded-lg border bg-tertiary/5 hover:border-tertiary transition-colors">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -222,7 +222,7 @@ export function WeeklyMealPlanner({ meals }: { meals: Meal[] }) {
                         <Button
                           variant="ghost"
                           onClick={() => setSelectedSlot({ date, type: value })}
-                          className="w-full h-16 border-2 border-border border-dashed hover:border-tertiary hover:bg-tertiary-muted dark:hover:bg-tertiary-muted hover:text-tertiary-muted-foreground transition-colors"
+                          className="w-full h-16 border-2 border-border border-dashed hover:border-tertiary hover:text-tertiary-muted-foreground transition-colors"
                         >
                           <Plus className="h-4 w-4 text-muted-foreground" />
                         </Button>

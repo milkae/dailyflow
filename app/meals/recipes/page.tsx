@@ -32,9 +32,7 @@ export default async function RecipesPage() {
             <BookOpen className="h-6 w-6 text-tertiary" />
           </div>
           <div>
-            <Heading className="text-4xl font-extrabold tracking-tight">
-              Recipes
-            </Heading>
+            <Heading>Recipes</Heading>
             <p className="text-muted-foreground mt-1">
               {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"} in
               your collection
@@ -52,7 +50,7 @@ export default async function RecipesPage() {
           <div className="rounded-full bg-tertiary/10 w-20 h-20 flex items-center justify-center mx-auto mb-4">
             <BookOpen className="h-10 w-10 text-tertiary" />
           </div>
-          <Heading as="h3" className="text-xl font-semibold mb-2">
+          <Heading as="h3" className="text-xl mb-2">
             No recipes yet
           </Heading>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
