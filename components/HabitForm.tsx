@@ -260,7 +260,7 @@ export const HabitForm = ({
           <DialogFooter className="flex justify-between gap-4 mt-4">
             <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <Button type="submit" disabled={pending}>
-              Add
+              {habit ? "Edit" : "Add"}
             </Button>
           </DialogFooter>
         </form>
