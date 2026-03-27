@@ -4,7 +4,11 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickStats } from "@/components/dashboard/QuickStats";
 import { TodayHabits } from "@/components/dashboard/TodayHabits";
 import { TodayMeals } from "@/components/dashboard/TodayMeals";
-import { isHabitActiveOnDate, parseHabit } from "@/lib/habits";
+import {
+  isHabitActiveOnDate,
+  isHabitCompletedOnDate,
+  parseHabit,
+} from "@/lib/habits";
 import prisma from "@/lib/prisma";
 
 export default async function DashboardPage() {
@@ -30,13 +34,9 @@ export default async function DashboardPage() {
     .filter((h) => isHabitActiveOnDate(h, today))
     .map(parseHabit);
 
-  const completedToday = todayHabits.filter((h) => {
-    return h.entries.some((e) => {
-      const d = new Date(e.date);
-      d.setHours(0, 0, 0, 0);
-      return d.getTime() === today.getTime();
-    });
-  }).length;
+  const completedToday = todayHabits.filter((habit) =>
+    isHabitCompletedOnDate(habit, today),
+  ).length;
 
   const completionRate =
     todayHabits.length > 0

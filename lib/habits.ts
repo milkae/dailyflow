@@ -42,6 +42,20 @@ export function isHabitActiveOnDate(habit: Habit, date: Date) {
   }
 }
 
+export function isHabitCompletedOnDate(
+  habit: TypedHabitWithEntries,
+  date: Date,
+) {
+  const targetDate = new Date(date);
+  targetDate.setHours(0, 0, 0, 0);
+
+  return habit.entries.some((entry) => {
+    const entryDate = new Date(entry.date);
+    entryDate.setHours(0, 0, 0, 0);
+    return entryDate.getTime() === targetDate.getTime();
+  });
+}
+
 export function getHabitEntryForToday(habit: TypedHabitWithEntries) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -61,19 +75,14 @@ export function getLastWeekHabits(
     date.setDate(date.getDate() - daysToRemove + i);
     date.setHours(0, 0, 0, 0);
 
-    const count = habits.reduce((acc, val) => {
-      return (
-        acc +
-        val.entries.filter((e) => {
-          const entryDate = new Date(e.date);
-          entryDate.setHours(0, 0, 0, 0);
-          return entryDate.getTime() === date.getTime();
-        }).length
-      );
-    }, 0);
+    const completed = habits.filter((habit) =>
+      isHabitCompletedOnDate(habit, date),
+    ).length;
+
     return {
-      day: new Intl.DateTimeFormat("fr-FR", { weekday: "short" }).format(date),
-      count,
+      day: date.toLocaleDateString("en-US", { weekday: "short" }),
+      completed,
+      date: date.toISOString(),
     };
   });
 }
@@ -81,20 +90,30 @@ export function getLastWeekHabits(
 export const calculateStreak = (habit: Habit & { entries: Entry[] }) => {
   let streak = 0;
 
-  for (let i = habit.entries.length - 1; i > 0; i--) {
-    const previousDay = new Date(habit.entries[i].date.getTime());
-    previousDay.setDate(previousDay.getDate() - 1);
-    previousDay.setHours(0, 0, 0, 0);
-    const nextHabitDate = habit.entries[i - 1].date;
-    nextHabitDate.setHours(0, 0, 0, 0);
+  for (let i = habit.entries.length - 1; i >= 0; i--) {
+    if (i === habit.entries.length - 1) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const entryDate = habit.entries[i].date;
+      entryDate.setHours(0, 0, 0, 0);
+      if (entryDate.getTime() !== today.getTime()) {
+        break;
+      }
+      streak++;
+    } else {
+      const previousDay = new Date(habit.entries[i].date.getTime());
+      previousDay.setDate(previousDay.getDate() - 1);
+      previousDay.setHours(0, 0, 0, 0);
+      const nextHabitEntryDate = habit.entries[i - 1].date;
+      nextHabitEntryDate.setHours(0, 0, 0, 0);
 
-    if (nextHabitDate.getTime() !== previousDay.getTime()) {
-      break;
+      if (nextHabitEntryDate.getTime() !== previousDay.getTime()) {
+        break;
+      }
+
+      streak++;
     }
-
-    streak++;
   }
-
   return streak;
 };
 

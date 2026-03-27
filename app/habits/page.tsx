@@ -25,11 +25,11 @@ export default async function HabitsPage() {
   const typedHabits = habits.map(parseHabit);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
           <Heading>Habits</Heading>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-2">
             Manage and track your {habits.length}{" "}
             {habits.length === 1 ? "habit" : "habits"}
           </p>
@@ -37,17 +37,17 @@ export default async function HabitsPage() {
         <HabitForm />
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList variant="line">
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList variant="line" className="gap-3">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="stats">Stats</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
+        <TabsContent value="overview">
           <HabitsOverview habits={typedHabits} />
         </TabsContent>
 
-        <TabsContent value="stats" className="space-y-6">
+        <TabsContent value="stats">
           <HabitsStats habits={typedHabits} />
         </TabsContent>
       </Tabs>
