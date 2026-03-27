@@ -1,43 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2, Calendar as CalendarIcon, Flame } from "lucide-react";
+import { Pencil, Calendar as CalendarIcon, Flame } from "lucide-react";
 import { calculateStreak } from "@/lib/habits";
-import { deleteHabit } from "@/lib/actions";
 import { TypedHabitWithEntries } from "@/lib/types";
 import { HabitForm } from "@/components/HabitForm";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { DeleteHabitButton } from "./DeleteHabitButton";
 
 export const HabitOverviewCard = ({
   habit,
 }: {
   habit: TypedHabitWithEntries;
 }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const router = useRouter();
   const streak = calculateStreak(habit);
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    await deleteHabit(habit.id);
-    router.refresh();
-  };
 
   return (
     <Card className="p-5 hover:border-primary transition-all group h-full flex flex-col">
@@ -83,37 +61,7 @@ export const HabitOverviewCard = ({
             </Button>
           }
         />
-        <AlertDialog>
-          <AlertDialogTrigger
-            render={
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={isDeleting}
-                className="text-destructive hover:bg-destructive-muted"
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            }
-          />
-          <AlertDialogContent size="sm">
-            <AlertDialogHeader>
-              <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
-                <Trash2 />
-              </AlertDialogMedia>
-              <AlertDialogTitle>{`Delete "${habit.name}"?`}</AlertDialogTitle>
-              <AlertDialogDescription>
-                {`This will permanently delete "${habit.name}". This cannot be undone.`}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="destructive" onClick={handleDelete}>
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeleteHabitButton habit={habit} size="sm" />
       </div>
     </Card>
   );
