@@ -4,9 +4,10 @@ import prisma from "./prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { Frequency, MealType } from "@/generated/prisma/enums";
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { parseHabit } from "./habits";
+import { headers } from "next/headers";
 
 const normalizeDate = (date: Date) => {
   const normalized = new Date(date);
@@ -51,7 +52,7 @@ export async function createOrUpdateHabit(
   },
   formData: FormData,
 ) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -86,7 +87,7 @@ export async function createOrUpdateHabit(
 }
 
 export async function submitHabitEntryForm(id: string, formData: FormData) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -101,7 +102,7 @@ export async function createHabitEntry(
   date = new Date(),
   note?: string,
 ) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -133,7 +134,7 @@ export async function createHabitEntry(
 }
 
 export async function deleteHabitEntry(id: string, date = new Date()) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -149,7 +150,7 @@ export async function deleteHabitEntry(id: string, date = new Date()) {
 }
 
 export async function toggleHabitCompletion(id: string, completion: boolean) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -163,7 +164,7 @@ export async function toggleHabitCompletion(id: string, completion: boolean) {
 }
 
 export async function getLastMonthHabits() {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -187,7 +188,7 @@ export async function getLastMonthHabits() {
 }
 
 export async function deleteHabit(id: string) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -213,7 +214,7 @@ export async function addOrUpdateMeal(
   },
   formData: FormData,
 ) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -248,7 +249,7 @@ export async function addOrUpdateMeal(
 }
 
 export async function deleteMeal(mealId: string) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -280,7 +281,7 @@ export async function createOrUpdateRecipe(
   },
   formData: FormData,
 ) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -357,7 +358,7 @@ export async function createOrUpdateRecipe(
 }
 
 export async function deleteRecipe(recipeId: string) {
-  const session = await auth();
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
     redirect("/login");

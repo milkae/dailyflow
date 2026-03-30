@@ -1,6 +1,7 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { MobileNav } from "./MobileNav";
 import { DesktopNav } from "./DesktopNav";
+import { headers } from "next/headers";
 
 type NavigationItem = {
   title: string;
@@ -12,7 +13,9 @@ export const Navbar = async ({
 }: {
   navigationData: NavigationItem[];
 }) => {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">

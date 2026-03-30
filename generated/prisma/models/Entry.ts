@@ -151,7 +151,7 @@ export type EntryGroupByOutputType = {
   _max: EntryMaxAggregateOutputType | null
 }
 
-type GetEntryGroupByPayload<T extends EntryGroupByArgs> = Prisma.PrismaPromise<
+export type GetEntryGroupByPayload<T extends EntryGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<EntryGroupByOutputType, T['by']> &
       {
@@ -1093,6 +1093,11 @@ export type EntryFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Skip the first `n` Entries.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Entries.
+   */
   distinct?: Prisma.EntryScalarFieldEnum | Prisma.EntryScalarFieldEnum[]
 }
 

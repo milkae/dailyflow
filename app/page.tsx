@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { QuickStats } from "@/components/dashboard/QuickStats";
@@ -10,10 +10,16 @@ import {
   parseHabit,
 } from "@/lib/habits";
 import prisma from "@/lib/prisma";
+import { headers } from "next/headers";
 
 export default async function DashboardPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

@@ -175,7 +175,7 @@ export type HabitGroupByOutputType = {
   _max: HabitMaxAggregateOutputType | null
 }
 
-type GetHabitGroupByPayload<T extends HabitGroupByArgs> = Prisma.PrismaPromise<
+export type GetHabitGroupByPayload<T extends HabitGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<HabitGroupByOutputType, T['by']> &
       {
@@ -343,6 +343,16 @@ export type HabitUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
+export type HabitListRelationFilter = {
+  every?: Prisma.HabitWhereInput
+  some?: Prisma.HabitWhereInput
+  none?: Prisma.HabitWhereInput
+}
+
+export type HabitOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type HabitCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -377,46 +387,6 @@ export type HabitMinOrderByAggregateInput = {
 export type HabitScalarRelationFilter = {
   is?: Prisma.HabitWhereInput
   isNot?: Prisma.HabitWhereInput
-}
-
-export type HabitListRelationFilter = {
-  every?: Prisma.HabitWhereInput
-  some?: Prisma.HabitWhereInput
-  none?: Prisma.HabitWhereInput
-}
-
-export type HabitOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type EnumFrequencyFieldUpdateOperationsInput = {
-  set?: $Enums.Frequency
-}
-
-export type HabitCreateNestedOneWithoutEntriesInput = {
-  create?: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
-  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutEntriesInput
-  connect?: Prisma.HabitWhereUniqueInput
-}
-
-export type HabitUpdateOneRequiredWithoutEntriesNestedInput = {
-  create?: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
-  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutEntriesInput
-  upsert?: Prisma.HabitUpsertWithoutEntriesInput
-  connect?: Prisma.HabitWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.HabitUpdateToOneWithWhereWithoutEntriesInput, Prisma.HabitUpdateWithoutEntriesInput>, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
 }
 
 export type HabitCreateNestedManyWithoutUserInput = {
@@ -461,64 +431,22 @@ export type HabitUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.HabitScalarWhereInput | Prisma.HabitScalarWhereInput[]
 }
 
-export type HabitCreateWithoutEntriesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  createdAt?: Date | string
-  frequency?: $Enums.Frequency
-  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  startDate?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutHabitsInput
+export type EnumFrequencyFieldUpdateOperationsInput = {
+  set?: $Enums.Frequency
 }
 
-export type HabitUncheckedCreateWithoutEntriesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  createdAt?: Date | string
-  frequency?: $Enums.Frequency
-  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  startDate?: Date | string
-  userId: string
+export type HabitCreateNestedOneWithoutEntriesInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutEntriesInput
+  connect?: Prisma.HabitWhereUniqueInput
 }
 
-export type HabitCreateOrConnectWithoutEntriesInput = {
-  where: Prisma.HabitWhereUniqueInput
-  create: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
-}
-
-export type HabitUpsertWithoutEntriesInput = {
-  update: Prisma.XOR<Prisma.HabitUpdateWithoutEntriesInput, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
-  create: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
-  where?: Prisma.HabitWhereInput
-}
-
-export type HabitUpdateToOneWithWhereWithoutEntriesInput = {
-  where?: Prisma.HabitWhereInput
-  data: Prisma.XOR<Prisma.HabitUpdateWithoutEntriesInput, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
-}
-
-export type HabitUpdateWithoutEntriesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
-  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutHabitsNestedInput
-}
-
-export type HabitUncheckedUpdateWithoutEntriesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
-  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+export type HabitUpdateOneRequiredWithoutEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutEntriesInput
+  upsert?: Prisma.HabitUpsertWithoutEntriesInput
+  connect?: Prisma.HabitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HabitUpdateToOneWithWhereWithoutEntriesInput, Prisma.HabitUpdateWithoutEntriesInput>, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
 }
 
 export type HabitCreateWithoutUserInput = {
@@ -581,6 +509,66 @@ export type HabitScalarWhereInput = {
   frequencyConfig?: Prisma.JsonNullableFilter<"Habit">
   startDate?: Prisma.DateTimeFilter<"Habit"> | Date | string
   userId?: Prisma.StringFilter<"Habit"> | string
+}
+
+export type HabitCreateWithoutEntriesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  frequency?: $Enums.Frequency
+  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutHabitsInput
+}
+
+export type HabitUncheckedCreateWithoutEntriesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  frequency?: $Enums.Frequency
+  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate?: Date | string
+  userId: string
+}
+
+export type HabitCreateOrConnectWithoutEntriesInput = {
+  where: Prisma.HabitWhereUniqueInput
+  create: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+}
+
+export type HabitUpsertWithoutEntriesInput = {
+  update: Prisma.XOR<Prisma.HabitUpdateWithoutEntriesInput, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
+  create: Prisma.XOR<Prisma.HabitCreateWithoutEntriesInput, Prisma.HabitUncheckedCreateWithoutEntriesInput>
+  where?: Prisma.HabitWhereInput
+}
+
+export type HabitUpdateToOneWithWhereWithoutEntriesInput = {
+  where?: Prisma.HabitWhereInput
+  data: Prisma.XOR<Prisma.HabitUpdateWithoutEntriesInput, Prisma.HabitUncheckedUpdateWithoutEntriesInput>
+}
+
+export type HabitUpdateWithoutEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
+  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutHabitsNestedInput
+}
+
+export type HabitUncheckedUpdateWithoutEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
+  frequencyConfig?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type HabitCreateManyUserInput = {
@@ -1362,6 +1350,11 @@ export type HabitFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Skip the first `n` Habits.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Habits.
+   */
   distinct?: Prisma.HabitScalarFieldEnum | Prisma.HabitScalarFieldEnum[]
 }
 

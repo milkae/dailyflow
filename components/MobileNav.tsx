@@ -9,9 +9,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { signIn, signOut } from "next-auth/react";
 import { NavLink } from "./NavLink";
 import { useState } from "react";
+import { authClient } from "@/lib/auth.client";
+import { redirect } from "next/navigation";
 
 type NavigationItem = {
   title: string;
@@ -53,12 +54,28 @@ export const MobileNav = ({
         </nav>
         <div className="mt-auto mb-6 flex justify-center">
           {isLoggedIn ? (
-            <Button variant="outline" onClick={() => signOut()}>
+            <Button
+              variant="outline"
+              onClick={async () =>
+                await authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      redirect("/");
+                    },
+                  },
+                })
+              }
+            >
               <LogOutIcon />
               <span className="flex flex-1 justify-center">Log out</span>
             </Button>
           ) : (
-            <Button variant="outline" onClick={() => signIn()}>
+            <Button
+              variant="outline"
+              onClick={async () =>
+                await authClient.signIn.social({ provider: "google" })
+              }
+            >
               <LogIn />
               <span className="flex flex-1 justify-center">Sign In</span>
             </Button>

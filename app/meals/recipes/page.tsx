@@ -1,14 +1,20 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { RecipeGrid } from "@/components/RecipeGrid";
 import { CreateRecipeButton } from "@/components/CreateRecipeButton";
 import { BookOpen } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Heading } from "@/components/ui/typography";
+import { headers } from "next/headers";
 
 export default async function RecipesPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
 
   const recipes = await prisma.recipe.findMany({
     where: { userId: session.user.id },

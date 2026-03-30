@@ -1,9 +1,10 @@
 "use client";
 
-import { signIn, signOut } from "next-auth/react";
+import { authClient } from "@/lib/auth.client";
 import { NavLink } from "./NavLink";
 import { Button } from "./ui/button";
 import { LogIn, LogOutIcon } from "lucide-react";
+import { redirect } from "next/navigation";
 
 type NavigationItem = {
   title: string;
@@ -30,12 +31,28 @@ export const DesktopNav = ({
       </nav>
       <div className="max-md:hidden">
         {isLoggedIn ? (
-          <Button variant="outline" onClick={() => signOut()}>
+          <Button
+            variant="outline"
+            onClick={async () =>
+              await authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    redirect("/");
+                  },
+                },
+              })
+            }
+          >
             <LogOutIcon />
             <span className="flex flex-1 justify-center">Log out</span>
           </Button>
         ) : (
-          <Button variant="outline" onClick={() => signIn()}>
+          <Button
+            variant="outline"
+            onClick={async () =>
+              await authClient.signIn.social({ provider: "google" })
+            }
+          >
             <LogIn />
             <span className="flex flex-1 justify-center">Sign In</span>
           </Button>

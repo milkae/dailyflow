@@ -1,18 +1,23 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { HabitDetailHeader } from "@/components/habits/HabitDetailHeader";
-import { HabitStats } from "@/components/habits/HabitStats";
 import { HabitTimeline } from "@/components/habits/HabitTimeline";
 import { parseHabit } from "@/lib/habits";
 import prisma from "@/lib/prisma";
+import { headers } from "next/headers";
 
 export default async function HabitDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
 
   const { id } = await params;
 

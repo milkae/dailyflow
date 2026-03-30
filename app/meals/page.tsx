@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { BookOpen } from "lucide-react";
 import { WeeklyMealPlanner } from "@/components/WeeklyMealPlanner";
@@ -6,10 +6,16 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { Heading } from "@/components/ui/typography";
 import { buttonVariants } from "@/lib/utils";
+import { headers } from "next/headers";
 
 export default async function MealsPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

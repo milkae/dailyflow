@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HabitsOverview } from "@/components/habits/HabitsOverview";
@@ -7,10 +7,16 @@ import { HabitForm } from "@/components/HabitForm";
 import prisma from "@/lib/prisma";
 import { parseHabit } from "@/lib/habits";
 import { Heading } from "@/components/ui/typography";
+import { headers } from "next/headers";
 
 export default async function HabitsPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/sign-in");
+  }
 
   const habits = await prisma.habit.findMany({
     where: { userId: session.user.id },
