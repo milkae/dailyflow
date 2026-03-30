@@ -23,7 +23,7 @@ export function DashboardHeader({
         })}
       </Heading>
 
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-base text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-3 text-muted-foreground">
         {totalCount > 0 && (
           <>
             <div className="flex items-center gap-2">
