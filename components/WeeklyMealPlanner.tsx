@@ -16,7 +16,7 @@ import { AddMealDialog } from "@/components/AddMealDialog";
 import { capitalize } from "@/lib/utils";
 import { MealType } from "@/generated/prisma/enums";
 import { Meal } from "@/generated/prisma/client";
-import { deleteMeal } from "@/lib/actions";
+import { deleteMeal } from "@/lib/actions/meal";
 import {
   Collapsible,
   CollapsibleContent,

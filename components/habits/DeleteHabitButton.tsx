@@ -3,7 +3,7 @@
 import { ComponentProps, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { deleteHabit } from "@/lib/actions";
+import { deleteHabit } from "@/lib/actions/habit";
 import { TypedHabit } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import {

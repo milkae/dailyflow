@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { RecipeFormDialog } from "@/components/RecipeFormDialog";
-import { deleteRecipe } from "@/lib/actions";
+import { deleteRecipe } from "@/lib/actions/recipe";
 import { useRouter } from "next/navigation";
 import {
   AlertDialog,
@@ -26,17 +26,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-type Recipe = {
-  id: string;
-  name: string;
-  description: string | null;
-  ingredients: string;
-  instructions: string;
-  prepTime: number | null;
-  cookTime: number | null;
-  sourceUrl: string | null;
-};
+import { Recipe } from "@/generated/prisma/browser";
 
 type Props = {
   recipe: Recipe;

@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { addOrUpdateMeal } from "@/lib/actions";
+import { addOrUpdateMeal } from "@/lib/actions/meal";
 import { TextInput } from "./TextInput";
 import { Meal } from "@/generated/prisma/client";
 import { capitalize } from "@/lib/utils";

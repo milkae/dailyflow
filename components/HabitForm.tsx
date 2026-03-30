@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { createOrUpdateHabit } from "@/lib/actions";
+import { createOrUpdateHabit } from "@/lib/actions/habit";
 import { TextInput } from "./TextInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";

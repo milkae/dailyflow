@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteHabit } from "@/lib/actions";
+import { deleteHabit } from "@/lib/actions/habit";
 import { Button } from "@/components/ui/button";
 import {
   Table,

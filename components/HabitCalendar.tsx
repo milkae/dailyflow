@@ -1,7 +1,7 @@
 "use client";
 
 import { Calendar } from "@/components/ui/calendar";
-import { createHabitEntry } from "@/lib/actions";
+import { createHabitEntry } from "@/lib/actions/habit";
 import { TypedHabitWithEntries } from "@/lib/types";
 
 export const HabitCalendar = ({ habit }: { habit: TypedHabitWithEntries }) => {

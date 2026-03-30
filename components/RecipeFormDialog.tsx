@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createOrUpdateRecipe } from "@/lib/actions";
+import { createOrUpdateRecipe } from "@/lib/actions/recipe";
 import { Loader2 } from "lucide-react";
 import { Recipe } from "@/generated/prisma/browser";
 import { Field, FieldGroup, FieldLabel } from "./ui/field";

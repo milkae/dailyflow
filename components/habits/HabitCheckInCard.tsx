@@ -15,7 +15,10 @@ import {
 } from "@/components/ui/dialog";
 import { TypedHabitWithEntries } from "@/lib/types";
 import { calculateStreak, getHabitEntryForToday } from "@/lib/habits";
-import { toggleHabitCompletion, submitHabitEntryForm } from "@/lib/actions";
+import {
+  toggleHabitCompletion,
+  submitHabitEntryForm,
+} from "@/lib/actions/habit";
 import { TextInput } from "../TextInput";
 
 type Props = {
