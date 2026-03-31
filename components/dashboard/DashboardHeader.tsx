@@ -54,4 +54,27 @@ export const DashboardHeader = async () => {
       </div>
     </div>
   );
+};
+
+export function DashboardHeaderSkeleton() {
+  const today = new Date();
+
+  return (
+    <div className="space-y-4">
+      <Heading>
+        {today.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        })}
+      </Heading>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 pb-2">
+          <div className="w-2 h-2 rounded-full bg-muted animate-pulse" />
+          <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+        </div>
+      </div>
+    </div>
+  );
 }
