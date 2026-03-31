@@ -13,7 +13,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
-import { AddMealDialog } from "@/components/AddMealDialog";
+import { AddMealDialog } from "@/components/meals/AddMealDialog";
 import { capitalize } from "@/lib/utils";
 import { MealType } from "@/generated/prisma/enums";
 import { Meal } from "@/generated/prisma/client";

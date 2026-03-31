@@ -5,7 +5,7 @@ import { Plus, ArrowRight, CalendarFold } from "lucide-react";
 import Link from "next/link";
 import { TypedHabitWithEntries } from "@/lib/types";
 import { HabitCheckInCard } from "@/components/habits/HabitCheckInCard";
-import { HabitForm } from "@/components/HabitForm";
+import { HabitForm } from "@/components/habits/HabitForm";
 import { buttonVariants } from "@/lib/utils";
 import { Heading } from "../ui/typography";
 

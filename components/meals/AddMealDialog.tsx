@@ -8,10 +8,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { addOrUpdateMeal } from "@/lib/actions/meal";
-import { TextInput } from "./TextInput";
+import { TextInput } from "@/components/TextInput";
 import { Meal } from "@/generated/prisma/client";
 import { capitalize } from "@/lib/utils";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 
 type Props = {

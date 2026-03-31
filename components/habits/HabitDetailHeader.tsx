@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pencil, Flame, Calendar } from "lucide-react";
-import { HabitForm } from "@/components/HabitForm";
+import { HabitForm } from "@/components/habits/HabitForm";
 import { calculateStreak } from "@/lib/habits";
 import { TypedHabitWithEntries } from "@/lib/types";
 import { Heading } from "../ui/typography";

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Calendar as CalendarIcon, Flame } from "lucide-react";
 import { calculateStreak } from "@/lib/habits";
 import { TypedHabitWithEntries } from "@/lib/types";
-import { HabitForm } from "@/components/HabitForm";
+import { HabitForm } from "@/components/habits/HabitForm";
 import Link from "next/link";
 import { DeleteHabitButton } from "./DeleteHabitButton";
 

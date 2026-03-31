@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { createOrUpdateHabit } from "@/lib/actions/habit";
-import { TextInput } from "./TextInput";
+import { TextInput } from "@/components/TextInput";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Frequency } from "@/generated/prisma/enums";
@@ -22,7 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { capitalize } from "@/lib/utils";
-import { Input } from "./ui/input";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus } from "lucide-react";
 import { TypedHabit } from "@/lib/types";
 

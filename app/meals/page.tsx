@@ -1,5 +1,5 @@
 import { BookOpen } from "lucide-react";
-import { WeeklyMealPlanner } from "@/components/WeeklyMealPlanner";
+import { WeeklyMealPlanner } from "@/components/meals/WeeklyMealPlanner";
 import Link from "next/link";
 import { Heading } from "@/components/ui/typography";
 import { buttonVariants } from "@/lib/utils";

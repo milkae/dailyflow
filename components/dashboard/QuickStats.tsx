@@ -1,5 +1,5 @@
 import { CheckCircle2, Target, TrendingUp } from "lucide-react";
-import { StatCard } from "../StatCard";
+import { StatCard } from "./StatCard";
 
 type Props = {
   total: number;
