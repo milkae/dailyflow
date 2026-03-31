@@ -8,6 +8,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { parseHabit } from "@/lib/habits";
 import { headers } from "next/headers";
+import { cache } from "react";
+import { verifySession } from "@/lib/dal";
 
 const normalizeDate = (date: Date) => {
   const normalized = new Date(date);
@@ -163,30 +165,6 @@ export async function toggleHabitCompletion(id: string, completion: boolean) {
   return createHabitEntry(id);
 }
 
-export async function getLastMonthHabits() {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
-  const previousMonth = new Date();
-  previousMonth.setMonth(previousMonth.getMonth() - 1);
-
-  const habits = await prisma.habit.findMany({
-    where: { userId: session.user.id },
-    include: {
-      entries: {
-        where: {
-          date: { gte: previousMonth },
-        },
-      },
-    },
-  });
-
-  return habits.map(parseHabit);
-}
-
 export async function deleteHabit(id: string) {
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -197,3 +175,19 @@ export async function deleteHabit(id: string) {
   await prisma.habit.delete({ where: { id, userId: session.user.id } });
   revalidatePath("/");
 }
+
+export const getHabits = cache(async () => {
+  const session = await verifySession();
+
+  const habits = await prisma.habit.findMany({
+    where: { userId: session.userId },
+    include: {
+      entries: {
+        orderBy: { date: "desc" },
+        take: 30,
+      },
+    },
+  });
+
+  return habits.map(parseHabit);
+});

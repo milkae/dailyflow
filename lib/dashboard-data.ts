@@ -1,25 +1,8 @@
 import { cache } from "react";
-import {
-  isHabitActiveOnDate,
-  isHabitCompletedOnDate,
-  parseHabit,
-} from "@/lib/habits";
+import { isHabitActiveOnDate, isHabitCompletedOnDate } from "@/lib/habits";
 import prisma from "@/lib/prisma";
 import { verifySession } from "./dal";
-
-export const getHabits = cache(async () => {
-  const session = await verifySession();
-
-  return prisma.habit.findMany({
-    where: { userId: session.userId },
-    include: {
-      entries: {
-        orderBy: { date: "desc" },
-        take: 30,
-      },
-    },
-  });
-});
+import { getHabits } from "./actions/habit";
 
 export const getTodayMeals = cache(async () => {
   const session = await verifySession();
@@ -42,7 +25,7 @@ export const getTodayHabits = cache(async () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  return habits.filter((h) => isHabitActiveOnDate(h, today)).map(parseHabit);
+  return habits.filter((h) => isHabitActiveOnDate(h, today));
 });
 
 export const getDashboardStats = cache(async () => {

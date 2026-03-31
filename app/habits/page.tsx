@@ -1,34 +1,12 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HabitsOverview } from "@/components/habits/HabitsOverview";
 import { HabitsStats } from "@/components/habits/HabitsStats";
-import { HabitForm } from "@/components/HabitForm";
-import prisma from "@/lib/prisma";
-import { parseHabit } from "@/lib/habits";
+import { HabitForm } from "@/components/habits/HabitForm";
 import { Heading } from "@/components/ui/typography";
-import { headers } from "next/headers";
+import { getHabits } from "@/lib/actions/habit";
 
 export default async function HabitsPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  const habits = await prisma.habit.findMany({
-    where: { userId: session.user.id },
-    include: {
-      entries: {
-        orderBy: { date: "desc" },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  const typedHabits = habits.map(parseHabit);
+  const habits = await getHabits();
 
   return (
     <div className="space-y-8">
@@ -50,11 +28,11 @@ export default async function HabitsPage() {
         </TabsList>
 
         <TabsContent value="overview">
-          <HabitsOverview habits={typedHabits} />
+          <HabitsOverview habits={habits} />
         </TabsContent>
 
         <TabsContent value="stats">
-          <HabitsStats habits={typedHabits} />
+          <HabitsStats habits={habits} />
         </TabsContent>
       </Tabs>
     </div>

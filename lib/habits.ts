@@ -2,7 +2,7 @@ import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
 import { habitSchema } from "./validators";
 import { TypedHabitWithEntries } from "./types";
 
-export function isHabitActiveOnDate(habit: Habit, date: Date) {
+export function isHabitActiveOnDate(habit: TypedHabitWithEntries, date: Date) {
   switch (habit.frequency) {
     case Frequency.DAILY:
       return true;
