@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/typography";
 import { buttonVariants } from "@/lib/utils";
 import { getWeekMeals } from "@/lib/actions/meal";
+import { Suspense } from "react";
+import { WeeklyMealPlannerSkeleton } from "@/components/meals/WeeklyMealPlannerSkeleton";
 
 export default async function MealsPage() {
   const mealsPromise = getWeekMeals();
@@ -28,7 +30,9 @@ export default async function MealsPage() {
           All Recipes
         </Link>
       </div>
-      <WeeklyMealPlanner mealsPromise={mealsPromise} />
+      <Suspense fallback={<WeeklyMealPlannerSkeleton />}>
+        <WeeklyMealPlanner mealsPromise={mealsPromise} />
+      </Suspense>
     </div>
   );
 }

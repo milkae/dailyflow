@@ -153,7 +153,7 @@ export const WeeklyMealPlanner = ({
             >
               <div className="flex items-center gap-2 lg:flex-col pb-3 border-b">
                 <div className="text-lg font-semibold">
-                  {date.toLocaleDateString("en-US", { weekday: "short" })}
+                  {date.toLocaleDateString("en-US", { weekday: "long" })}
                 </div>
                 <div
                   className={`text-lg lg:text-2xl font-bold ${isToday ? "text-tertiary" : "text-foreground"}`}
