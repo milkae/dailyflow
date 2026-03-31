@@ -1,16 +1,9 @@
 import { Heading } from "../ui/typography";
+import { getDashboardStats } from "@/lib/dashboard-data";
 
-type Props = {
-  completedCount: number;
-  totalCount: number;
-  mealsCount: number;
-};
+export const DashboardHeader = async () => {
+  const { total, completed, mealsCount } = await getDashboardStats();
 
-export function DashboardHeader({
-  completedCount,
-  totalCount,
-  mealsCount,
-}: Props) {
   const today = new Date();
 
   return (
@@ -24,17 +17,17 @@ export function DashboardHeader({
       </Heading>
 
       <div className="flex flex-wrap items-center gap-3 text-muted-foreground">
-        {totalCount > 0 && (
+        {total > 0 && (
           <>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-success" />
               <span>
                 <strong className="font-semibold text-foreground">
-                  {completedCount}
+                  {completed}
                 </strong>{" "}
                 of{" "}
                 <strong className="font-semibold text-foreground">
-                  {totalCount}
+                  {total}
                 </strong>{" "}
                 habits completed
               </span>
@@ -55,7 +48,7 @@ export function DashboardHeader({
             )}
           </>
         )}
-        {totalCount === 0 && mealsCount === 0 && (
+        {total === 0 && mealsCount === 0 && (
           <span>Start your day by creating habits and planning meals</span>
         )}
       </div>
