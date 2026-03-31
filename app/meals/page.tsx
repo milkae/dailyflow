@@ -1,38 +1,12 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { BookOpen } from "lucide-react";
 import { WeeklyMealPlanner } from "@/components/WeeklyMealPlanner";
 import Link from "next/link";
-import prisma from "@/lib/prisma";
 import { Heading } from "@/components/ui/typography";
 import { buttonVariants } from "@/lib/utils";
-import { headers } from "next/headers";
+import { getWeekMeals } from "@/lib/actions/meal";
 
 export default async function MealsPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect("/sign-in");
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const startOfWeek = new Date(today);
-  const day = startOfWeek.getDay();
-  const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
-  startOfWeek.setDate(diff);
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(endOfWeek.getDate() + 7);
-
-  const meals = await prisma.meal.findMany({
-    where: {
-      userId: session.user.id,
-      date: { gte: startOfWeek, lt: endOfWeek },
-    },
-    orderBy: [{ date: "asc" }, { type: "asc" }],
-  });
+  const mealsPromise = getWeekMeals();
 
   return (
     <div className="space-y-8">
@@ -54,7 +28,7 @@ export default async function MealsPage() {
           All Recipes
         </Link>
       </div>
-      <WeeklyMealPlanner meals={meals} />
+      <WeeklyMealPlanner mealsPromise={mealsPromise} />
     </div>
   );
 }
