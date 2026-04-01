@@ -38,7 +38,7 @@ export function RecipeGrid({ recipes }: Props) {
                   </p>
                 )}
               </div>
-              {(recipe.prepTime || recipe.cookTime) && (
+              {!!(recipe.prepTime || recipe.cookTime) && (
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   {!!recipe.prepTime && (
                     <div className="flex items-center gap-1">

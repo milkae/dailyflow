@@ -16,7 +16,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-export const CreateRecipeDialog = () => {
+export const CreateRecipeDialog = ({
+  open,
+  onOpenChange,
+}: {
+  open?: boolean;
+  onOpenChange?: (state: boolean) => void;
+}) => {
   const [tab, setTab] = useState<"url" | "manual">("url");
   const [url, setUrl] = useState("");
   const [isParsing, setIsParsing] = useState(false);
@@ -50,15 +56,17 @@ export const CreateRecipeDialog = () => {
     setIsParsing(false);
   };
 
+  const handleOpenState = onOpenChange ?? setIsOpen;
+
   const handleSuccess = () => {
-    setIsOpen(false);
+    handleOpenState(false);
     setTab("url");
     setUrl("");
     setCurrentRecipe(undefined);
   };
 
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
+    handleOpenState(open);
     if (!open) {
       setTab("url");
       setUrl("");
@@ -67,15 +75,17 @@ export const CreateRecipeDialog = () => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger
-        render={
-          <Button className="bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground">
-            <Plus className="h-4 w-4 mr-2" />
-            New Recipe
-          </Button>
-        }
-      />
+    <Dialog open={open || isOpen} onOpenChange={handleOpenChange}>
+      {!open && (
+        <DialogTrigger
+          render={
+            <Button className="bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground">
+              <Plus className="h-4 w-4 mr-2" />
+              New Recipe
+            </Button>
+          }
+        />
+      )}
       <DialogContent className=" sm:max-w-175 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add Recipe</DialogTitle>

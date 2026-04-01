@@ -57,7 +57,7 @@ export function RecipeDetail({ recipe }: Props) {
 
   return (
     <>
-      <main className="py-8 max-w-4xl space-y-6">
+      <main className="py-8 max-w-4xl space-y-6 m-auto">
         <Link
           href="/meals/recipes"
           className={buttonVariants({ variant: "ghost" })}
