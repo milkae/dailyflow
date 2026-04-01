@@ -1,4 +1,3 @@
-// components/RecipeDetail.tsx
 "use client";
 
 import { useState } from "react";
@@ -13,7 +12,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
-import { RecipeFormDialog } from "@/components/RecipeFormDialog";
+import { EditRecipeDialog } from "@/components/recipes/EditRecipeDialog";
 import { deleteRecipe } from "@/lib/actions/recipe";
 import { useRouter } from "next/navigation";
 import {
@@ -184,7 +183,7 @@ export function RecipeDetail({ recipe }: Props) {
       </main>
 
       {/* Edit Dialog */}
-      <RecipeFormDialog
+      <EditRecipeDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         recipe={recipe}

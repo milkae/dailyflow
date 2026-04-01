@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { RecipeGrid } from "@/components/RecipeGrid";
-import { CreateRecipeButton } from "@/components/CreateRecipeButton";
+import { RecipeGrid } from "@/components/recipes/RecipeGrid";
+import { CreateRecipeDialog } from "@/components/recipes/CreateRecipeDialog";
 import { BookOpen } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Heading } from "@/components/ui/typography";
@@ -45,7 +45,7 @@ export default async function RecipesPage() {
             </p>
           </div>
         </div>
-        <CreateRecipeButton />
+        <CreateRecipeDialog />
       </div>
 
       {/* Grid */}
@@ -62,7 +62,7 @@ export default async function RecipesPage() {
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
             Start building your recipe collection
           </p>
-          <CreateRecipeButton />
+          <CreateRecipeDialog />
         </div>
       )}
     </div>
