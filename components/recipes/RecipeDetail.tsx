@@ -40,7 +40,7 @@ export function RecipeDetail({ recipe }: Props) {
   const handleDelete = async () => {
     setIsDeleting(true);
     await deleteRecipe(recipe.id);
-    router.push("/meal/recipes");
+    router.push("/meals/recipes");
     router.refresh();
   };
 
@@ -62,7 +62,7 @@ export function RecipeDetail({ recipe }: Props) {
           variant="ghost"
           className="mb-6"
           render={
-            <Link href="/meal/recipes">
+            <Link href="/meals/recipes">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to recipes
             </Link>

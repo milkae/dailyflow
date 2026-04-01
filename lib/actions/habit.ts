@@ -85,6 +85,8 @@ export async function createOrUpdateHabit(
   });
 
   revalidatePath("/");
+  revalidatePath("/habits");
+
   return { formErrors: [], fieldErrors: {}, success: true };
 }
 
@@ -174,6 +176,7 @@ export async function deleteHabit(id: string) {
 
   await prisma.habit.delete({ where: { id, userId: session.user.id } });
   revalidatePath("/");
+  revalidatePath("/habits");
 }
 
 export const getHabits = cache(async () => {

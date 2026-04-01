@@ -57,7 +57,7 @@ export async function addOrUpdateMeal(
   });
 
   revalidatePath("/");
-  revalidatePath("/meal-plan");
+  revalidatePath("/meals");
   return { formErrors: [], fieldErrors: {} };
 }
 
@@ -73,7 +73,7 @@ export async function deleteMeal(mealId: string) {
   });
 
   revalidatePath("/");
-  revalidatePath("/meal/week-plan");
+  revalidatePath("/meals");
 }
 
 export const getWeekMeals = cache(async () => {

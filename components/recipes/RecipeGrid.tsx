@@ -22,7 +22,7 @@ export function RecipeGrid({ recipes }: Props) {
       {recipes.map((recipe) => (
         <Link
           key={recipe.id}
-          href={`/meal/recipes/${recipe.id}`}
+          href={`/meals/recipes/${recipe.id}`}
           className="group"
         >
           <Card className="h-full hover:border-tertiary transition-all hover:shadow-lg">

@@ -74,7 +74,7 @@ export async function createOrUpdateRecipe(
         },
       });
 
-      revalidatePath(`/meal/recipes/${id}`);
+      revalidatePath(`/meals/recipes/${id}`);
     } else {
       await prisma.recipe.create({
         data: {
@@ -90,7 +90,7 @@ export async function createOrUpdateRecipe(
       });
     }
 
-    revalidatePath("/meal/recipes");
+    revalidatePath("/meals/recipes");
     return { formErrors: [], fieldErrors: {} };
   } catch (error) {
     console.error("Recipe save error:", error);
@@ -120,5 +120,5 @@ export async function deleteRecipe(recipeId: string) {
     where: { id: recipeId, userId: session.user.id },
   });
 
-  revalidatePath("/meal/recipes");
+  revalidatePath("/meals/recipes");
 }
