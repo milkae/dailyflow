@@ -24,6 +24,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Recipe } from "@/generated/prisma/browser";
 
 const MealIcons = {
   [MealType.breakfast]: <Croissant />,
@@ -96,10 +97,13 @@ const MealsList = ({ date, meals, onSelection }: MealsListProps) => {
 
 export const WeeklyMealPlanner = ({
   mealsPromise,
+  recipesPromise,
 }: {
   mealsPromise: Promise<{ date: Date; meals: Record<MealType, Meal | null> }[]>;
+  recipesPromise: Promise<Recipe[]>;
 }) => {
   const mealsByDate = use(mealsPromise);
+  const recipes = use(recipesPromise);
   const isMobile = useIsMobile();
   const [selectedSlot, setSelectedSlot] = useState<{
     date: Date;
@@ -179,6 +183,7 @@ export const WeeklyMealPlanner = ({
           mealType={selectedSlot.type}
           date={selectedSlot.date}
           existingMeal={selectedSlot.meal}
+          recipes={recipes}
         />
       )}
     </>

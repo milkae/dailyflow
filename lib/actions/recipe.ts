@@ -3,9 +3,7 @@
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { verifySession } from "../dal";
 
 const recipeSchema = z.object({
   name: z.string(),
@@ -26,12 +24,7 @@ export async function createOrUpdateRecipe(
   },
   formData: FormData,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
+  const session = await verifySession();
   const formDataObj = Object.fromEntries(formData.entries());
   const validatedFields = recipeSchema.safeParse(formDataObj);
 
@@ -44,7 +37,7 @@ export async function createOrUpdateRecipe(
   try {
     if (id) {
       const existing = await prisma.recipe.findUnique({
-        where: { id, userId: session.user.id },
+        where: { id, userId: session.userId },
       });
 
       if (!existing) {
@@ -55,7 +48,7 @@ export async function createOrUpdateRecipe(
       }
 
       await prisma.recipe.update({
-        where: { id, userId: session.user.id },
+        where: { id, userId: session.userId },
         data: recipe,
       });
 
@@ -63,11 +56,11 @@ export async function createOrUpdateRecipe(
     } else {
       if (recipe.sourceUrl) {
         const existing = await prisma.recipe.findFirst({
-          where: { sourceUrl: recipe.sourceUrl, userId: session.user.id },
+          where: { sourceUrl: recipe.sourceUrl, userId: session.userId },
         });
         if (existing) {
           await prisma.recipe.update({
-            where: { id: existing.id, userId: session.user.id },
+            where: { id: existing.id, userId: session.userId },
             data: recipe,
           });
           revalidatePath(`/meals/recipes`);
@@ -78,7 +71,7 @@ export async function createOrUpdateRecipe(
       await prisma.recipe.create({
         data: {
           ...recipe,
-          userId: session.user.id,
+          userId: session.userId,
         },
       });
     }
@@ -95,14 +88,9 @@ export async function createOrUpdateRecipe(
 }
 
 export async function deleteRecipe(recipeId: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
+  const session = await verifySession();
   const recipe = await prisma.recipe.findUnique({
-    where: { id: recipeId, userId: session.user.id },
+    where: { id: recipeId, userId: session.userId },
   });
 
   if (!recipe) {
@@ -110,8 +98,13 @@ export async function deleteRecipe(recipeId: string) {
   }
 
   await prisma.recipe.delete({
-    where: { id: recipeId, userId: session.user.id },
+    where: { id: recipeId, userId: session.userId },
   });
 
   revalidatePath("/meals/recipes");
+}
+
+export async function getAllRecipes() {
+  const session = await verifySession();
+  return prisma.recipe.findMany({ where: { userId: session.userId } });
 }

@@ -17,6 +17,7 @@ const mealSchema = z.object({
     .min(1, "Name is required")
     .max(100, "Name must be 100 characters or less"),
   notes: z.string().optional(),
+  recipeId: z.string().optional(),
 });
 
 export async function addOrUpdateMeal(
@@ -42,17 +43,18 @@ export async function addOrUpdateMeal(
     return z.flattenError(validatedFields.error);
   }
 
-  const { name, notes } = validatedFields.data;
+  const { name, notes, recipeId } = validatedFields.data;
 
   await prisma.meal.upsert({
     where: { id: id || "", userId: session.user.id },
-    update: { name, notes },
+    update: { name, notes, recipeId },
     create: {
       name,
       notes,
       type,
       date: dateOnly,
       userId: session.user.id,
+      recipeId,
     },
   });
 

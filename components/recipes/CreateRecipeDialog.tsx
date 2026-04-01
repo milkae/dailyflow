@@ -76,7 +76,7 @@ export const CreateRecipeDialog = ({
 
   return (
     <Dialog open={open || isOpen} onOpenChange={handleOpenChange}>
-      {!open && (
+      {typeof open === "undefined" && (
         <DialogTrigger
           render={
             <Button className="bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground">

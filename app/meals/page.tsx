@@ -6,9 +6,11 @@ import { buttonVariants } from "@/lib/utils";
 import { getWeekMeals } from "@/lib/actions/meal";
 import { Suspense } from "react";
 import { WeeklyMealPlannerSkeleton } from "@/components/meals/WeeklyMealPlannerSkeleton";
+import { getAllRecipes } from "@/lib/actions/recipe";
 
 export default async function MealsPage() {
   const mealsPromise = getWeekMeals();
+  const recipesPromise = getAllRecipes();
 
   return (
     <div className="space-y-8">
@@ -31,7 +33,10 @@ export default async function MealsPage() {
         </Link>
       </div>
       <Suspense fallback={<WeeklyMealPlannerSkeleton />}>
-        <WeeklyMealPlanner mealsPromise={mealsPromise} />
+        <WeeklyMealPlanner
+          mealsPromise={mealsPromise}
+          recipesPromise={recipesPromise}
+        />
       </Suspense>
     </div>
   );
