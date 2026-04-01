@@ -283,7 +283,7 @@
     @apply text-2xl font-semibold;
   }
   p {
-    @apply leading-7 not-first:mt-6;
+    @apply leading-7;
   }
   html {
     @apply font-sans;

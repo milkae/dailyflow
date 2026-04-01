@@ -1,0 +1,146 @@
+import { Recipe } from "@/generated/prisma/browser";
+import { NextRequest, NextResponse } from "next/server";
+import { JSDOM } from "jsdom";
+
+interface RecipeJsonLd {
+  "@type": "Recipe" | string[];
+  name?: string;
+  description?: string;
+  recipeIngredient?: string[];
+  recipeInstructions?: (string | { text: string })[];
+  prepTime?: string;
+  cookTime?: string;
+  recipeYield?: string | number;
+  image?: string | { url: string } | (string | { url: string })[];
+  recipeCategory?: string;
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { url } = await request.json();
+    if (!url) {
+      return NextResponse.json({ error: "URL is required" }, { status: 400 });
+    }
+
+    const dom = await JSDOM.fromURL(url);
+    const recipeData = extractRecipe(dom, url);
+
+    if (!recipeData) {
+      return NextResponse.json(
+        { error: "Could not parse recipe from this URL" },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json(recipeData as Recipe);
+  } catch (error) {
+    console.error("Recipe parsing error:", error);
+    return NextResponse.json(
+      { error: "Failed to parse recipe" },
+      { status: 500 },
+    );
+  }
+}
+
+function extractRecipe(dom: JSDOM, url: string) {
+  const scripts = dom.window.document.querySelectorAll(
+    'script[type="application/ld+json"]',
+  );
+
+  if (scripts.length) {
+    try {
+      const scriptArray = Array.from(scripts);
+      for (let i = 0; i < scriptArray.length; i++) {
+        const script = scriptArray[i];
+        const parsed = JSON.parse(script.textContent);
+        const recipe = findRecipeNode(parsed);
+
+        if (recipe) {
+          return {
+            name: recipe.name,
+            description: recipe.description || "",
+            ingredients: Array.isArray(recipe.recipeIngredient)
+              ? recipe.recipeIngredient.join("\n")
+              : recipe.recipeIngredient || "",
+            instructions: Array.isArray(recipe.recipeInstructions)
+              ? recipe.recipeInstructions
+                  .map((i) => (typeof i === "string" ? i : i.text || ""))
+                  .filter(Boolean)
+                  .join("\n")
+              : recipe.recipeInstructions || "",
+            prepTime: parseDuration(recipe.prepTime),
+            cookTime: parseDuration(recipe.cookTime),
+            servings: parseServings(recipe.recipeYield),
+            imageUrl: Array.isArray(recipe.image)
+              ? (typeof recipe.image[0] === "string"
+                  ? recipe.image[0]
+                  : recipe.image[0]?.url) || ""
+              : (typeof recipe.image === "string"
+                  ? recipe.image
+                  : recipe.image?.url) || "",
+            sourceUrl: url,
+            category: recipe.recipeCategory,
+          } as Recipe;
+        }
+      }
+    } catch (error) {
+      console.error("Failed to parse schema:", error);
+    }
+  }
+}
+
+function isRecipeNode(node: unknown): node is RecipeJsonLd {
+  if (!node || typeof node !== "object") return false;
+  const obj = node as Record<string, unknown>;
+  const type = obj["@type"];
+  if (typeof type === "string" && type === "Recipe") return true;
+  if (Array.isArray(type) && type.includes("Recipe")) return true;
+  return false;
+}
+
+function findRecipeNode(node: unknown): RecipeJsonLd | null {
+  if (!node) return null;
+
+  if (isRecipeNode(node)) return node;
+
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      const found = findRecipeNode(item);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  if (typeof node === "object") {
+    const obj = node as Record<string, unknown>;
+    if (obj["@graph"] && Array.isArray(obj["@graph"])) {
+      return findRecipeNode(obj["@graph"]);
+    }
+    for (const key in obj) {
+      const found = findRecipeNode(obj[key]);
+      if (found) return found;
+    }
+  }
+
+  return null;
+}
+
+function parseDuration(duration?: string): number | null {
+  if (!duration) return null;
+
+  const hoursMatch = duration.match(/(\d+)H/);
+  const minutesMatch = duration.match(/(\d+)M/);
+  const hours = hoursMatch ? parseInt(hoursMatch[1]) : 0;
+  const minutes = minutesMatch ? parseInt(minutesMatch[1]) : 0;
+
+  return hours * 60 + minutes;
+}
+
+function parseServings(yieldValue?: unknown): number {
+  if (typeof yieldValue === "number") return yieldValue;
+  if (typeof yieldValue === "string") {
+    const num = parseInt(yieldValue);
+    return isNaN(num) ? 4 : num;
+  }
+  return 4;
+}
