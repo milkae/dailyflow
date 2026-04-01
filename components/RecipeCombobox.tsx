@@ -18,18 +18,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-type Recipe = {
-  id: string;
-  name: string;
-  description: string | null;
-  sourceUrl: string | null;
-};
+import { Recipe } from "@/generated/prisma/browser";
 
 type Props = {
   recipes: Recipe[];
-  selectedRecipeId: string | null;
-  onSelectRecipe: (recipeId: string, recipeName: string) => void;
+  selectedRecipeId?: string;
+  onSelectRecipe: (recipeId: string) => void;
   onCreateNew: () => void;
 };
 
@@ -58,7 +52,7 @@ export const RecipeCombobox = ({
               {selectedRecipe ? (
                 <span className="truncate">{selectedRecipe.name}</span>
               ) : (
-                <span className="text-slate-500 dark:text-slate-500">
+                <span className="text-muted-foreground">
                   Select a recipe...
                 </span>
               )}
@@ -67,10 +61,7 @@ export const RecipeCombobox = ({
           }
         />
 
-        <PopoverContent
-          className="w-(--radix-popover-trigger-width) p-0 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
-          align="start"
-        >
+        <PopoverContent className="w-(--anchor-width) p-0" align="start">
           <Command className="bg-transparent">
             <CommandInput
               placeholder="Search recipes..."
@@ -82,16 +73,14 @@ export const RecipeCombobox = ({
             <CommandList>
               <CommandEmpty className="py-6 text-center text-sm">
                 <div className="space-y-3">
-                  <p className="text-slate-500 dark:text-slate-500">
-                    No recipe found.
-                  </p>
+                  <p className="text-muted-foreground">No recipe found.</p>
                   <Button
                     size="sm"
                     onClick={() => {
                       setOpen(false);
                       onCreateNew();
                     }}
-                    className="bg-violet-600 hover:bg-violet-700 text-white"
+                    className="bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     {`Create ${search}`}
@@ -105,7 +94,7 @@ export const RecipeCombobox = ({
                     key={recipe.id}
                     value={recipe.name}
                     onSelect={() => {
-                      onSelectRecipe(recipe.id, recipe.name);
+                      onSelectRecipe(recipe.id);
                       setOpen(false);
                     }}
                     className="cursor-pointer"
@@ -121,7 +110,7 @@ export const RecipeCombobox = ({
                     <div className="flex-1 min-w-0">
                       <div className="font-medium truncate">{recipe.name}</div>
                       {recipe.description && (
-                        <div className="text-xs text-slate-500 dark:text-slate-500 truncate">
+                        <div className="text-xs text-muted-foreground truncate">
                           {recipe.description}
                         </div>
                       )}
@@ -139,7 +128,7 @@ export const RecipeCombobox = ({
                         setOpen(false);
                         onCreateNew();
                       }}
-                      className="cursor-pointer text-violet-600 dark:text-violet-400"
+                      className="cursor-pointer text-tertiary"
                     >
                       <Plus className="mr-2 h-4 w-4" />
                       Create new recipe
@@ -154,14 +143,12 @@ export const RecipeCombobox = ({
 
       {/* Info sur la recette sélectionnée */}
       {selectedRecipe && (
-        <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-3">
+        <div className="rounded-lg border p-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-50">
-                {selectedRecipe.name}
-              </p>
+              <p className="text-sm font-medium">{selectedRecipe.name}</p>
               {selectedRecipe.description && (
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 line-clamp-2">
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                   {selectedRecipe.description}
                 </p>
               )}
@@ -171,7 +158,7 @@ export const RecipeCombobox = ({
                 href={selectedRecipe.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-violet-600 dark:text-violet-400 hover:underline text-xs shrink-0"
+                className="text-tertiary hover:underline text-xs shrink-0"
               >
                 View recipe →
               </a>
