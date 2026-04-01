@@ -7,7 +7,10 @@ interface RecipeJsonLd {
   name?: string;
   description?: string;
   recipeIngredient?: string[];
-  recipeInstructions?: (string | { text: string })[];
+  recipeInstructions?: (
+    | string
+    | { text?: string; itemListElement?: { text: string }[] }
+  )[];
   prepTime?: string;
   cookTime?: string;
   recipeYield?: string | number;
@@ -54,20 +57,16 @@ function extractRecipe(dom: JSDOM, url: string) {
         const script = scriptArray[i];
         const parsed = JSON.parse(script.textContent);
         const recipe = findRecipeNode(parsed);
-
         if (recipe) {
           return {
-            name: recipe.name,
-            description: recipe.description || "",
+            name: decodeHtmlEntities(recipe.name || ""),
+            description: decodeHtmlEntities(recipe.description || ""),
             ingredients: Array.isArray(recipe.recipeIngredient)
-              ? recipe.recipeIngredient.join("\n")
-              : recipe.recipeIngredient || "",
-            instructions: Array.isArray(recipe.recipeInstructions)
-              ? recipe.recipeInstructions
-                  .map((i) => (typeof i === "string" ? i : i.text || ""))
-                  .filter(Boolean)
+              ? recipe.recipeIngredient
+                  .map((i) => decodeHtmlEntities(i))
                   .join("\n")
-              : recipe.recipeInstructions || "",
+              : decodeHtmlEntities(recipe.recipeIngredient || ""),
+            instructions: parseRecipeInstructions(recipe.recipeInstructions),
             prepTime: parseDuration(recipe.prepTime),
             cookTime: parseDuration(recipe.cookTime),
             servings: parseServings(recipe.recipeYield),
@@ -87,6 +86,8 @@ function extractRecipe(dom: JSDOM, url: string) {
       console.error("Failed to parse schema:", error);
     }
   }
+
+  return null;
 }
 
 function isRecipeNode(node: unknown): node is RecipeJsonLd {
@@ -143,4 +144,35 @@ function parseServings(yieldValue?: unknown): number {
     return isNaN(num) ? 4 : num;
   }
   return 4;
+}
+
+function parseRecipeInstructions(
+  instructions?: (
+    | string
+    | { text?: string; itemListElement?: { text: string }[] }
+  )[],
+) {
+  return Array.isArray(instructions)
+    ? instructions
+        .map((i) => {
+          if (typeof i === "string") {
+            return decodeHtmlEntities(i);
+          }
+          if (i.itemListElement) {
+            return i.itemListElement
+              .map((step) => decodeHtmlEntities(step.text || ""))
+              .filter(Boolean)
+              .join("\n");
+          }
+          return decodeHtmlEntities(i.text || "");
+        })
+        .filter(Boolean)
+        .join("\n")
+    : decodeHtmlEntities(instructions || "");
+}
+
+function decodeHtmlEntities(text: string): string {
+  const textarea = new JSDOM("").window.document.createElement("textarea");
+  textarea.innerHTML = text;
+  return textarea.value;
 }
