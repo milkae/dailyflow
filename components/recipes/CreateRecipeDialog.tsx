@@ -20,8 +20,8 @@ export const CreateRecipeDialog = () => {
   const [tab, setTab] = useState<"url" | "manual">("url");
   const [url, setUrl] = useState("");
   const [isParsing, setIsParsing] = useState(false);
-
   const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleParseUrl = async () => {
     if (!url) return;
@@ -50,8 +50,24 @@ export const CreateRecipeDialog = () => {
     setIsParsing(false);
   };
 
+  const handleSuccess = () => {
+    setIsOpen(false);
+    setTab("url");
+    setUrl("");
+    setCurrentRecipe(undefined);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setTab("url");
+      setUrl("");
+      setCurrentRecipe(undefined);
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
           <Button className="bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground">
@@ -116,7 +132,7 @@ export const CreateRecipeDialog = () => {
           </TabsContent>
 
           <TabsContent value="manual" className="space-y-4 mt-4">
-            <RecipeForm recipe={currentRecipe} />
+            <RecipeForm recipe={currentRecipe} onSuccess={handleSuccess} />
           </TabsContent>
         </Tabs>
       </DialogContent>

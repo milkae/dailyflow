@@ -1,4 +1,4 @@
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,9 +14,10 @@ import {
 
 type Props = {
   recipe?: Recipe;
+  onSuccess?: () => void;
 };
 
-export function RecipeForm({ recipe }: Props) {
+export function RecipeForm({ recipe, onSuccess }: Props) {
   const submitRecipe = createOrUpdateRecipe.bind(null, {
     id: recipe?.id,
   });
@@ -25,8 +26,23 @@ export function RecipeForm({ recipe }: Props) {
     fieldErrors: {},
   });
 
+  const wasPendingRef = useRef(false);
+
+  useEffect(() => {
+    if (pending) {
+      wasPendingRef.current = true;
+    } else if (
+      wasPendingRef.current &&
+      state.formErrors.length === 0 &&
+      Object.keys(state.fieldErrors).length === 0
+    ) {
+      onSuccess?.();
+      wasPendingRef.current = false;
+    }
+  }, [pending, state, onSuccess]);
+
   return (
-    <form action={formAction} className="space-y-4 mt-4">
+    <form action={formAction} className="space-y-4 mt-4" key={recipe?.name}>
       <Field data-invalid={!!state.fieldErrors.name?.length}>
         <FieldLabel htmlFor="recipe-name">
           Recipe Name <span className="text-destructive">*</span>
