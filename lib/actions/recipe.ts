@@ -43,7 +43,6 @@ export async function createOrUpdateRecipe(
 
   try {
     if (id) {
-      //TODO check for existing URL and ask for confirmation (possibly multiple recipes on same page)
       const existing = await prisma.recipe.findUnique({
         where: { id, userId: session.user.id },
       });
@@ -62,6 +61,20 @@ export async function createOrUpdateRecipe(
 
       revalidatePath(`/meals/recipes/${id}`);
     } else {
+      if (recipe.sourceUrl) {
+        const existing = await prisma.recipe.findFirst({
+          where: { sourceUrl: recipe.sourceUrl, userId: session.user.id },
+        });
+        if (existing) {
+          await prisma.recipe.update({
+            where: { id: existing.id, userId: session.user.id },
+            data: recipe,
+          });
+          revalidatePath(`/meals/recipes`);
+          return { formErrors: [], fieldErrors: {} };
+        }
+      }
+
       await prisma.recipe.create({
         data: {
           ...recipe,
