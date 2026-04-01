@@ -40,13 +40,13 @@ export function RecipeGrid({ recipes }: Props) {
               </div>
               {(recipe.prepTime || recipe.cookTime) && (
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  {recipe.prepTime && (
+                  {!!recipe.prepTime && (
                     <div className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
                       <span>Prep: {recipe.prepTime}min</span>
                     </div>
                   )}
-                  {recipe.cookTime && (
+                  {!!recipe.cookTime && (
                     <div className="flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5" />
                       <span>Cook: {recipe.cookTime}min</span>

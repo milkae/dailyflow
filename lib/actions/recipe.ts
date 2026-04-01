@@ -12,8 +12,9 @@ const recipeSchema = z.object({
   description: z.string().optional(),
   ingredients: z.string(),
   instructions: z.string(),
-  prepTime: z.number().optional(),
-  cookTime: z.number().optional(),
+  prepTime: z.coerce.number().optional(),
+  cookTime: z.coerce.number().optional(),
+  servings: z.coerce.number().optional(),
   sourceUrl: z.string().optional(),
 });
 
@@ -38,18 +39,11 @@ export async function createOrUpdateRecipe(
     return z.flattenError(validatedFields.error);
   }
 
-  const {
-    name,
-    description,
-    ingredients,
-    instructions,
-    prepTime,
-    cookTime,
-    sourceUrl,
-  } = validatedFields.data;
+  const recipe = validatedFields.data;
 
   try {
     if (id) {
+      //TODO check for existing URL and ask for confirmation (possibly multiple recipes on same page)
       const existing = await prisma.recipe.findUnique({
         where: { id, userId: session.user.id },
       });
@@ -63,28 +57,14 @@ export async function createOrUpdateRecipe(
 
       await prisma.recipe.update({
         where: { id, userId: session.user.id },
-        data: {
-          name,
-          description,
-          ingredients,
-          instructions,
-          prepTime,
-          cookTime,
-          sourceUrl,
-        },
+        data: recipe,
       });
 
       revalidatePath(`/meals/recipes/${id}`);
     } else {
       await prisma.recipe.create({
         data: {
-          name,
-          description,
-          ingredients,
-          instructions,
-          prepTime,
-          cookTime,
-          sourceUrl,
+          ...recipe,
           userId: session.user.id,
         },
       });

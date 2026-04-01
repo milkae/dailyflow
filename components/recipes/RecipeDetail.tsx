@@ -26,6 +26,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Recipe } from "@/generated/prisma/browser";
+import { buttonVariants } from "@/lib/utils";
 
 type Props = {
   recipe: Recipe;
@@ -56,21 +57,17 @@ export function RecipeDetail({ recipe }: Props) {
 
   return (
     <>
-      <main className="py-8 max-w-4xl">
-        {/* Back button */}
-        <Button
-          variant="ghost"
-          className="mb-6"
-          render={
-            <Link href="/meals/recipes">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to recipes
-            </Link>
-          }
-        />
+      <main className="py-8 max-w-4xl space-y-6">
+        <Link
+          href="/meals/recipes"
+          className={buttonVariants({ variant: "ghost" })}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to recipes
+        </Link>
 
         {/* Header */}
-        <div className="mb-8">
+        <div>
           <div className="flex items-start justify-between gap-4 mb-4">
             <div className="flex-1">
               <h1 className="text-4xl font-bold mb-2">{recipe.name}</h1>
@@ -103,7 +100,7 @@ export function RecipeDetail({ recipe }: Props) {
 
           {/* Time info */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-            {recipe.prepTime && (
+            {!!recipe.prepTime && (
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
                 <span>
@@ -111,7 +108,7 @@ export function RecipeDetail({ recipe }: Props) {
                 </span>
               </div>
             )}
-            {recipe.cookTime && (
+            {!!recipe.cookTime && (
               <div className="flex items-center gap-2">
                 <ChefHat className="h-4 w-4" />
                 <span>
