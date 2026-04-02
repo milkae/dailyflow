@@ -16,7 +16,7 @@ type Props = {
 export function EditRecipeDialog({ open, onOpenChange, recipe }: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className=" sm:max-w-175 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-175 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{recipe ? "Edit Recipe" : "Add Recipe"}</DialogTitle>
         </DialogHeader>

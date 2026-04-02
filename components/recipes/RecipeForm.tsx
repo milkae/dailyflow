@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createOrUpdateRecipe } from "@/lib/actions/recipe";
-import { Loader2 } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
 import { Recipe } from "@/generated/prisma/browser";
 import {
   Field,
@@ -235,21 +235,25 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
       {recipe?.sourceUrl && (
         <div className="space-y-2">
           <Field data-invalid={!!state.fieldErrors.sourceUrl?.length}>
-            <FieldLabel htmlFor="sourceUrl">Source</FieldLabel>
+            <FieldLabel htmlFor="sourceUrl">
+              Source
+              <a
+                href={recipe?.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-tertiary hover:underline"
+              >
+                <span>Open link</span>
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </FieldLabel>
+
             <Input
               id="sourceUrl"
               name="sourceUrl"
               defaultValue={recipe?.sourceUrl}
               disabled={pending}
             />
-            <a
-              href={recipe?.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-sm text-violet-600 dark:text-violet-400 hover:underline truncate"
-            >
-              {recipe?.sourceUrl}
-            </a>
             {!!state.fieldErrors.sourceUrl?.length && (
               <div>
                 {state.fieldErrors.sourceUrl.map((e, i) => (

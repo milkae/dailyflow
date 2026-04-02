@@ -86,7 +86,7 @@ export const CreateRecipeDialog = ({
           }
         />
       )}
-      <DialogContent className=" sm:max-w-175 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-175 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add Recipe</DialogTitle>
         </DialogHeader>
