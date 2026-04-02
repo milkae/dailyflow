@@ -4,9 +4,6 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { MealType } from "@/generated/prisma/enums";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { cache } from "react";
 import { verifySession } from "@/lib/dal";
 import { MealWithRecipeName } from "../types";
@@ -28,12 +25,7 @@ export async function addOrUpdateMeal(
   },
   formData: FormData,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
+  const session = await verifySession();
   const dateOnly = new Date(date);
   dateOnly.setHours(0, 0, 0, 0);
   const formDataObj = Object.fromEntries(formData.entries());
@@ -46,14 +38,14 @@ export async function addOrUpdateMeal(
   const { name, notes, recipeId } = validatedFields.data;
 
   await prisma.meal.upsert({
-    where: { id: id || "", userId: session.user.id },
+    where: { id: id || "", userId: session.userId },
     update: { name, notes, recipeId },
     create: {
       name,
       notes,
       type,
       date: dateOnly,
-      userId: session.user.id,
+      userId: session.userId,
       recipeId,
     },
   });
@@ -64,14 +56,10 @@ export async function addOrUpdateMeal(
 }
 
 export async function deleteMeal(mealId: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
+  const session = await verifySession();
 
   await prisma.meal.delete({
-    where: { id: mealId, userId: session.user.id },
+    where: { id: mealId, userId: session.userId },
   });
 
   revalidatePath("/");
@@ -80,7 +68,6 @@ export async function deleteMeal(mealId: string) {
 
 export const getWeekMeals = cache(async () => {
   const session = await verifySession();
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const startOfWeek = new Date(today);

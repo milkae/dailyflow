@@ -4,10 +4,7 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { Frequency } from "@/generated/prisma/enums";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { parseHabit } from "@/lib/habits";
-import { headers } from "next/headers";
 import { cache } from "react";
 import { verifySession } from "@/lib/dal";
 
@@ -54,12 +51,7 @@ export async function createOrUpdateHabit(
   },
   formData: FormData,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
+  const session = await verifySession();
   const formDataObj = Object.fromEntries(formData.entries());
   const validatedFields = habitSchema.safeParse(formDataObj);
 
@@ -73,14 +65,14 @@ export async function createOrUpdateHabit(
     undefined;
 
   await prisma.habit.upsert({
-    where: { id: id || "", userId: session.user.id },
+    where: { id: id || "", userId: session.userId },
     update: { name, description, frequency, frequencyConfig },
     create: {
       name,
       description,
       frequency,
       frequencyConfig,
-      userId: session.user.id,
+      userId: session.userId,
     },
   });
 
@@ -91,12 +83,6 @@ export async function createOrUpdateHabit(
 }
 
 export async function submitHabitEntryForm(id: string, formData: FormData) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
   const note = (formData.get("note") as string) || "";
   await createHabitEntry(id, undefined, note);
 }
@@ -106,18 +92,13 @@ export async function createHabitEntry(
   date = new Date(),
   note?: string,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
+  const session = await verifySession();
   const entryDate = normalizeDate(date);
 
   const existingEntry = await prisma.entry.findUnique({
     where: {
       habitId_date: { habitId: id, date: entryDate },
-      habit: { userId: session.user.id },
+      habit: { userId: session.userId },
     },
   });
 
@@ -128,7 +109,7 @@ export async function createHabitEntry(
   await prisma.entry.upsert({
     where: {
       habitId_date: { habitId: id, date: entryDate },
-      habit: { userId: session.user.id },
+      habit: { userId: session.userId },
     },
     update: { note },
     create: { habitId: id, date: entryDate, note },
@@ -138,28 +119,17 @@ export async function createHabitEntry(
 }
 
 export async function deleteHabitEntry(id: string, date = new Date()) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
+  const session = await verifySession();
   const entryDate = normalizeDate(date);
 
   await prisma.entry.deleteMany({
-    where: { habitId: id, date: entryDate, habit: { userId: session.user.id } },
+    where: { habitId: id, date: entryDate, habit: { userId: session.userId } },
   });
 
   revalidatePath("/");
 }
 
 export async function toggleHabitCompletion(id: string, completion: boolean) {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
   if (!completion) {
     return deleteHabitEntry(id);
   }
@@ -168,13 +138,9 @@ export async function toggleHabitCompletion(id: string, completion: boolean) {
 }
 
 export async function deleteHabit(id: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await verifySession();
 
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
-  await prisma.habit.delete({ where: { id, userId: session.user.id } });
+  await prisma.habit.delete({ where: { id, userId: session.userId } });
   revalidatePath("/");
   revalidatePath("/habits");
 }
