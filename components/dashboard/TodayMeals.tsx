@@ -6,10 +6,10 @@ import { MealSlot } from "@/components/meals/MealSlot";
 import { buttonVariants } from "@/lib/utils";
 import { MealType } from "@/generated/prisma/enums";
 import { Heading } from "../ui/typography";
-import { Meal } from "@/generated/prisma/browser";
+import { MealWithRecipeName } from "@/lib/types";
 
 type Props = {
-  meals: Meal[];
+  meals: MealWithRecipeName[];
 };
 
 export function TodayMeals({ meals }: Props) {
@@ -18,7 +18,7 @@ export function TodayMeals({ meals }: Props) {
       acc[meal.type] = meal;
       return acc;
     },
-    {} as Record<MealType, Meal>,
+    {} as Record<MealType, MealWithRecipeName>,
   );
 
   return (

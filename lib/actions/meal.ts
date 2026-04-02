@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { cache } from "react";
 import { verifySession } from "@/lib/dal";
-import { Meal } from "@/generated/prisma/browser";
+import { MealWithRecipeName } from "../types";
 
 const mealSchema = z.object({
   name: z
@@ -95,6 +95,7 @@ export const getWeekMeals = cache(async () => {
       userId: session.userId,
       date: { gte: startOfWeek, lt: endOfWeek },
     },
+    include: { recipe: { select: { id: true, name: true } } },
     orderBy: [{ date: "desc" }, { type: "asc" }],
   });
 
@@ -115,7 +116,7 @@ export const getWeekMeals = cache(async () => {
       acc[dateKey][meal.type] = meal;
       return acc;
     },
-    {} as Record<string, Record<MealType, Meal | null>>,
+    {} as Record<string, Record<MealType, MealWithRecipeName | null>>,
   );
 
   return Array.from({ length: 7 }, (_, i) => {

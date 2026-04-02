@@ -16,7 +16,6 @@ import { useState } from "react";
 import { AddMealDialog } from "@/components/meals/AddMealDialog";
 import { capitalize } from "@/lib/utils";
 import { MealType } from "@/generated/prisma/enums";
-import { Meal } from "@/generated/prisma/client";
 import { deleteMeal } from "@/lib/actions/meal";
 import {
   Collapsible,
@@ -25,6 +24,8 @@ import {
 } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Recipe } from "@/generated/prisma/browser";
+import Link from "next/link";
+import { MealWithRecipeName } from "@/lib/types";
 
 const MealIcons = {
   [MealType.breakfast]: <Croissant />,
@@ -35,7 +36,7 @@ const MealIcons = {
 
 interface MealsListProps {
   date: Date;
-  meals: Record<MealType, Meal | null>;
+  meals: Record<MealType, MealWithRecipeName | null>;
   onSelection: ({
     date,
     type,
@@ -43,7 +44,7 @@ interface MealsListProps {
   }: {
     date: Date;
     type: MealType;
-    meal?: Meal;
+    meal?: MealWithRecipeName;
   }) => void;
 }
 
@@ -79,6 +80,15 @@ const MealsList = ({ date, meals, onSelection }: MealsListProps) => {
                   {meal.notes}
                 </p>
               )}
+              {meal.recipe && (
+                <Link
+                  href={`/meals/recipes/${meal.recipe.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-xs text-tertiary hover:underline block font-medium truncate"
+                >
+                  {meal.recipe.name}
+                </Link>
+              )}
             </div>
           </div>
         ) : (
@@ -99,7 +109,9 @@ export const WeeklyMealPlanner = ({
   mealsPromise,
   recipesPromise,
 }: {
-  mealsPromise: Promise<{ date: Date; meals: Record<MealType, Meal | null> }[]>;
+  mealsPromise: Promise<
+    { date: Date; meals: Record<MealType, MealWithRecipeName | null> }[]
+  >;
   recipesPromise: Promise<Recipe[]>;
 }) => {
   const mealsByDate = use(mealsPromise);
@@ -108,7 +120,7 @@ export const WeeklyMealPlanner = ({
   const [selectedSlot, setSelectedSlot] = useState<{
     date: Date;
     type: MealType;
-    meal?: Meal;
+    meal?: MealWithRecipeName;
   } | null>(null);
 
   const today = new Date();

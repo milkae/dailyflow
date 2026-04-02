@@ -17,6 +17,7 @@ export const getTodayMeals = cache(async () => {
       userId: session.userId,
       date: { gte: today, lt: tomorrow },
     },
+    include: { recipe: { select: { id: true, name: true } } },
   });
 });
 

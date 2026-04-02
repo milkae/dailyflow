@@ -36,3 +36,7 @@ export type TypedHabitWithEntries = Omit<
   "frequency" | "frequencyConfig"
 > &
   HabitFrequencyConfig;
+
+export type MealWithRecipeName = Prisma.MealGetPayload<{
+  include: { recipe: { select: { id: true; name: true } } };
+}>;

@@ -1,8 +1,8 @@
 import { MealType } from "@/generated/prisma/enums";
 import { Cookie, Croissant, Salad, Soup } from "lucide-react";
-import { Meal } from "@/generated/prisma/browser";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { MealWithRecipeName } from "@/lib/types";
 
 const mealConfig = {
   [MealType.breakfast]: { label: "Breakfast", icon: Croissant },
@@ -13,7 +13,7 @@ const mealConfig = {
 
 type Props = {
   type: MealType;
-  meal?: Meal;
+  meal?: MealWithRecipeName;
   onClick?: () => void;
 };
 
@@ -46,13 +46,18 @@ export function MealSlot({ type, meal, onClick }: Props) {
               <p className="font-semibold text-sm text-foreground truncate leading-tight mt-1">
                 {meal.name}
               </p>
-              {meal.recipeId && (
+              {meal.notes && (
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                  {meal.notes}
+                </p>
+              )}
+              {meal.recipe && (
                 <Link
-                  href={`/meals/recipes/${meal.recipeId}`}
+                  href={`/meals/recipes/${meal.recipe.id}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="text-[11px] text-tertiary hover:underline flex items-center gap-1 mt-1.5 font-medium"
+                  className="text-sm text-tertiary hover:underline font-medium"
                 >
-                  View recipe
+                  {meal.recipe.name}
                 </Link>
               )}
             </>
