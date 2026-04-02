@@ -1,9 +1,10 @@
-import { Skeleton } from "../ui/skeleton";
 import { Heading } from "../ui/typography";
-import { getDashboardStats } from "@/lib/dashboard-data";
+import { getDashboardData } from "@/lib/dashboard-data";
 
-export const DashboardHeader = async () => {
-  const { total, completed, mealsCount } = await getDashboardStats();
+export async function DashboardHeader() {
+  const { stats } = await getDashboardData();
+  const { total, completed, mealsCount } = stats;
+
   const today = new Date();
 
   return (
@@ -17,7 +18,7 @@ export const DashboardHeader = async () => {
       </Heading>
 
       <div className="flex flex-wrap items-center gap-3 text-muted-foreground">
-        {total > 0 && (
+        {total > 0 ? (
           <>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-success" />
@@ -32,6 +33,7 @@ export const DashboardHeader = async () => {
                 habits completed
               </span>
             </div>
+
             {mealsCount > 0 && (
               <>
                 <span className="text-border">•</span>
@@ -41,33 +43,15 @@ export const DashboardHeader = async () => {
                     <strong className="font-semibold text-foreground">
                       {mealsCount}
                     </strong>{" "}
-                    meals planned
+                    meals scheduled for today
                   </span>
                 </div>
               </>
             )}
           </>
-        )}
-        {total === 0 && mealsCount === 0 && (
+        ) : (
           <span>Start your day by creating habits and planning meals</span>
         )}
-      </div>
-    </div>
-  );
-};
-
-export function DashboardHeaderSkeleton() {
-  return (
-    <div className="space-y-4">
-      <Heading>
-        <Skeleton className="h-12 w-1/4" />
-      </Heading>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2 pb-2">
-          <div className="w-2 h-2 rounded-full bg-muted animate-pulse" />
-          <div className="h-4 bg-muted rounded w-32 animate-pulse" />
-        </div>
       </div>
     </div>
   );

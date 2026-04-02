@@ -1,40 +1,21 @@
 import { Suspense } from "react";
-import {
-  DashboardHeader,
-  DashboardHeaderSkeleton,
-} from "@/components/dashboard/DashboardHeader";
-import {
-  StatsSection,
-  StatsSectionSkeleton,
-} from "@/components/dashboard/StatsSection";
-import {
-  HabitsSection,
-  HabitsSectionSkeleton,
-} from "@/components/dashboard/HabitsSection";
-import {
-  MealsSection,
-  MealsSectionSkeleton,
-} from "@/components/dashboard/MealsSection";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { StatsSection } from "@/components/dashboard/StatsSection";
+import { HabitsSection } from "@/components/dashboard/HabitsSection";
+import { MealsSection } from "@/components/dashboard/MealsSection";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
-      <Suspense fallback={<DashboardHeaderSkeleton />}>
+    <Suspense fallback={<DashboardSkeleton />}>
+      <div className="space-y-8">
         <DashboardHeader />
-      </Suspense>
-
-      <Suspense fallback={<StatsSectionSkeleton />}>
         <StatsSection />
-      </Suspense>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Suspense fallback={<HabitsSectionSkeleton />}>
+        <div className="grid gap-6 lg:grid-cols-2">
           <HabitsSection />
-        </Suspense>
-        <Suspense fallback={<MealsSectionSkeleton />}>
           <MealsSection />
-        </Suspense>
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }

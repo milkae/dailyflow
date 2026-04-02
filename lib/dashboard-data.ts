@@ -4,40 +4,33 @@ import prisma from "@/lib/prisma";
 import { verifySession } from "./dal";
 import { getHabits } from "./actions/habit";
 
-export const getTodayMeals = cache(async () => {
+const normalizeDate = (date: Date) => {
+  const normalized = new Date(date);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+};
+
+export const getDashboardData = cache(async () => {
   const session = await verifySession();
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = normalizeDate(new Date());
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  return prisma.meal.findMany({
-    where: {
-      userId: session.userId,
-      date: { gte: today, lt: tomorrow },
-    },
-    include: { recipe: { select: { id: true, name: true } } },
-  });
-});
-
-export const getTodayHabits = cache(async () => {
-  const habits = await getHabits();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  return habits.filter((h) => isHabitActiveOnDate(h, today));
-});
-
-export const getDashboardStats = cache(async () => {
-  const [todayHabits, todayMeals] = await Promise.all([
-    getTodayHabits(),
-    getTodayMeals(),
+  const [habits, meals] = await Promise.all([
+    getHabits(),
+    prisma.meal.findMany({
+      where: {
+        userId: session.userId,
+        date: { gte: today, lt: tomorrow },
+      },
+      include: { recipe: { select: { id: true, name: true } } },
+    }),
   ]);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
+  const todayHabits = habits.filter((habit) =>
+    isHabitActiveOnDate(habit, today),
+  );
   const completedToday = todayHabits.filter((habit) =>
     isHabitCompletedOnDate(habit, today),
   ).length;
@@ -48,9 +41,28 @@ export const getDashboardStats = cache(async () => {
       : 0;
 
   return {
-    total: todayHabits.length,
-    completed: completedToday,
-    rate: completionRate,
-    mealsCount: todayMeals.length,
+    habits: todayHabits,
+    meals,
+    stats: {
+      total: todayHabits.length,
+      completed: completedToday,
+      rate: completionRate,
+      mealsCount: meals.length,
+    },
   };
+});
+
+export const getTodayMeals = cache(async () => {
+  const { meals } = await getDashboardData();
+  return meals;
+});
+
+export const getTodayHabits = cache(async () => {
+  const { habits } = await getDashboardData();
+  return habits;
+});
+
+export const getDashboardStats = cache(async () => {
+  const { stats } = await getDashboardData();
+  return stats;
 });
