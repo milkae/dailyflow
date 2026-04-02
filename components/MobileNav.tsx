@@ -1,6 +1,6 @@
 "use client";
 
-import { LogIn, LogOutIcon, MenuIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { NavLink } from "./NavLink";
 import { useState } from "react";
-import { authClient } from "@/lib/auth.client";
-import { redirect } from "next/navigation";
+import { AuthButton } from "./AuthButton";
 
 type NavigationItem = {
   title: string;
@@ -21,10 +20,8 @@ type NavigationItem = {
 
 export const MobileNav = ({
   navigationData,
-  isLoggedIn,
 }: {
   navigationData: NavigationItem[];
-  isLoggedIn?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -53,33 +50,7 @@ export const MobileNav = ({
           ))}
         </nav>
         <div className="mt-auto mb-6 flex justify-center">
-          {isLoggedIn ? (
-            <Button
-              variant="outline"
-              onClick={async () =>
-                await authClient.signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      redirect("/");
-                    },
-                  },
-                })
-              }
-            >
-              <LogOutIcon />
-              <span className="flex flex-1 justify-center">Log out</span>
-            </Button>
-          ) : (
-            <Button
-              variant="outline"
-              onClick={async () =>
-                await authClient.signIn.social({ provider: "google" })
-              }
-            >
-              <LogIn />
-              <span className="flex flex-1 justify-center">Sign In</span>
-            </Button>
-          )}
+          <AuthButton />
         </div>
       </SheetContent>
     </Sheet>

@@ -1,9 +1,9 @@
+import { Skeleton } from "../ui/skeleton";
 import { Heading } from "../ui/typography";
 import { getDashboardStats } from "@/lib/dashboard-data";
 
 export const DashboardHeader = async () => {
   const { total, completed, mealsCount } = await getDashboardStats();
-
   const today = new Date();
 
   return (
@@ -57,16 +57,10 @@ export const DashboardHeader = async () => {
 };
 
 export function DashboardHeaderSkeleton() {
-  const today = new Date();
-
   return (
     <div className="space-y-4">
       <Heading>
-        {today.toLocaleDateString("en-US", {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-        })}
+        <Skeleton className="h-12 w-1/4" />
       </Heading>
 
       <div className="flex flex-wrap items-center gap-3">
