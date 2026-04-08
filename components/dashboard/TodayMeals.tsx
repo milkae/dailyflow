@@ -1,5 +1,3 @@
-"use client";
-
 import { Plus, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { MealSlot } from "@/components/meals/MealSlot";
@@ -7,12 +5,11 @@ import { buttonVariants } from "@/lib/utils";
 import { MealType } from "@/generated/prisma/enums";
 import { Heading } from "../ui/typography";
 import { MealWithRecipeName } from "@/lib/types";
+import { getTodayMeals } from "@/lib/dashboard-data";
 
-type Props = {
-  meals: MealWithRecipeName[];
-};
+export async function TodayMeals() {
+  const meals = await getTodayMeals();
 
-export function TodayMeals({ meals }: Props) {
   const mealsByType = meals.reduce(
     (acc, meal) => {
       acc[meal.type] = meal;

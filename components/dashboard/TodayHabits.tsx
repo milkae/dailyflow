@@ -1,15 +1,15 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Plus, ArrowRight, CalendarFold } from "lucide-react";
 import Link from "next/link";
-import { TypedHabitWithEntries } from "@/lib/types";
 import { HabitCheckInCard } from "@/components/habits/HabitCheckInCard";
 import { HabitForm } from "@/components/habits/HabitForm";
 import { buttonVariants } from "@/lib/utils";
 import { Heading } from "../ui/typography";
+import { getTodayHabits } from "@/lib/dashboard-data";
 
-export function TodayHabits({ habits }: { habits: TypedHabitWithEntries[] }) {
+export async function TodayHabits() {
+  const habits = await getTodayHabits();
+
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">

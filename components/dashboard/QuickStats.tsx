@@ -1,13 +1,10 @@
 import { CheckCircle2, Target, TrendingUp } from "lucide-react";
 import { StatCard } from "./StatCard";
+import { getDashboardStats } from "@/lib/dashboard-data";
 
-type Props = {
-  total: number;
-  completed: number;
-  rate: number;
-};
+export async function QuickStats() {
+  const { total, completed, rate } = await getDashboardStats();
 
-export function QuickStats({ total, completed, rate }: Props) {
   const stats = [
     {
       label: "Active Today",
