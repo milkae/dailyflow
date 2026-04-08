@@ -7,12 +7,7 @@ import { Frequency } from "@/generated/prisma/enums";
 import { parseHabit } from "@/lib/habits";
 import { cache } from "react";
 import { verifySession } from "@/lib/dal";
-
-const normalizeDate = (date: Date) => {
-  const normalized = new Date(date);
-  normalized.setHours(0, 0, 0, 0);
-  return normalized;
-};
+import { normalizeDate } from "../utils";
 
 const habitSchema = z.object({
   id: z.string().optional(),
@@ -147,9 +142,7 @@ export async function deleteHabit(id: string) {
 
 export const getHabits = cache(async () => {
   const session = await verifySession();
-  const habits = await getHabitsForUser({ userId: session.userId });
-
-  return habits.map(parseHabit);
+  return getHabitsForUser({ userId: session.userId });
 });
 
 export const getHabitsForUser = cache(

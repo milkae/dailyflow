@@ -4,9 +4,9 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { MealType } from "@/generated/prisma/enums";
-import { cache } from "react";
 import { verifySession } from "@/lib/dal";
 import { MealWithRecipeName } from "../types";
+import { normalizeDate } from "../utils";
 
 const mealSchema = z.object({
   name: z
@@ -66,21 +66,44 @@ export async function deleteMeal(mealId: string) {
   revalidatePath("/meals");
 }
 
-export const getWeekMeals = cache(async () => {
-  const session = await verifySession();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const startOfWeek = new Date(today);
+function getWeekBounds(today: Date) {
+  const normalized = normalizeDate(today);
+
+  const startOfWeek = new Date(normalized);
   const day = startOfWeek.getDay();
   const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
   startOfWeek.setDate(diff);
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(endOfWeek.getDate() + 7);
 
+  return { startOfWeek, endOfWeek };
+}
+
+export const getWeekMeals = async () => {
+  const session = await verifySession();
+  const today = new Date();
+  const { startOfWeek, endOfWeek } = getWeekBounds(today);
+
+  return getWeekMealsCached(
+    session.userId,
+    startOfWeek.toISOString(),
+    endOfWeek.toISOString(),
+  );
+};
+
+const getWeekMealsCached = async (
+  userId: string,
+  startISO: string,
+  endISO: string,
+) => {
+  "use cache";
   const meals = await prisma.meal.findMany({
     where: {
-      userId: session.userId,
-      date: { gte: startOfWeek, lt: endOfWeek },
+      userId,
+      date: {
+        gte: new Date(startISO),
+        lt: new Date(endISO),
+      },
     },
     include: { recipe: { select: { id: true, name: true } } },
     orderBy: [{ date: "desc" }, { type: "asc" }],
@@ -107,11 +130,11 @@ export const getWeekMeals = cache(async () => {
   );
 
   return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(startOfWeek);
+    const date = new Date(startISO);
     date.setDate(date.getDate() + i);
     const dateKey = date.toISOString().split("T")[0];
-    const meals = mealsByDateAndType[dateKey] || { ...emptyMeals };
+    const mealsForDay = mealsByDateAndType[dateKey] || { ...emptyMeals };
 
-    return { date, meals };
+    return { date, meals: mealsForDay };
   });
-});
+};
