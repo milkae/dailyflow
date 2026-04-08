@@ -147,16 +147,25 @@ export async function deleteHabit(id: string) {
 
 export const getHabits = cache(async () => {
   const session = await verifySession();
-
-  const habits = await prisma.habit.findMany({
-    where: { userId: session.userId },
-    include: {
-      entries: {
-        orderBy: { date: "desc" },
-        take: 30,
-      },
-    },
-  });
+  const habits = await getHabitsForUser({ userId: session.userId });
 
   return habits.map(parseHabit);
 });
+
+export const getHabitsForUser = cache(
+  async ({ userId }: { userId: string }) => {
+    "use cache";
+
+    const habits = await prisma.habit.findMany({
+      where: { userId },
+      include: {
+        entries: {
+          orderBy: { date: "desc" },
+          take: 30,
+        },
+      },
+    });
+
+    return habits.map(parseHabit);
+  },
+);

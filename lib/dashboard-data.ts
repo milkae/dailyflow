@@ -2,7 +2,7 @@ import { cache } from "react";
 import { isHabitActiveOnDate, isHabitCompletedOnDate } from "@/lib/habits";
 import prisma from "@/lib/prisma";
 import { verifySession } from "./dal";
-import { getHabits } from "./actions/habit";
+import { getHabitsForUser } from "./actions/habit";
 
 const normalizeDate = (date: Date) => {
   const normalized = new Date(date);
@@ -10,24 +10,26 @@ const normalizeDate = (date: Date) => {
   return normalized;
 };
 
-export const getDashboardData = cache(async () => {
-  const session = await verifySession();
-
-  const today = normalizeDate(new Date());
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
+const getDashboardDataForSession = async ({
+  userId,
+  today,
+  tomorrow,
+}: {
+  userId: string;
+  today: Date;
+  tomorrow: Date;
+}) => {
+  "use cache";
   const [habits, meals] = await Promise.all([
-    getHabits(),
+    getHabitsForUser({ userId }),
     prisma.meal.findMany({
       where: {
-        userId: session.userId,
+        userId,
         date: { gte: today, lt: tomorrow },
       },
       include: { recipe: { select: { id: true, name: true } } },
     }),
   ]);
-
   const todayHabits = habits.filter((habit) =>
     isHabitActiveOnDate(habit, today),
   );
@@ -50,6 +52,20 @@ export const getDashboardData = cache(async () => {
       mealsCount: meals.length,
     },
   };
+};
+
+export const getDashboardData = cache(async () => {
+  const session = await verifySession();
+
+  const today = normalizeDate(new Date());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  return getDashboardDataForSession({
+    userId: session.userId,
+    today,
+    tomorrow,
+  });
 });
 
 export const getTodayMeals = cache(async () => {
