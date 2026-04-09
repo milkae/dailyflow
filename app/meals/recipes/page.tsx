@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { RecipeGrid } from "@/components/recipes/RecipeGrid";
-import { CreateRecipeDialog } from "@/components/recipes/CreateRecipeDialog";
+import { RecipeGrid } from "@/features/recipes/components/RecipeGrid";
+import { CreateRecipeDialog } from "@/features/recipes/components/CreateRecipeDialog";
 import { BookOpen } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Heading } from "@/components/ui/typography";

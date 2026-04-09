@@ -1,12 +1,12 @@
 import { BookOpen } from "lucide-react";
-import { WeeklyMealPlanner } from "@/components/meals/WeeklyMealPlanner";
+import { WeeklyMealPlanner } from "@/features/meals/components/WeeklyMealPlanner";
 import Link from "next/link";
 import { Heading } from "@/components/ui/typography";
-import { buttonVariants } from "@/lib/utils";
-import { getWeekMeals } from "@/lib/actions/meal";
+import { buttonVariants } from "@/components/ui/buttonVariants";
+import { getWeekMeals } from "@/features/meals/actions";
 import { Suspense } from "react";
-import { WeeklyMealPlannerSkeleton } from "@/components/meals/WeeklyMealPlannerSkeleton";
-import { getAllRecipes } from "@/lib/actions/recipe";
+import { WeeklyMealPlannerSkeleton } from "@/features/meals/components/WeeklyMealPlannerSkeleton";
+import { getAllRecipes } from "@/features/recipes/actions";
 
 export default async function MealsPage() {
   const mealsPromise = getWeekMeals();

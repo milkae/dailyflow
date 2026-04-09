@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
-import { RecipeDetail } from "@/components/recipes/RecipeDetail";
+import { RecipeDetail } from "@/features/recipes/components/RecipeDetail";
 
 export default async function RecipeDetailPage({
   params,

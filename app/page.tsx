@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
-import { TodayHabits } from "@/components/dashboard/TodayHabits";
-import { QuickStats } from "@/components/dashboard/QuickStats";
-import { TodayMeals } from "@/components/dashboard/TodayMeals";
+import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
+import { DashboardSkeleton } from "@/features/dashboard/components/DashboardSkeleton";
+import { TodayHabits } from "@/features/dashboard/components/TodayHabits";
+import { QuickStats } from "@/features/dashboard/components/QuickStats";
+import { TodayMeals } from "@/features/dashboard/components/TodayMeals";
 
 export default function DashboardPage() {
   return (

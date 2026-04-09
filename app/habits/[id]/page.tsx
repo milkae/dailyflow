@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
-import { HabitDetailHeader } from "@/components/habits/HabitDetailHeader";
-import { HabitTimeline } from "@/components/habits/HabitTimeline";
-import { parseHabit } from "@/lib/habits";
+import { HabitDetailHeader } from "@/features/habits/components/HabitDetailHeader";
+import { HabitTimeline } from "@/features/habits/components/HabitTimeline";
+import { parseHabit } from "@/utils/habits";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
 

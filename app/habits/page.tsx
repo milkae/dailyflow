@@ -1,9 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HabitsOverview } from "@/components/habits/HabitsOverview";
-import { HabitsStats } from "@/components/habits/HabitsStats";
-import { HabitForm } from "@/components/habits/HabitForm";
+import { HabitsOverview } from "@/features/habits/components/HabitsOverview";
+import { HabitsStats } from "@/features/habits/components/HabitsStats";
+import { HabitForm } from "@/features/habits/components/HabitForm";
 import { Heading } from "@/components/ui/typography";
-import { getHabits } from "@/lib/actions/habit";
+import { getHabits } from "@/features/habits/actions";
 
 export default async function HabitsPage() {
   const habits = await getHabits();

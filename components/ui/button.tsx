@@ -3,7 +3,8 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { type VariantProps } from "class-variance-authority";
 
-import { buttonVariants, cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/buttonVariants";
+import { cn } from "@/utils/cn";
 
 function Button({
   className,
