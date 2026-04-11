@@ -1,8 +1,7 @@
-import { Heading } from "../../../components/ui/typography";
-import { getDashboardData } from "@/features/dashboard/actions";
+import { Heading } from "@/components/ui/typography";
+import { DashboardStats } from "../actions";
 
-export async function DashboardHeader() {
-  const { stats } = await getDashboardData();
+export function DashboardHeader({ stats }: { stats: DashboardStats }) {
   const { total, completed, mealsCount } = stats;
 
   const today = new Date();

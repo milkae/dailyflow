@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { MealType } from "@/generated/prisma/enums";
 import { verifySession } from "@/lib/dal";
 import { MealWithRecipeName } from "@/features/meals/types";
@@ -50,6 +50,7 @@ export async function addOrUpdateMeal(
     },
   });
 
+  updateTag("dashboard");
   revalidatePath("/");
   revalidatePath("/meals");
   return { formErrors: [], fieldErrors: {} };
@@ -62,6 +63,7 @@ export async function deleteMeal(mealId: string) {
     where: { id: mealId, userId: session.userId },
   });
 
+  updateTag("dashboard");
   revalidatePath("/");
   revalidatePath("/meals");
 }

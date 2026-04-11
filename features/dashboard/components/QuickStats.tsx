@@ -1,11 +1,11 @@
 import { CheckCircle2, Target, TrendingUp } from "lucide-react";
 import { StatCard } from "./StatCard";
-import { getDashboardStats } from "@/features/dashboard/actions";
+import { DashboardStats } from "../actions";
 
-export async function QuickStats() {
-  const { total, completed, rate } = await getDashboardStats();
+export function QuickStats({ stats }: { stats: DashboardStats }) {
+  const { total, completed, rate } = stats;
 
-  const stats = [
+  const statCards = [
     {
       label: "Active Today",
       value: total,
@@ -36,7 +36,7 @@ export async function QuickStats() {
 
   return (
     <div className="grid gap-3 sm:grid-cols-3">
-      {stats.map((stat) => (
+      {statCards.map((stat) => (
         <StatCard key={stat.label} {...stat} />
       ))}
     </div>

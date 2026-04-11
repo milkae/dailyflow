@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { Frequency } from "@/generated/prisma/enums";
 import { parseHabit } from "@/utils/habits";
 import { cache } from "react";
@@ -71,6 +71,7 @@ export async function createOrUpdateHabit(
     },
   });
 
+  updateTag("dashboard");
   revalidatePath("/");
   revalidatePath("/habits");
 
@@ -110,6 +111,7 @@ export async function createHabitEntry(
     create: { habitId: id, date: entryDate, note },
   });
 
+  updateTag("dashboard");
   revalidatePath("/");
 }
 
@@ -121,6 +123,7 @@ export async function deleteHabitEntry(id: string, date = new Date()) {
     where: { habitId: id, date: entryDate, habit: { userId: session.userId } },
   });
 
+  updateTag("dashboard");
   revalidatePath("/");
 }
 
@@ -136,6 +139,7 @@ export async function deleteHabit(id: string) {
   const session = await verifySession();
 
   await prisma.habit.delete({ where: { id, userId: session.userId } });
+  updateTag("dashboard");
   revalidatePath("/");
   revalidatePath("/habits");
 }

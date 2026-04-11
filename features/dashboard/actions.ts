@@ -1,20 +1,33 @@
-import { cache } from "react";
+import { cacheLife, cacheTag } from "next/cache";
 import { isHabitActiveOnDate, isHabitCompletedOnDate } from "@/utils/habits";
 import prisma from "@/lib/prisma";
-import { verifySession } from "../../lib/dal";
 import { getHabitsForUser } from "../habits/actions";
 import { normalizeDate } from "@/utils/date";
+import type { TypedHabitWithEntries } from "@/features/habits/types";
+import type { MealWithRecipeName } from "@/features/meals/types";
 
-const getDashboardDataForSession = async ({
-  userId,
-  today,
-  tomorrow,
-}: {
-  userId: string;
-  today: Date;
-  tomorrow: Date;
-}) => {
+export type DashboardStats = {
+  total: number;
+  completed: number;
+  rate: number;
+  mealsCount: number;
+};
+
+export type DashboardData = {
+  habits: TypedHabitWithEntries[];
+  meals: MealWithRecipeName[];
+  stats: DashboardStats;
+};
+
+const getDashboardDataCached = async (userId: string) => {
   "use cache";
+  cacheLife("days");
+  cacheTag("dashboard");
+
+  const today = normalizeDate(new Date());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
   const [habits, meals] = await Promise.all([
     getHabitsForUser({ userId }),
     prisma.meal.findMany({
@@ -25,6 +38,7 @@ const getDashboardDataForSession = async ({
       include: { recipe: { select: { id: true, name: true } } },
     }),
   ]);
+
   const todayHabits = habits.filter((habit) =>
     isHabitActiveOnDate(habit, today),
   );
@@ -49,31 +63,6 @@ const getDashboardDataForSession = async ({
   };
 };
 
-export const getDashboardData = cache(async () => {
-  const session = await verifySession();
-
-  const today = normalizeDate(new Date());
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  return getDashboardDataForSession({
-    userId: session.userId,
-    today,
-    tomorrow,
-  });
-});
-
-export const getTodayMeals = cache(async () => {
-  const { meals } = await getDashboardData();
-  return meals;
-});
-
-export const getTodayHabits = cache(async () => {
-  const { habits } = await getDashboardData();
-  return habits;
-});
-
-export const getDashboardStats = cache(async () => {
-  const { stats } = await getDashboardData();
-  return stats;
-});
+export const getDashboardData = async (userId: string) => {
+  return getDashboardDataCached(userId);
+};

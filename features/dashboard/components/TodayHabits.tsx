@@ -5,11 +5,9 @@ import { HabitCheckInCard } from "@/features/habits/components/HabitCheckInCard"
 import { HabitForm } from "@/features/habits/components/HabitForm";
 import { buttonVariants } from "@/components/ui/buttonVariants";
 import { Heading } from "../../../components/ui/typography";
-import { getTodayHabits } from "@/features/dashboard/actions";
+import { TypedHabitWithEntries } from "@/features/habits/types";
 
-export async function TodayHabits() {
-  const habits = await getTodayHabits();
-
+export function TodayHabits({ habits }: { habits: TypedHabitWithEntries[] }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">

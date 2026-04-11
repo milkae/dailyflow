@@ -5,11 +5,8 @@ import { buttonVariants } from "@/components/ui/buttonVariants";
 import { MealType } from "@/generated/prisma/enums";
 import { Heading } from "../../../components/ui/typography";
 import { MealWithRecipeName } from "@/features/meals/types";
-import { getTodayMeals } from "@/features/dashboard/actions";
 
-export async function TodayMeals() {
-  const meals = await getTodayMeals();
-
+export function TodayMeals({ meals }: { meals: MealWithRecipeName[] }) {
   const mealsByType = meals.reduce(
     (acc, meal) => {
       acc[meal.type] = meal;

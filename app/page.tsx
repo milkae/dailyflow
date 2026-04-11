@@ -1,21 +1,22 @@
-import { Suspense } from "react";
+import { getDashboardData } from "@/features/dashboard/actions";
 import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
-import { DashboardSkeleton } from "@/features/dashboard/components/DashboardSkeleton";
-import { TodayHabits } from "@/features/dashboard/components/TodayHabits";
 import { QuickStats } from "@/features/dashboard/components/QuickStats";
+import { TodayHabits } from "@/features/dashboard/components/TodayHabits";
 import { TodayMeals } from "@/features/dashboard/components/TodayMeals";
+import { getUserId } from "@/lib/dal";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const userId = await getUserId();
+  const { habits, meals, stats } = await getDashboardData(userId!);
+
   return (
-    <Suspense fallback={<DashboardSkeleton />}>
-      <div className="space-y-8">
-        <DashboardHeader />
-        <QuickStats />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <TodayHabits />
-          <TodayMeals />
-        </div>
+    <div className="space-y-8">
+      <DashboardHeader stats={stats} />
+      <QuickStats stats={stats} />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TodayHabits habits={habits} />
+        <TodayMeals meals={meals} />
       </div>
-    </Suspense>
+    </div>
   );
 }
