@@ -1,6 +1,7 @@
 import { Recipe } from "@/generated/prisma/browser";
 import { NextRequest, NextResponse } from "next/server";
 import { JSDOM } from "jsdom";
+import { verifySession } from "@/lib/dal";
 
 interface RecipeJsonLd {
   "@type": "Recipe" | string[];
@@ -19,10 +20,21 @@ interface RecipeJsonLd {
 }
 
 export async function POST(request: NextRequest) {
+  await verifySession();
+
   try {
     const { url } = await request.json();
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
+    }
+
+    const urlObj = new URL(url);
+
+    if (!["http:", "https:"].includes(urlObj.protocol)) {
+      return NextResponse.json(
+        { error: "Only HTTP/HTTPS URLs are supported" },
+        { status: 400 },
+      );
     }
 
     const dom = await JSDOM.fromURL(url);
