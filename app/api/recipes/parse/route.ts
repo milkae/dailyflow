@@ -2,6 +2,7 @@ import { Recipe } from "@/generated/prisma/browser";
 import { NextRequest, NextResponse } from "next/server";
 import { JSDOM } from "jsdom";
 import { verifySession } from "@/lib/dal";
+import { logError } from "@/lib/logger";
 
 interface RecipeJsonLd {
   "@type": "Recipe" | string[];
@@ -48,8 +49,9 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(recipeData as Recipe);
-  } catch (error) {
-    console.error("Recipe parsing error:", error);
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    logError(error, "Recipe parsing error");
     return NextResponse.json(
       { error: "Failed to parse recipe" },
       { status: 500 },
@@ -94,8 +96,9 @@ function extractRecipe(dom: JSDOM, url: string) {
           } as Recipe;
         }
       }
-    } catch (error) {
-      console.error("Failed to parse schema:", error);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      logError(error, "Recipe parser: Failed to parse schema");
     }
   }
 

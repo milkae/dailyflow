@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../../components/ui/dialog";
+import { logError } from "@/lib/logger";
 
 export const CreateRecipeDialog = ({
   open,
@@ -49,8 +50,9 @@ export const CreateRecipeDialog = ({
           "Could not parse this recipe URL. Please enter details manually.",
         );
       }
-    } catch (error) {
-      console.error("Failed to parse recipe:", error);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      logError(error, "Recipe parse error");
       alert("Failed to import recipe. Please try again or enter manually.");
     }
     setIsParsing(false);

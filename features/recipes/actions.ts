@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { verifySession } from "@/lib/dal";
+import { logError } from "@/lib/logger";
 
 const recipeSchema = z.object({
   name: z.string(),
@@ -78,8 +79,9 @@ export async function createOrUpdateRecipe(
 
     revalidatePath("/meals/recipes");
     return { formErrors: [], fieldErrors: {} };
-  } catch (error) {
-    console.error("Recipe save error:", error);
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    logError(error, "Recipe save error");
     return {
       formErrors: ["Failed to save recipe. Please try again."],
       fieldErrors: {},
