@@ -26,8 +26,7 @@ export async function addOrUpdateMeal(
   formData: FormData,
 ) {
   const session = await verifySession();
-  const dateOnly = new Date(date);
-  dateOnly.setHours(0, 0, 0, 0);
+  const dateOnly = normalizeDate(date);
   const formDataObj = Object.fromEntries(formData.entries());
   const validatedFields = mealSchema.safeParse(formDataObj);
 

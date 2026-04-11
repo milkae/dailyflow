@@ -10,6 +10,7 @@ import {
 
 import { TypedHabitWithEntries } from "@/features/habits/types";
 import { isHabitActiveOnDate, isHabitCompletedOnDate } from "@/utils/habits";
+import { normalizeDate } from "@/utils/date";
 
 const chartConfig = {
   rate: {
@@ -24,9 +25,8 @@ export const CompletionRateChart = ({
   habits: TypedHabitWithEntries[];
 }) => {
   const data = Array.from({ length: 30 }, (_, i) => {
-    const date = new Date();
+    const date = normalizeDate(new Date());
     date.setDate(date.getDate() - (29 - i));
-    date.setHours(0, 0, 0, 0);
 
     const activeHabits = habits.filter((h) => isHabitActiveOnDate(h, date));
 

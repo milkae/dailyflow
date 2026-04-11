@@ -1,6 +1,7 @@
 import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
 import { habitSchema } from "../lib/validators";
 import { TypedHabitWithEntries } from "../features/habits/types";
+import { normalizeDate } from "./date";
 
 export function isHabitActiveOnDate(habit: TypedHabitWithEntries, date: Date) {
   switch (habit.frequency) {
@@ -26,11 +27,9 @@ export function isHabitActiveOnDate(habit: TypedHabitWithEntries, date: Date) {
     case Frequency.INTERVAL: {
       const config = habit.frequencyConfig as { interval: number } | null;
       if (!config?.interval) return false;
-      const startDate = new Date(habit.startDate);
-      startDate.setHours(0, 0, 0, 0);
 
-      const targetDate = new Date(date);
-      targetDate.setHours(0, 0, 0, 0);
+      const startDate = normalizeDate(habit.startDate);
+      const targetDate = normalizeDate(date);
 
       const daysDiff = Math.floor(
         (targetDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
@@ -46,22 +45,20 @@ export function isHabitCompletedOnDate(
   habit: TypedHabitWithEntries,
   date: Date,
 ) {
-  const targetDate = new Date(date);
-  targetDate.setHours(0, 0, 0, 0);
+  const targetDate = normalizeDate(date);
 
   return habit.entries.some((entry) => {
-    const entryDate = new Date(entry.date);
-    entryDate.setHours(0, 0, 0, 0);
+    const entryDate = normalizeDate(entry.date);
     return entryDate.getTime() === targetDate.getTime();
   });
 }
 
 export function getHabitEntryForToday(habit: TypedHabitWithEntries) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = normalizeDate(new Date());
 
   return habit.entries.find((entry) => {
-    return entry.date.getTime() === today.getTime();
+    const entryDate = normalizeDate(entry.date);
+    return entryDate.getTime() === today.getTime();
   });
 }
 
@@ -70,10 +67,9 @@ export function getLastWeekHabits(
   fromToday: boolean = false,
 ) {
   return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
+    const date = normalizeDate(new Date());
     const daysToRemove = fromToday ? 6 : date.getDay();
     date.setDate(date.getDate() - daysToRemove + i);
-    date.setHours(0, 0, 0, 0);
 
     const completed = habits.filter((habit) =>
       isHabitCompletedOnDate(habit, date),
@@ -92,20 +88,16 @@ export const calculateStreak = (habit: Habit & { entries: Entry[] }) => {
 
   for (let i = habit.entries.length - 1; i >= 0; i--) {
     if (i === habit.entries.length - 1) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const entryDate = habit.entries[i].date;
-      entryDate.setHours(0, 0, 0, 0);
+      const today = normalizeDate(new Date());
+      const entryDate = normalizeDate(habit.entries[i].date);
       if (entryDate.getTime() !== today.getTime()) {
         break;
       }
       streak++;
     } else {
-      const previousDay = new Date(habit.entries[i].date.getTime());
+      const previousDay = normalizeDate(habit.entries[i].date);
       previousDay.setDate(previousDay.getDate() - 1);
-      previousDay.setHours(0, 0, 0, 0);
-      const nextHabitEntryDate = habit.entries[i - 1].date;
-      nextHabitEntryDate.setHours(0, 0, 0, 0);
+      const nextHabitEntryDate = normalizeDate(habit.entries[i - 1].date);
 
       if (nextHabitEntryDate.getTime() !== previousDay.getTime()) {
         break;
