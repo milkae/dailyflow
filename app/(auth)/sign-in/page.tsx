@@ -4,7 +4,7 @@ import { SignIn } from "./sign-in";
 
 export default function SignInPage() {
   return (
-    <Card className="w-full max-w-md p-8 space-y-6">
+    <Card className="w-full max-w-md p-8 space-y-6 m-auto">
       <Heading className="text-center">Log In</Heading>
       <SignIn />
     </Card>

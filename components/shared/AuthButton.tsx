@@ -3,10 +3,16 @@
 import { authClient } from "@/lib/auth.client";
 import { Button } from "../ui/button";
 import { LogIn, LogOutIcon } from "lucide-react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { buttonVariants } from "../ui/buttonVariants";
+import { useState } from "react";
+import { Spinner } from "../ui/spinner";
 
 export const AuthButton = () => {
   const { data: session, isPending } = authClient.useSession();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   if (isPending) {
     return <div className="w-20 h-10 animate-pulse bg-muted rounded" />;
@@ -14,32 +20,39 @@ export const AuthButton = () => {
 
   return (
     <>
-      {session?.user.id ? (
+      {session?.user?.id ? (
         <Button
           variant="outline"
-          onClick={async () =>
+          onClick={async () => {
+            setLoading(true);
             await authClient.signOut({
               fetchOptions: {
-                onSuccess: () => {
-                  redirect("/");
+                onError: () => {
+                  setLoading(false);
                 },
               },
-            })
-          }
+            });
+            router.refresh();
+          }}
+          disabled={loading}
         >
-          <LogOutIcon />
-          <span className="flex flex-1 justify-center">Log out</span>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <>
+              <LogOutIcon />
+              <span className="flex flex-1 justify-center">Log out</span>
+            </>
+          )}
         </Button>
       ) : (
-        <Button
-          variant="outline"
-          onClick={async () =>
-            await authClient.signIn.social({ provider: "google" })
-          }
+        <Link
+          href="/sign-in"
+          className={buttonVariants({ variant: "outline" })}
         >
           <LogIn />
           <span className="flex flex-1 justify-center">Sign In</span>
-        </Button>
+        </Link>
       )}
     </>
   );
