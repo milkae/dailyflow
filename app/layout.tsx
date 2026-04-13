@@ -32,10 +32,8 @@ export default function RootLayout({
           <TooltipProvider>
             <div className="min-h-screen flex flex-col">
               <Navbar navigationData={navigationData} />
-              <main className="flex-1 w-full">
-                <div className="container py-6 md:py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  {children}
-                </div>
+              <main className="flex flex-col flex-1 container py-6 md:py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {children}
               </main>
               <footer className="border-t border-border bg-card mt-auto">
                 <div className="container py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
