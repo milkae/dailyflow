@@ -84,6 +84,9 @@ model Habit {
   startDate       DateTime  @default(now())
   userId          String
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("habit")
 }
 
 enum Frequency {
@@ -102,6 +105,7 @@ model Entry {
   note    String?
 
   @@unique([habitId, date])
+  @@index([date])
 }
 
 model Meal {
@@ -118,6 +122,9 @@ model Meal {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([date])
+  @@index([userId])
+  @@index([recipeId])
+  @@map("meal")
 }
 
 enum MealType {
@@ -144,4 +151,8 @@ model Recipe {
   updatedAt    DateTime @updatedAt
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@map("recipe")
 }
