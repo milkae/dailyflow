@@ -43,9 +43,9 @@ export const createRecipeSchema = z.object({
   description: z.string().max(1000).optional(),
   ingredients: z.string().min(1, "Ingredients required"),
   instructions: z.string().min(1, "Instructions required"),
-  prepTime: z.number().int().min(0).optional(),
-  cookTime: z.number().int().min(0).optional(),
-  servings: z.number().int().min(1).default(4),
+  prepTime: z.coerce.number().int().min(0).optional(),
+  cookTime: z.coerce.number().int().min(0).optional(),
+  servings: z.coerce.number().int().min(1).default(4),
   sourceUrl: z.string().optional(),
 });
 
