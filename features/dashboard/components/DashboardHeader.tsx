@@ -17,21 +17,23 @@ export function DashboardHeader({ stats }: { stats: DashboardStats }) {
       </Heading>
 
       <div className="flex flex-wrap items-center gap-3 text-muted-foreground">
-        {total > 0 ? (
+        {total || mealsCount ? (
           <>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-success" />
-              <span>
-                <strong className="font-semibold text-foreground">
-                  {completed}
-                </strong>{" "}
-                of{" "}
-                <strong className="font-semibold text-foreground">
-                  {total}
-                </strong>{" "}
-                habits completed
-              </span>
-            </div>
+            {total > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-success" />
+                <span>
+                  <strong className="font-semibold text-foreground">
+                    {completed}
+                  </strong>{" "}
+                  of{" "}
+                  <strong className="font-semibold text-foreground">
+                    {total}
+                  </strong>{" "}
+                  habits completed
+                </span>
+              </div>
+            )}
 
             {mealsCount > 0 && (
               <>
