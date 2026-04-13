@@ -7,15 +7,7 @@ import { MealType } from "@/generated/prisma/enums";
 import { verifySession } from "@/lib/dal";
 import { MealWithRecipeName } from "@/features/meals/types";
 import { normalizeDate } from "@/utils/date";
-
-const mealSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .max(100, "Name must be 100 characters or less"),
-  notes: z.string().optional(),
-  recipeId: z.string().optional(),
-});
+import { createMealSchema } from "@/lib/validators";
 
 export async function addOrUpdateMeal(
   { date, type, id }: { date: Date; type: MealType; id?: string },
@@ -28,7 +20,7 @@ export async function addOrUpdateMeal(
   const session = await verifySession();
   const dateOnly = normalizeDate(date);
   const formDataObj = Object.fromEntries(formData.entries());
-  const validatedFields = mealSchema.safeParse(formDataObj);
+  const validatedFields = createMealSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
     return z.flattenError(validatedFields.error);

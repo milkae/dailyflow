@@ -5,17 +5,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { verifySession } from "@/lib/dal";
 import { logError } from "@/lib/logger";
-
-const recipeSchema = z.object({
-  name: z.string(),
-  description: z.string().optional(),
-  ingredients: z.string(),
-  instructions: z.string(),
-  prepTime: z.coerce.number().optional(),
-  cookTime: z.coerce.number().optional(),
-  servings: z.coerce.number().optional(),
-  sourceUrl: z.string().optional(),
-});
+import { createRecipeSchema } from "@/lib/validators";
 
 export async function createOrUpdateRecipe(
   { id }: { id?: string },
@@ -27,7 +17,7 @@ export async function createOrUpdateRecipe(
 ) {
   const session = await verifySession();
   const formDataObj = Object.fromEntries(formData.entries());
-  const validatedFields = recipeSchema.safeParse(formDataObj);
+  const validatedFields = createRecipeSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
     return z.flattenError(validatedFields.error);

@@ -1,5 +1,5 @@
 import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
-import { habitSchema } from "../lib/validators";
+import { habitFrequencySchema } from "../lib/validators";
 import { TypedHabitWithEntries } from "../features/habits/types";
 import { normalizeDate } from "./date";
 
@@ -114,7 +114,7 @@ export function parseHabit(
     include: { entries: true };
   }>,
 ): TypedHabitWithEntries {
-  const parsed = habitSchema.parse({
+  const parsed = habitFrequencySchema.parse({
     frequency: habit.frequency,
     frequencyConfig: habit.frequencyConfig,
   });

@@ -8,17 +8,7 @@ import { parseHabit } from "@/utils/habits";
 import { cache } from "react";
 import { verifySession } from "@/lib/dal";
 import { normalizeDate } from "@/utils/date";
-
-const habitSchema = z.object({
-  id: z.string().optional(),
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .max(100, "Name must be 100 characters or less"),
-  description: z.string("Invalid description").optional(),
-  frequency: z.enum(Frequency).optional(),
-  config: z.string().optional(),
-});
+import { createHabitSchema } from "@/lib/validators";
 
 const getFrequencyConfig = (
   frequency?: Frequency,
@@ -48,25 +38,33 @@ export async function createOrUpdateHabit(
 ) {
   const session = await verifySession();
   const formDataObj = Object.fromEntries(formData.entries());
-  const validatedFields = habitSchema.safeParse(formDataObj);
+  const validatedFields = createHabitSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
     return { ...z.flattenError(validatedFields.error), success: false };
   }
 
-  const { name, description, frequency, config, id } = validatedFields.data;
-  const frequencyConfig =
-    getFrequencyConfig(frequency, config ? JSON.parse(config) : null) ||
-    undefined;
+  const { name, description, frequency, frequencyConfig, id } =
+    validatedFields.data;
+  const parsedFrequencyConfig =
+    getFrequencyConfig(
+      frequency,
+      frequencyConfig ? JSON.parse(frequencyConfig) : null,
+    ) || undefined;
 
   await prisma.habit.upsert({
     where: { id: id || "", userId: session.userId },
-    update: { name, description, frequency, frequencyConfig },
+    update: {
+      name,
+      description,
+      frequency,
+      frequencyConfig: parsedFrequencyConfig,
+    },
     create: {
       name,
       description,
       frequency,
-      frequencyConfig,
+      frequencyConfig: parsedFrequencyConfig,
       userId: session.userId,
     },
   });
