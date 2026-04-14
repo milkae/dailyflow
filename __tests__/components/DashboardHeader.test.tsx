@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
-import { getByNestedText } from "@/utils/tests";
+import { getByNestedText } from "@/__tests__/tests-utils";
 
 describe("DashboardHeader", () => {
   it("should render stats correctly", () => {

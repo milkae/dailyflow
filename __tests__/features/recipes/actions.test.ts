@@ -18,37 +18,12 @@ import {
   getAllRecipes,
 } from "@/features/recipes/actions";
 import { revalidatePath } from "next/cache";
-
-const MOCK_USER_ID = "user-1";
-const MOCK_RECIPE_ID = "recipe-1";
-
-const createMockRecipe = (overrides = {}) => ({
-  id: MOCK_RECIPE_ID,
-  name: "Pesto Pasta",
-  description: "Classic Italian pasta",
-  prepTime: 10,
-  cookTime: 20,
-  imageUrl: null,
-  sourceUrl: "https://example.com/recipe",
-  category: null,
-  ingredients: "pasta, pesto, cream, parmesan",
-  instructions: "Boil pasta, mix with pesto and cream",
-  servings: 4,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  userId: MOCK_USER_ID,
-  ...overrides,
-});
-
-const createFormData = (data: Record<string, unknown>) => {
-  const formData = new FormData();
-  Object.entries(data).forEach(([key, value]) => {
-    if (value !== null && value !== undefined) {
-      formData.append(key, String(value));
-    }
-  });
-  return formData;
-};
+import {
+  createFormData,
+  createMockRecipe,
+  MOCK_RECIPE_ID,
+  MOCK_USER_ID,
+} from "@/__tests__/tests-utils";
 
 describe("createOrUpdateRecipe", () => {
   beforeEach(() => {
