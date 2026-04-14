@@ -6,13 +6,11 @@ import { revalidatePath } from "next/cache";
 import { verifySession } from "@/lib/dal";
 import { logError } from "@/lib/logger";
 import { createRecipeSchema } from "@/lib/validators";
+import { ActionState, Status } from "@/utils/action-state";
 
 export async function createOrUpdateRecipe(
   { id }: { id?: string },
-  _initialState: {
-    formErrors: string[];
-    fieldErrors: { [i: string]: string[] };
-  },
+  _initialState: ActionState,
   formData: FormData,
 ) {
   const session = await verifySession();
@@ -20,7 +18,7 @@ export async function createOrUpdateRecipe(
   const validatedFields = createRecipeSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
-    return z.flattenError(validatedFields.error);
+    return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
   }
 
   const recipe = validatedFields.data;
@@ -35,6 +33,7 @@ export async function createOrUpdateRecipe(
         return {
           formErrors: ["Recipe not found"],
           fieldErrors: {},
+          status: Status.ERROR,
         };
       }
 
@@ -55,7 +54,7 @@ export async function createOrUpdateRecipe(
             data: recipe,
           });
           revalidatePath(`/meals/recipes`);
-          return { formErrors: [], fieldErrors: {} };
+          return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
         }
       }
 
@@ -68,13 +67,14 @@ export async function createOrUpdateRecipe(
     }
 
     revalidatePath("/meals/recipes");
-    return { formErrors: [], fieldErrors: {} };
+    return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
   } catch (err) {
     const error = err instanceof Error ? err : new Error(String(err));
     logError(error, "Recipe save error");
     return {
       formErrors: ["Failed to save recipe. Please try again."],
       fieldErrors: {},
+      status: Status.ERROR,
     };
   }
 }

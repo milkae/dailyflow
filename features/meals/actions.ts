@@ -8,13 +8,11 @@ import { verifySession } from "@/lib/dal";
 import { MealWithRecipeName } from "@/features/meals/types";
 import { normalizeDate } from "@/utils/date";
 import { createMealSchema } from "@/lib/validators";
+import { ActionState, Status } from "@/utils/action-state";
 
 export async function addOrUpdateMeal(
   { date, type, id }: { date: Date; type: MealType; id?: string },
-  _initialState: {
-    formErrors: string[];
-    fieldErrors: { [i: string]: string[] };
-  },
+  _initialState: ActionState,
   formData: FormData,
 ) {
   const session = await verifySession();
@@ -23,7 +21,7 @@ export async function addOrUpdateMeal(
   const validatedFields = createMealSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
-    return z.flattenError(validatedFields.error);
+    return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
   }
 
   const { name, notes, recipeId } = validatedFields.data;
@@ -44,7 +42,7 @@ export async function addOrUpdateMeal(
   updateTag("dashboard");
   revalidatePath("/");
   revalidatePath("/meals");
-  return { formErrors: [], fieldErrors: {} };
+  return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
 }
 
 export async function deleteMeal(mealId: string) {

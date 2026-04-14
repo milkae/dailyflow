@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ReactElement,
-  startTransition,
-  useActionState,
-  useEffect,
-  useState,
-} from "react";
+import { ReactElement, useActionState, useState } from "react";
 import { createOrUpdateHabit } from "@/features/habits/actions";
 import { TextInput } from "@/components/shared/TextInput";
 import { Button } from "@/components/ui/button";

@@ -1,4 +1,4 @@
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +11,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { withCallbacks } from "@/utils/action-state";
 
 type Props = {
   recipe?: Recipe;
@@ -21,29 +22,14 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
   const submitRecipe = createOrUpdateRecipe.bind(null, {
     id: recipe?.id,
   });
-  const [state, formAction, pending] = useActionState(submitRecipe, {
-    formErrors: [],
-    fieldErrors: {},
-  });
-
-  const wasPendingRef = useRef(false);
-
-  useEffect(() => {
-    if (pending) {
-      wasPendingRef.current = true;
-    } else if (
-      wasPendingRef.current &&
-      state.formErrors.length === 0 &&
-      Object.keys(state.fieldErrors).length === 0
-    ) {
-      onSuccess?.();
-      wasPendingRef.current = false;
-    }
-  }, [pending, state, onSuccess]);
+  const [state, formAction, pending] = useActionState(
+    withCallbacks(submitRecipe, { onSuccess }),
+    null,
+  );
 
   return (
     <form action={formAction} className="space-y-4 mt-4" key={recipe?.name}>
-      <Field data-invalid={!!state.fieldErrors.name?.length}>
+      <Field data-invalid={!!state?.fieldErrors.name?.length}>
         <FieldLabel htmlFor="recipe-name">
           Recipe Name <span className="text-destructive">*</span>
         </FieldLabel>
@@ -55,7 +41,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           placeholder="Peanut butter noodles"
           disabled={pending}
         />
-        {!!state.fieldErrors.name?.length && (
+        {!!state?.fieldErrors.name?.length && (
           <div>
             {state.fieldErrors.name.map((e, i) => (
               <FieldError
@@ -70,7 +56,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         )}
       </Field>
 
-      <Field data-invalid={!!state.fieldErrors.description?.length}>
+      <Field data-invalid={!!state?.fieldErrors.description?.length}>
         <FieldLabel htmlFor="recipe-description">
           Description{" "}
           <span className="text-muted-foreground text-sm font-normal">
@@ -86,7 +72,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           disabled={pending}
           className="resize-none"
         />
-        {!!state.fieldErrors.description?.length && (
+        {!!state?.fieldErrors.description?.length && (
           <div>
             {state.fieldErrors.description.map((e, i) => (
               <FieldError
@@ -102,7 +88,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
       </Field>
 
       <FieldGroup className="grid grid-cols-2 gap-4">
-        <Field data-invalid={!!state.fieldErrors.prepTime?.length}>
+        <Field data-invalid={!!state?.fieldErrors.prepTime?.length}>
           <FieldLabel htmlFor="prep-time">Prep (min)</FieldLabel>
           <Input
             id="prep-time"
@@ -112,7 +98,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             placeholder="15"
             disabled={pending}
           />
-          {!!state.fieldErrors.prepTime?.length && (
+          {!!state?.fieldErrors.prepTime?.length && (
             <div>
               {state.fieldErrors.prepTime.map((e, i) => (
                 <FieldError
@@ -126,7 +112,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             </div>
           )}
         </Field>
-        <Field data-invalid={!!state.fieldErrors.cookTime?.length}>
+        <Field data-invalid={!!state?.fieldErrors.cookTime?.length}>
           <FieldLabel htmlFor="cook-time">Cook (min)</FieldLabel>
           <Input
             id="cook-time"
@@ -136,7 +122,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             placeholder="20"
             disabled={pending}
           />
-          {!!state.fieldErrors.cookTime?.length && (
+          {!!state?.fieldErrors.cookTime?.length && (
             <div>
               {state.fieldErrors.cookTime.map((e, i) => (
                 <FieldError
@@ -150,7 +136,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             </div>
           )}
         </Field>
-        <Field data-invalid={!!state.fieldErrors.servings?.length}>
+        <Field data-invalid={!!state?.fieldErrors.servings?.length}>
           <FieldLabel htmlFor="servings">Servings</FieldLabel>
           <Input
             id="servings"
@@ -161,7 +147,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             disabled={pending}
           />
         </Field>
-        {!!state.fieldErrors.servings?.length && (
+        {!!state?.fieldErrors.servings?.length && (
           <div>
             {state.fieldErrors.servings.map((e, i) => (
               <FieldError
@@ -176,7 +162,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         )}
       </FieldGroup>
 
-      <Field data-invalid={!!state.fieldErrors.ingredients?.length}>
+      <Field data-invalid={!!state?.fieldErrors.ingredients?.length}>
         <FieldLabel htmlFor="ingredients">
           Ingredients{" "}
           <span className="text-muted-foreground text-sm font-normal">
@@ -192,7 +178,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           disabled={pending}
           className="font-mono text-sm"
         />
-        {!!state.fieldErrors.ingredients?.length && (
+        {!!state?.fieldErrors.ingredients?.length && (
           <div>
             {state.fieldErrors.ingredients.map((e, i) => (
               <FieldError
@@ -207,7 +193,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         )}
       </Field>
 
-      <Field data-invalid={!!state.fieldErrors.instructions?.length}>
+      <Field data-invalid={!!state?.fieldErrors.instructions?.length}>
         <FieldLabel htmlFor="instructions">Instructions</FieldLabel>
         <Textarea
           id="instructions"
@@ -217,7 +203,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           rows={8}
           disabled={pending}
         />
-        {!!state.fieldErrors.instructions?.length && (
+        {!!state?.fieldErrors.instructions?.length && (
           <div>
             {state.fieldErrors.instructions.map((e, i) => (
               <FieldError
@@ -234,7 +220,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
 
       {recipe?.sourceUrl && (
         <div className="space-y-2">
-          <Field data-invalid={!!state.fieldErrors.sourceUrl?.length}>
+          <Field data-invalid={!!state?.fieldErrors.sourceUrl?.length}>
             <FieldLabel htmlFor="sourceUrl">
               Source
               <a
@@ -254,7 +240,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
               defaultValue={recipe?.sourceUrl}
               disabled={pending}
             />
-            {!!state.fieldErrors.sourceUrl?.length && (
+            {!!state?.fieldErrors.sourceUrl?.length && (
               <div>
                 {state.fieldErrors.sourceUrl.map((e, i) => (
                   <FieldError
@@ -271,7 +257,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         </div>
       )}
 
-      {state.formErrors.map((e, i) => (
+      {state?.formErrors.map((e, i) => (
         <p
           aria-live="polite"
           key={i}

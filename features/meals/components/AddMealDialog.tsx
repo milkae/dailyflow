@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { RecipeCombobox } from "../../recipes/components/RecipeCombobox";
 import { CreateRecipeDialog } from "../../recipes/components/CreateRecipeDialog";
+import { withCallbacks } from "@/utils/action-state";
 
 type Props = {
   open: boolean;
@@ -38,10 +39,10 @@ export function AddMealDialog({
     type: mealType,
     id: existingMeal?.id,
   });
-  const [state, formAction, pending] = useActionState(submitMealForm, {
-    formErrors: [],
-    fieldErrors: {},
-  });
+  const [state, formAction, pending] = useActionState(
+    withCallbacks(submitMealForm, { onSuccess: () => onOpenChange(false) }),
+    null,
+  );
   const [selectedRecipeId, onSelectRecipe] = useState<string>(
     existingMeal?.recipeId || "",
   );
@@ -67,7 +68,6 @@ export function AddMealDialog({
             action={async (formData) => {
               formData.append("recipeId", selectedRecipeId || "");
               formAction(formData);
-              onOpenChange(false);
             }}
             className="space-y-4"
           >
@@ -79,18 +79,18 @@ export function AddMealDialog({
                   defaultValue={existingMeal?.name}
                   required
                   disabled={pending}
-                  errors={state.fieldErrors.name}
+                  errors={state?.fieldErrors.name}
                 />
               </Field>
-              <Field data-invalid={!!state.fieldErrors.notes?.length}>
+              <Field data-invalid={!!state?.fieldErrors.notes?.length}>
                 <Textarea
                   name="notes"
                   defaultValue={existingMeal?.notes ?? ""}
                   placeholder="Add notes..."
                   disabled={pending}
-                  aria-invalid={!!state.fieldErrors.notes?.length}
+                  aria-invalid={!!state?.fieldErrors.notes?.length}
                 />
-                {!!state.fieldErrors.notes?.length && (
+                {!!state?.fieldErrors.notes?.length && (
                   <div>
                     {state.fieldErrors.notes.map((e, i) => (
                       <FieldError
