@@ -28,6 +28,7 @@ import {
   MOCK_HABIT_ID,
   MOCK_USER_ID,
 } from "@/__tests__/tests-utils";
+import { Status } from "@/utils/action-state";
 
 describe("Habit Server Actions", () => {
   beforeEach(() => {
@@ -47,12 +48,9 @@ describe("Habit Server Actions", () => {
           frequencyConfig: null,
         });
 
-        const result = await createOrUpdateHabit(
-          { formErrors: [], fieldErrors: {}, success: false },
-          formData,
-        );
+        const result = await createOrUpdateHabit(null, formData);
 
-        expect(result.success).toBe(true);
+        expect(result.status).toBe(Status.SUCCESS);
         expect(result.formErrors).toEqual([]);
         expect(prismaMock.habit.upsert).toHaveBeenCalledWith({
           where: { id: "", userId: MOCK_USER_ID },
@@ -75,12 +73,9 @@ describe("Habit Server Actions", () => {
           frequencyConfig: JSON.stringify({ day: 1 }),
         });
 
-        const result = await createOrUpdateHabit(
-          { formErrors: [], fieldErrors: {}, success: false },
-          formData,
-        );
+        const result = await createOrUpdateHabit(null, formData);
 
-        expect(result.success).toBe(true);
+        expect(result.status).toBe(Status.SUCCESS);
         expect(prismaMock.habit.upsert).toHaveBeenCalledWith({
           where: expect.any(Object),
           update: expect.any(Object),
@@ -101,12 +96,9 @@ describe("Habit Server Actions", () => {
           frequencyConfig: JSON.stringify({ day: 15 }),
         });
 
-        const result = await createOrUpdateHabit(
-          { formErrors: [], fieldErrors: {}, success: false },
-          formData,
-        );
+        const result = await createOrUpdateHabit(null, formData);
 
-        expect(result.success).toBe(true);
+        expect(result.status).toBe(Status.SUCCESS);
         expect(prismaMock.habit.upsert).toHaveBeenCalledWith({
           where: expect.any(Object),
           update: expect.any(Object),
@@ -129,12 +121,9 @@ describe("Habit Server Actions", () => {
           frequencyConfig: JSON.stringify({ days: [1, 3, 5] }),
         });
 
-        const result = await createOrUpdateHabit(
-          { formErrors: [], fieldErrors: {}, success: false },
-          formData,
-        );
+        const result = await createOrUpdateHabit(null, formData);
 
-        expect(result.success).toBe(true);
+        expect(result.status).toBe(Status.SUCCESS);
         expect(prismaMock.habit.upsert).toHaveBeenCalledWith({
           where: expect.any(Object),
           update: expect.any(Object),
@@ -155,12 +144,9 @@ describe("Habit Server Actions", () => {
           frequencyConfig: JSON.stringify({ interval: 3 }),
         });
 
-        const result = await createOrUpdateHabit(
-          { formErrors: [], fieldErrors: {}, success: false },
-          formData,
-        );
+        const result = await createOrUpdateHabit(null, formData);
 
-        expect(result.success).toBe(true);
+        expect(result.status).toBe(Status.SUCCESS);
         expect(prismaMock.habit.upsert).toHaveBeenCalledWith({
           where: expect.any(Object),
           update: expect.any(Object),
@@ -180,10 +166,7 @@ describe("Habit Server Actions", () => {
           frequency: "DAILY",
         });
 
-        await createOrUpdateHabit(
-          { formErrors: [], fieldErrors: {}, success: false },
-          formData,
-        );
+        await createOrUpdateHabit(null, formData);
 
         expect(updateTag).toHaveBeenCalledWith("dashboard");
         expect(revalidatePath).toHaveBeenCalledWith("/");
@@ -206,12 +189,9 @@ describe("Habit Server Actions", () => {
           frequency: "DAILY",
         });
 
-        const result = await createOrUpdateHabit(
-          { formErrors: [], fieldErrors: {}, success: false },
-          formData,
-        );
+        const result = await createOrUpdateHabit(null, formData);
 
-        expect(result.success).toBe(true);
+        expect(result.status).toBe(Status.SUCCESS);
         expect(prismaMock.habit.upsert).toHaveBeenCalledWith({
           where: { id: MOCK_HABIT_ID, userId: MOCK_USER_ID },
           update: expect.objectContaining({

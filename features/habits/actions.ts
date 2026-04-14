@@ -9,6 +9,7 @@ import { cache } from "react";
 import { verifySession } from "@/lib/dal";
 import { normalizeDate } from "@/utils/date";
 import { createHabitSchema } from "@/lib/validators";
+import { ActionState, Status } from "@/utils/action-state";
 
 const getFrequencyConfig = (
   frequency?: Frequency,
@@ -29,11 +30,7 @@ const getFrequencyConfig = (
 };
 
 export async function createOrUpdateHabit(
-  _initialState: {
-    formErrors: string[];
-    fieldErrors: { [i: string]: string[] };
-    success: boolean;
-  },
+  _initialState: ActionState,
   formData: FormData,
 ) {
   const session = await verifySession();
@@ -41,7 +38,7 @@ export async function createOrUpdateHabit(
   const validatedFields = createHabitSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
-    return { ...z.flattenError(validatedFields.error), success: false };
+    return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
   }
 
   const { name, description, frequency, frequencyConfig, id } =
@@ -73,7 +70,7 @@ export async function createOrUpdateHabit(
   revalidatePath("/");
   revalidatePath("/habits");
 
-  return { formErrors: [], fieldErrors: {}, success: true };
+  return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
 }
 
 export async function submitHabitEntryForm(id: string, formData: FormData) {

@@ -33,6 +33,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus } from "lucide-react";
 import { TypedHabit } from "@/features/habits/types";
+import { withCallbacks } from "@/utils/action-state";
 
 const frequencies = Object.values(Frequency).map((v) => ({
   value: v,
@@ -56,11 +57,10 @@ export const HabitForm = ({
   habit?: TypedHabit;
   trigger?: ReactElement;
 }) => {
-  const [state, formAction, pending] = useActionState(createOrUpdateHabit, {
-    formErrors: [],
-    fieldErrors: {},
-    success: false,
-  });
+  const [state, formAction, pending] = useActionState(
+    withCallbacks(createOrUpdateHabit, { onSuccess: () => setOpen(false) }),
+    null,
+  );
   const [selectedFrequency, setFrequency] = useState<Frequency>(
     habit?.frequency || Frequency.DAILY,
   );
@@ -70,12 +70,6 @@ export const HabitForm = ({
       [],
   );
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    if (state.success) {
-      startTransition(() => setOpen(false));
-    }
-  }, [state.success]);
 
   return (
     <Dialog
@@ -124,7 +118,7 @@ export const HabitForm = ({
                   defaultValue={habit?.name}
                   placeholder="Habit name"
                   required
-                  errors={state.fieldErrors.name}
+                  errors={state?.fieldErrors.name}
                 />
               </Field>
               <Field>
@@ -132,7 +126,7 @@ export const HabitForm = ({
                   name="description"
                   defaultValue={habit?.description || ""}
                   placeholder="Habit description"
-                  errors={state.fieldErrors.description}
+                  errors={state?.fieldErrors.description}
                 />
               </Field>
               <Field>
@@ -243,15 +237,15 @@ export const HabitForm = ({
                   />
                 </Field>
               )}
-              {state.fieldErrors.config && (
+              {state?.fieldErrors.frequencyConfig && (
                 <p className="text-sm text-destructive">
-                  {state.fieldErrors.config}
+                  {state?.fieldErrors.frequencyConfig}
                 </p>
               )}
             </FieldGroup>
           </FieldSet>
 
-          {state.formErrors.map((e, i) => (
+          {state?.formErrors.map((e, i) => (
             <p aria-live="polite" key={i}>
               {e}
             </p>
