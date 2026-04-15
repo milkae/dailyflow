@@ -73,9 +73,13 @@ export async function createOrUpdateHabit(
   return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
 }
 
-export async function submitHabitEntryForm(id: string, formData: FormData) {
+export async function submitHabitEntryForm(
+  id: string,
+  _initialState: ActionState,
+  formData: FormData,
+) {
   const note = (formData.get("note") as string) || "";
-  await createHabitEntry(id, undefined, note);
+  return createHabitEntry(id, undefined, note);
 }
 
 export async function createHabitEntry(
@@ -94,7 +98,7 @@ export async function createHabitEntry(
   });
 
   if (existingEntry && existingEntry.note === note) {
-    return;
+    return { status: Status.SUCCESS };
   }
 
   await prisma.entry.upsert({
@@ -108,6 +112,7 @@ export async function createHabitEntry(
 
   updateTag("dashboard");
   revalidatePath("/");
+  return { status: Status.SUCCESS };
 }
 
 export async function deleteHabitEntry(id: string, date = new Date()) {

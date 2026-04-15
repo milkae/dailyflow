@@ -5,9 +5,9 @@ export enum Status {
 
 export type ActionState =
   | {
-      formErrors: string[];
-      fieldErrors: Record<string, string[]>;
-      status: Status;
+      formErrors?: string[];
+      fieldErrors?: Record<string, string[]>;
+      status?: Status;
     }
   | null
   | undefined;
