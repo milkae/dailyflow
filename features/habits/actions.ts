@@ -10,6 +10,7 @@ import { verifySession } from "@/lib/dal";
 import { normalizeDate } from "@/utils/date";
 import { createHabitSchema } from "@/lib/validators";
 import { ActionState, Status } from "@/utils/action-state";
+import { JsonNull } from "@prisma/client/runtime/client";
 
 const getFrequencyConfig = (
   frequency?: Frequency,
@@ -35,7 +36,18 @@ export async function createOrUpdateHabit(
 ) {
   const session = await verifySession();
   const formDataObj = Object.fromEntries(formData.entries());
-  const validatedFields = createHabitSchema.safeParse(formDataObj);
+
+  const parsedFrequencyConfig = getFrequencyConfig(
+    formDataObj.frequency as Frequency,
+    formDataObj.frequencyConfig
+      ? JSON.parse(formDataObj.frequencyConfig as string)
+      : null,
+  );
+
+  const validatedFields = createHabitSchema.safeParse({
+    ...formDataObj,
+    frequencyConfig: parsedFrequencyConfig,
+  });
 
   if (!validatedFields.success) {
     return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
@@ -43,11 +55,6 @@ export async function createOrUpdateHabit(
 
   const { name, description, frequency, frequencyConfig, id } =
     validatedFields.data;
-  const parsedFrequencyConfig =
-    getFrequencyConfig(
-      frequency,
-      frequencyConfig ? JSON.parse(frequencyConfig) : null,
-    ) || undefined;
 
   await prisma.habit.upsert({
     where: { id: id || "", userId: session.userId },
@@ -55,13 +62,13 @@ export async function createOrUpdateHabit(
       name,
       description,
       frequency,
-      frequencyConfig: parsedFrequencyConfig,
+      frequencyConfig: frequencyConfig === null ? JsonNull : frequencyConfig,
     },
     create: {
       name,
       description,
       frequency,
-      frequencyConfig: parsedFrequencyConfig,
+      frequencyConfig: frequencyConfig === null ? JsonNull : frequencyConfig,
       userId: session.userId,
     },
   });

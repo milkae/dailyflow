@@ -23,19 +23,20 @@ export const habitFrequencySchema = z.discriminatedUnion("frequency", [
   }),
 ]);
 
-export const createHabitSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, "Name is required").max(100),
-  description: z.string().max(500).optional(),
-  frequency: z.enum([
-    "DAILY",
-    "WEEKLY",
-    "MONTHLY",
-    "SPECIFIC_DAYS",
-    "INTERVAL",
-  ]),
-  frequencyConfig: z.string().optional(),
-});
+export const createHabitSchema = z
+  .object({
+    id: z.string().optional(),
+    name: z.string().min(1, "Name is required").max(100),
+    description: z.string().max(500).optional(),
+    frequency: z.enum([
+      "DAILY",
+      "WEEKLY",
+      "MONTHLY",
+      "SPECIFIC_DAYS",
+      "INTERVAL",
+    ]),
+  })
+  .and(habitFrequencySchema);
 
 export const createRecipeSchema = z.object({
   id: z.string().optional(),

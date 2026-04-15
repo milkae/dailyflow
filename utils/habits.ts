@@ -2,6 +2,7 @@ import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
 import { habitFrequencySchema } from "../lib/validators";
 import { TypedHabitWithEntries } from "../features/habits/types";
 import { normalizeDate } from "./date";
+import { logError } from "@/lib/logger";
 
 export function isHabitActiveOnDate(habit: TypedHabitWithEntries, date: Date) {
   switch (habit.frequency) {
@@ -114,13 +115,18 @@ export function parseHabit(
     include: { entries: true };
   }>,
 ): TypedHabitWithEntries {
-  const parsed = habitFrequencySchema.parse({
+  const validatedFields = habitFrequencySchema.safeParse({
     frequency: habit.frequency,
     frequencyConfig: habit.frequencyConfig,
   });
 
+  if (!validatedFields.success) {
+    logError(validatedFields.error, "Parse habit validation error");
+    throw new Error("Error while parsing habit's frequency");
+  }
+
   return {
     ...habit,
-    ...parsed,
+    ...validatedFields.data,
   };
 }

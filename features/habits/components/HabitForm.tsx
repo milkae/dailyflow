@@ -2,9 +2,15 @@
 
 import { ReactElement, useActionState, useState } from "react";
 import { createOrUpdateHabit } from "@/features/habits/actions";
-import { TextInput } from "@/components/shared/TextInput";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
 import { Frequency } from "@/generated/prisma/enums";
 import {
   Dialog,
@@ -25,9 +31,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus } from "lucide-react";
+import { AlertCircleIcon, Plus } from "lucide-react";
 import { TypedHabit } from "@/features/habits/types";
 import { withCallbacks } from "@/utils/action-state";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const frequencies = Object.values(Frequency).map((v) => ({
   value: v,
@@ -93,93 +100,140 @@ export const HabitForm = ({
           </DialogTitle>
         </DialogHeader>
 
+        {state?.formErrors.map((e, i) => (
+          <Alert
+            variant="destructive"
+            className="max-w-md"
+            aria-live="polite"
+            key={i}
+          >
+            <AlertCircleIcon />
+            <AlertTitle>An Error Occured</AlertTitle>
+            <AlertDescription>{e}</AlertDescription>
+          </Alert>
+        ))}
+
         <form
+          className="space-y-4"
           action={(formData) => {
             if (habit) {
               formData.append("id", habit.id);
             }
-            if (selectedDays) {
-              formData.append("config", JSON.stringify(selectedDays));
+            if (!!selectedDays.length) {
+              formData.append("frequencyConfig", JSON.stringify(selectedDays));
             }
             formAction(formData);
           }}
         >
-          <FieldSet>
-            <FieldGroup>
-              <Field>
-                <TextInput
-                  name="name"
-                  defaultValue={habit?.name}
-                  placeholder="Habit name"
-                  required
-                  errors={state?.fieldErrors.name}
-                />
-              </Field>
-              <Field>
-                <TextInput
-                  name="description"
-                  defaultValue={habit?.description || ""}
-                  placeholder="Habit description"
-                  errors={state?.fieldErrors.description}
-                />
-              </Field>
-              <Field>
-                <FieldLabel>Frequency</FieldLabel>
-                <Select
-                  name="frequency"
-                  defaultValue={habit?.frequency || frequencies[0].value}
-                  onValueChange={(value) => setFrequency(value as Frequency)}
+          <Field data-invalid={!!state?.fieldErrors.name?.length}>
+            <Input
+              name="name"
+              defaultValue={habit?.name}
+              placeholder="Habit name"
+              required
+              disabled={pending}
+              aria-invalid={!!state?.fieldErrors.name?.length}
+            />
+            {!!state?.fieldErrors.name?.length && (
+              <FieldError aria-live="polite" errors={state.fieldErrors.name} />
+            )}
+          </Field>
+          <Field data-invalid={!!state?.fieldErrors.description?.length}>
+            <Input
+              name="description"
+              defaultValue={habit?.description || ""}
+              placeholder="Habit description"
+              disabled={pending}
+              aria-invalid={!!state?.fieldErrors.description?.length}
+            />
+            {!!state?.fieldErrors.description?.length && (
+              <FieldError
+                aria-live="polite"
+                errors={state.fieldErrors.description}
+              />
+            )}
+          </Field>
+          <FieldGroup>
+            <Field data-invalid={!!state?.fieldErrors.frequency?.length}>
+              <FieldLabel htmlFor="frequency">Frequency</FieldLabel>
+              <Select
+                id="frenquency"
+                name="frequency"
+                defaultValue={habit?.frequency || frequencies[0].value}
+                onValueChange={(value) => setFrequency(value as Frequency)}
+              >
+                <SelectTrigger
+                  aria-invalid={!!state?.fieldErrors.frequency?.length}
                 >
-                  <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {frequencies.map((frequency) => (
+                    <SelectItem value={frequency.value} key={frequency.value}>
+                      {frequency.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {!!state?.fieldErrors.frequency?.length && (
+                <FieldError
+                  aria-live="polite"
+                  errors={state.fieldErrors.frequency}
+                />
+              )}
+            </Field>
+
+            {selectedFrequency === Frequency.WEEKLY && (
+              <Field
+                data-invalid={!!state?.fieldErrors.frequencyConfig?.length}
+              >
+                <FieldLabel htmlFor="frequencyConfig">Day of week</FieldLabel>
+                <Select
+                  id="frequencyConfig"
+                  name="frequencyConfig"
+                  defaultValue={
+                    habit?.frequency === Frequency.WEEKLY
+                      ? habit?.frequencyConfig?.day
+                      : 1
+                  }
+                >
+                  <SelectTrigger
+                    aria-invalid={!!state?.fieldErrors.frequencyConfig?.length}
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {frequencies.map((frequency) => (
-                      <SelectItem value={frequency.value} key={frequency.value}>
-                        {frequency.label}
+                    {dayNames.map((day) => (
+                      <SelectItem key={day.value} value={day.value.toString()}>
+                        {day.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </Field>
+            )}
 
-              {selectedFrequency === Frequency.WEEKLY && (
-                <Field>
-                  <FieldLabel>Day of week</FieldLabel>
-                  <Select
-                    defaultValue={
-                      habit?.frequency === Frequency.WEEKLY
-                        ? habit?.frequencyConfig?.day
-                        : 1
-                    }
-                    name="config"
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {dayNames.map((day) => (
-                        <SelectItem
-                          key={day.value}
-                          value={day.value.toString()}
-                        >
-                          {day.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
-              )}
-
-              {selectedFrequency === Frequency.SPECIFIC_DAYS && (
-                <Field>
-                  <FieldLabel>Select days</FieldLabel>
+            {selectedFrequency === Frequency.SPECIFIC_DAYS && (
+              <FieldSet
+                data-invalid={!!state?.fieldErrors.frequencyConfig?.length}
+              >
+                <FieldLegend>Select days</FieldLegend>
+                <FieldGroup className="grid grid-cols-4">
                   {dayNames.map((day) => {
                     return (
-                      <div key={day.value} className="flex items-center gap-2">
+                      <Field
+                        key={day.value}
+                        orientation="horizontal"
+                        data-invalid={
+                          !!state?.fieldErrors.frequencyConfig?.length
+                        }
+                      >
                         <Checkbox
                           id={`config-${day.short}`}
                           checked={!!selectedDays?.includes(day.value)}
+                          aria-invalid={
+                            !!state?.fieldErrors.frequencyConfig?.length
+                          }
                           onCheckedChange={(checked) => {
                             const newDays = checked
                               ? [...(selectedDays || []), day.value].sort()
@@ -189,61 +243,65 @@ export const HabitForm = ({
                             setSelectedDays(newDays);
                           }}
                         />
-                        <label htmlFor={`config-${day.short}`}>
+                        <FieldLabel htmlFor={`config-${day.short}`}>
                           {day.short}
-                        </label>
-                      </div>
+                        </FieldLabel>
+                      </Field>
                     );
                   })}
-                </Field>
-              )}
+                </FieldGroup>
+              </FieldSet>
+            )}
 
-              {selectedFrequency === Frequency.INTERVAL && (
-                <Field>
-                  <FieldLabel>Repeat every (days)</FieldLabel>
-                  <Input
-                    type="number"
-                    min="1"
-                    max="30"
-                    name="config"
-                    defaultValue={
-                      habit?.frequency === Frequency.INTERVAL
-                        ? habit?.frequencyConfig?.interval
-                        : 1
-                    }
-                  />
-                </Field>
-              )}
+            {selectedFrequency === Frequency.INTERVAL && (
+              <Field
+                data-invalid={!!state?.fieldErrors.frequencyConfig?.length}
+              >
+                <FieldLabel htmlFor="frequencyConfig">
+                  Repeat every (days)
+                </FieldLabel>
+                <Input
+                  id="frequencyConfig"
+                  type="number"
+                  min="1"
+                  max="30"
+                  name="frequencyConfig"
+                  defaultValue={
+                    habit?.frequency === Frequency.INTERVAL
+                      ? habit?.frequencyConfig?.interval
+                      : 1
+                  }
+                  aria-invalid={!!state?.fieldErrors.frequencyConfig?.length}
+                />
+              </Field>
+            )}
 
-              {selectedFrequency === Frequency.MONTHLY && (
-                <Field>
-                  <FieldLabel>Day of the month</FieldLabel>
-                  <Input
-                    type="number"
-                    min="1"
-                    max="31"
-                    name="config"
-                    defaultValue={
-                      habit?.frequency === Frequency.MONTHLY
-                        ? habit?.frequencyConfig?.day
-                        : 1
-                    }
-                  />
-                </Field>
-              )}
-              {state?.fieldErrors.frequencyConfig && (
-                <p className="text-sm text-destructive">
-                  {state?.fieldErrors.frequencyConfig}
-                </p>
-              )}
-            </FieldGroup>
-          </FieldSet>
-
-          {state?.formErrors.map((e, i) => (
-            <p aria-live="polite" key={i}>
-              {e}
-            </p>
-          ))}
+            {selectedFrequency === Frequency.MONTHLY && (
+              <Field
+                data-invalid={!!state?.fieldErrors.frequencyConfig?.length}
+              >
+                <FieldLabel htmlFor="frequencyConfig">
+                  Day of the month
+                </FieldLabel>
+                <Input
+                  id="frequencyConfig"
+                  type="number"
+                  min="1"
+                  max="31"
+                  name="frequencyConfig"
+                  defaultValue={
+                    habit?.frequency === Frequency.MONTHLY
+                      ? habit?.frequencyConfig?.day
+                      : 1
+                  }
+                  aria-invalid={!!state?.fieldErrors.frequencyConfig?.length}
+                />
+              </Field>
+            )}
+            {state?.fieldErrors.frequencyConfig && (
+              <FieldError errors={state.fieldErrors.frequencyConfig} />
+            )}
+          </FieldGroup>
 
           <DialogFooter className="flex justify-between gap-4 mt-4">
             <DialogClose render={<Button variant="outline">Cancel</Button>} />
