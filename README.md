@@ -1,36 +1,208 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DailyFlow - Habits, Meals & Recipes Tracker
+
+A modern full-stack web application for tracking daily habits, meals, and recipes. Built with **Next.js 16**, **React 19**, **Prisma**, and **TailwindCSS**.
+
+## Features
+
+### 📊 Dashboard
+
+- Quick stats overview of habits and meals
+- Today's habits and meals at a glance
+
+### 🎯 Habits
+
+- Create and track daily, weekly, or monthly habits
+- Visual streak tracking and progress indicators
+- Habit timeline with completion history
+- Completion rate analytics
+- Support for flexible frequency patterns (daily, weekly, monthly, specific days, intervals)
+
+### 🍽️ Meals
+
+- Log meals by type (breakfast, lunch, dinner, snack)
+- Associate meals with recipes
+- Date-based meal planning
+- Quick meal history view
+
+### 👨‍🍳 Recipes
+
+- Create custom recipes with ingredients and instructions
+- Parse recipes from URLs (auto-extraction of recipe data)
+
+### 🔐 Authentication
+
+- Secure authentication with Google OAuth
+- Better Auth integration
+- Protected routes and user-specific data
+
+## Tech Stack
+
+**Frontend:**
+
+- [Next.js 16](https://nextjs.org) - React framework with App Router
+- [React 19](https://react.dev) - UI library
+- [TailwindCSS 4](https://tailwindcss.com) - Styling
+- [shadcn/ui](https://ui.shadcn.com) - Component library
+- [React Query](https://tanstack.com/query) - Data fetching & caching
+- [Recharts](https://recharts.org) - Data visualization
+
+**Backend:**
+
+- [Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) - Server endpoints
+- [Prisma ORM](https://www.prisma.io) - Database management
+- [Better Auth](https://www.better-auth.com) - Authentication
+
+**Database:**
+
+- PostgreSQL
+
+**Developer Tools:**
+
+- [TypeScript](https://www.typescriptlang.org) - Type safety
+- [Zod](https://zod.dev) - Schema validation
+- [Vitest](https://vitest.dev) - Testing framework
+- [ESLint](https://eslint.org) - Code linting
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ and pnpm (or npm/yarn)
+- PostgreSQL database
+- Google OAuth credentials (for authentication)
+
+### Installation
+
+1. **Clone and install dependencies:**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo>
+cd dailyflow
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Set up environment variables:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Update `.env.local` with your values:
 
-## Learn More
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/dailyflow
+BETTER_AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Set up the database:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npx prisma migrate dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Run the development server:**
 
-## Deploy on Vercel
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```
+├── app/                    # Next.js App Router
+│   ├── api/               # API routes
+│   ├── (auth)/            # Authentication pages
+│   ├── habits/            # Habits feature
+│   ├── meals/             # Meals feature
+│   └── layout.tsx         # Root layout
+├── components/            # Reusable components
+│   ├── layout/            # Navigation, header, footer
+│   ├── ui/                # shadcn/ui components
+│   └── providers/         # Context providers
+├── features/              # Feature-specific logic
+│   ├── habits/            # Habits feature (components, actions)
+│   ├── meals/             # Meals feature
+│   └── recipes/           # Recipes feature
+├── lib/                   # Utilities and configuration
+│   ├── auth.ts            # Auth setup
+│   ├── prisma.ts          # Prisma client
+│   └── validators.ts      # Zod schemas
+├── prisma/                # Database schema and migrations
+└── utils/                 # Helper functions
+```
+
+## Available Scripts
+
+```bash
+# Development
+pnpm dev              # Start dev server
+pnpm build            # Production build
+pnpm start            # Start production server
+pnpm lint             # Run ESLint
+pnpm test             # Run tests with Vitest
+```
+
+## Key Implementation Details
+
+### Server Actions
+
+- Form submissions use Next.js Server Actions for type-safe mutations
+- Input validation with Zod schemas
+- Automatic cache revalidation with `revalidatePath()`
+
+### Data Fetching
+
+- Server components for initial data loading
+- React Query for client-side data management
+- Optimistic updates in UI
+
+### Authentication Flow
+
+- Protected routes with session verification
+- User-specific data isolation
+- Google OAuth sign-in/sign-up
+
+### Database
+
+- Prisma ORM with PostgreSQL
+- User data relationships (Habits, Meals, Recipes per user)
+- Soft deletion support for data safety
+
+## Deployment
+
+### Vercel (Recommended)
+
+```bash
+pnpm install -g vercel
+vercel
+```
+
+### Docker
+
+```bash
+docker build -t dailyflow .
+docker run -p 3000:3000 dailyflow
+```
+
+### Manual Deployment
+
+1. Set up a PostgreSQL database
+2. Deploy to your hosting platform (AWS, DigitalOcean, Railway, etc.)
+3. Set environment variables in production
+4. Run database migrations: `npx prisma migrate deploy`
+
+## Future Enhancements
+
+- Meal planning calendar
+- Nutrition tracking integration
+- Social sharing of habits and recipes
+- Mobile app with React Native
+- Advanced analytics and insights
+
+## License
+
+MIT
