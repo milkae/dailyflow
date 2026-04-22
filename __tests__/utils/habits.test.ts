@@ -5,6 +5,7 @@ import {
   isHabitActiveOnDate,
   isHabitCompletedOnDate,
   getHabitEntryForToday,
+  calculateStreak,
 } from "@/utils/habits";
 import { Frequency } from "@/generated/prisma/browser";
 import {
@@ -289,6 +290,70 @@ describe("Habit Utilities", () => {
     it("should return undefined with no entries", () => {
       const habit = createMockTypedHabitWithEntries(Frequency.DAILY, null, []);
       expect(getHabitEntryForToday(habit)).toBeUndefined();
+    });
+  });
+
+  describe("calculateStreak", () => {
+    it("should calculate current streak correctly for consecutive days", () => {
+      const today = new Date();
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+
+      const habit = createMockTypedHabitWithEntries(Frequency.DAILY);
+      habit.entries = [
+        createMockEntry(today),
+        createMockEntry(yesterday),
+        createMockEntry(twoDaysAgo),
+      ];
+
+      expect(calculateStreak(habit)).toBe(3);
+    });
+
+    it("should break streak on missing day", () => {
+      const today = new Date();
+      const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+
+      const habit = createMockTypedHabitWithEntries(Frequency.DAILY);
+      habit.entries = [createMockEntry(today), createMockEntry(twoDaysAgo)];
+
+      expect(calculateStreak(habit)).toBe(1); // Only today
+    });
+
+    it("should handle empty entries", () => {
+      const habit = createMockTypedHabitWithEntries(Frequency.DAILY);
+      expect(calculateStreak(habit)).toBe(0);
+    });
+
+    it("should handle non-daily frequencies", () => {
+      const monday1 = new Date("2024-04-01"); // Monday
+      const monday2 = new Date("2024-04-08"); // Next Monday
+
+      const habit = createMockTypedHabitWithEntries(Frequency.WEEKLY, {
+        day: 1,
+      });
+      habit.entries = [createMockEntry(monday1), createMockEntry(monday2)];
+
+      expect(calculateStreak(habit)).toBe(2);
+    });
+
+    it("should handle single entry", () => {
+      const habit = createMockTypedHabitWithEntries(Frequency.DAILY);
+      habit.entries = [createMockEntry(new Date())];
+
+      expect(calculateStreak(habit)).toBe(1);
+    });
+
+    it("should handle future dates (shouldn't count)", () => {
+      const today = new Date();
+      const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+      const habit = createMockTypedHabitWithEntries(Frequency.DAILY);
+      habit.entries = [
+        createMockEntry(today),
+        createMockEntry(tomorrow), // Future date
+      ];
+
+      expect(calculateStreak(habit)).toBe(1); // Only today counts
     });
   });
 });

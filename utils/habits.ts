@@ -85,28 +85,42 @@ export function getLastWeekHabits(
 }
 
 export const calculateStreak = (habit: Habit & { entries: Entry[] }) => {
-  let streak = 0;
+  if (!habit.entries.length) return 0;
 
-  for (let i = habit.entries.length - 1; i >= 0; i--) {
-    if (i === habit.entries.length - 1) {
-      const today = normalizeDate(new Date());
-      const entryDate = normalizeDate(habit.entries[i].date);
-      if (entryDate.getTime() !== today.getTime()) {
-        break;
-      }
+  // Sort entries by date descending (most recent first)
+  const sortedEntries = [...habit.entries].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  let streak = 0;
+  const today = normalizeDate(new Date());
+
+  // Check if most recent entry is today or yesterday
+  const mostRecentEntry = sortedEntries[0];
+  const mostRecentDate = normalizeDate(mostRecentEntry.date);
+
+  // If most recent entry is in the future or more than 1 day ago, no current streak
+  const daysDiff = Math.floor(
+    (today.getTime() - mostRecentDate.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  if (daysDiff > 1) return 0;
+
+  // Count consecutive days backwards from most recent
+  for (let i = 0; i < sortedEntries.length; i++) {
+    const entryDate = normalizeDate(sortedEntries[i].date);
+    const expectedDate = new Date(today);
+    expectedDate.setDate(today.getDate() - i);
+
+    if (
+      normalizeDate(entryDate).getTime() ===
+      normalizeDate(expectedDate).getTime()
+    ) {
       streak++;
     } else {
-      const previousDay = normalizeDate(habit.entries[i].date);
-      previousDay.setDate(previousDay.getDate() - 1);
-      const nextHabitEntryDate = normalizeDate(habit.entries[i - 1].date);
-
-      if (nextHabitEntryDate.getTime() !== previousDay.getTime()) {
-        break;
-      }
-
-      streak++;
+      break;
     }
   }
+
   return streak;
 };
 
