@@ -1,6 +1,7 @@
 import { useActionState, useState } from "react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -8,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { addOrUpdateMeal } from "@/features/meals/actions";
-import { TextInput } from "@/components/shared/TextInput";
 import { Meal, Recipe } from "@/generated/prisma/client";
 import { capitalize } from "@/utils/string";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,6 +16,9 @@ import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { RecipeCombobox } from "../../recipes/components/RecipeCombobox";
 import { CreateRecipeDialog } from "../../recipes/components/CreateRecipeDialog";
 import { withCallbacks } from "@/utils/action-state";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   open: boolean;
@@ -64,6 +67,20 @@ export function AddMealDialog({
               })}
             </DialogDescription>
           </DialogHeader>
+
+          {state?.formErrors.map((e, i) => (
+            <Alert
+              variant="destructive"
+              className="max-w-md"
+              aria-live="polite"
+              key={i}
+            >
+              <AlertCircleIcon />
+              <AlertTitle>An Error Occured</AlertTitle>
+              <AlertDescription>{e}</AlertDescription>
+            </Alert>
+          ))}
+
           <form
             action={async (formData) => {
               formData.append("recipeId", selectedRecipeId || "");
@@ -72,15 +89,21 @@ export function AddMealDialog({
             className="space-y-4"
           >
             <FieldGroup>
-              <Field>
-                <TextInput
+              <Field data-invalid={!!state?.fieldErrors.name?.length}>
+                <Input
                   name="name"
                   placeholder="Meal name"
                   defaultValue={existingMeal?.name}
                   required
                   disabled={pending}
-                  errors={state?.fieldErrors.name}
+                  aria-invalid={!!state?.fieldErrors.name?.length}
                 />
+                {!!state?.fieldErrors.name?.length && (
+                  <FieldError
+                    aria-live="polite"
+                    errors={state.fieldErrors.name}
+                  />
+                )}
               </Field>
               <Field data-invalid={!!state?.fieldErrors.notes?.length}>
                 <Textarea
@@ -91,17 +114,11 @@ export function AddMealDialog({
                   aria-invalid={!!state?.fieldErrors.notes?.length}
                 />
                 {!!state?.fieldErrors.notes?.length && (
-                  <div>
-                    {state.fieldErrors.notes.map((e, i) => (
-                      <FieldError
-                        aria-live="polite"
-                        key={i}
-                        className="text-sm text-destructive"
-                      >
-                        {e}
-                      </FieldError>
-                    ))}
-                  </div>
+                  <FieldError
+                    aria-live="polite"
+                    className="text-sm text-destructive"
+                    errors={state.fieldErrors.notes}
+                  />
                 )}
               </Field>
             </FieldGroup>
@@ -114,15 +131,17 @@ export function AddMealDialog({
               />
             )}
             <div className="flex gap-2 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={pending}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
+              <DialogClose
+                render={
+                  <Button
+                    variant="outline"
+                    disabled={pending}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                }
+              />
               <Button
                 type="submit"
                 disabled={pending}

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createOrUpdateRecipe } from "@/features/recipes/actions";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { AlertCircleIcon, ExternalLink, Loader2 } from "lucide-react";
 import { Recipe } from "@/generated/prisma/browser";
 import {
   Field,
@@ -12,6 +12,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { withCallbacks } from "@/utils/action-state";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type Props = {
   recipe?: Recipe;
@@ -28,7 +29,19 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
   );
 
   return (
-    <form action={formAction} className="space-y-4 mt-4" key={recipe?.name}>
+    <form action={formAction} className="space-y-4">
+      {state?.formErrors.map((e, i) => (
+        <Alert
+          variant="destructive"
+          className="max-w-md"
+          aria-live="polite"
+          key={i}
+        >
+          <AlertCircleIcon />
+          <AlertTitle>An Error Occured</AlertTitle>
+          <AlertDescription>{e}</AlertDescription>
+        </Alert>
+      ))}
       <Field data-invalid={!!state?.fieldErrors.name?.length}>
         <FieldLabel htmlFor="recipe-name">
           Recipe Name <span className="text-destructive">*</span>
@@ -42,17 +55,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           disabled={pending}
         />
         {!!state?.fieldErrors.name?.length && (
-          <div>
-            {state.fieldErrors.name.map((e, i) => (
-              <FieldError
-                aria-live="polite"
-                key={i}
-                className="text-sm text-destructive"
-              >
-                {e}
-              </FieldError>
-            ))}
-          </div>
+          <FieldError aria-live="polite" errors={state.fieldErrors.name} />
         )}
       </Field>
 
@@ -71,19 +74,13 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           rows={2}
           disabled={pending}
           className="resize-none"
+          aria-invalid={!!state?.fieldErrors.description?.length}
         />
         {!!state?.fieldErrors.description?.length && (
-          <div>
-            {state.fieldErrors.description.map((e, i) => (
-              <FieldError
-                aria-live="polite"
-                key={i}
-                className="text-sm text-destructive"
-              >
-                {e}
-              </FieldError>
-            ))}
-          </div>
+          <FieldError
+            aria-live="polite"
+            errors={state.fieldErrors.description}
+          />
         )}
       </Field>
 
@@ -99,17 +96,10 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             disabled={pending}
           />
           {!!state?.fieldErrors.prepTime?.length && (
-            <div>
-              {state.fieldErrors.prepTime.map((e, i) => (
-                <FieldError
-                  aria-live="polite"
-                  key={i}
-                  className="text-sm text-destructive"
-                >
-                  {e}
-                </FieldError>
-              ))}
-            </div>
+            <FieldError
+              aria-live="polite"
+              errors={state.fieldErrors.prepTime}
+            />
           )}
         </Field>
         <Field data-invalid={!!state?.fieldErrors.cookTime?.length}>
@@ -123,17 +113,10 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             disabled={pending}
           />
           {!!state?.fieldErrors.cookTime?.length && (
-            <div>
-              {state.fieldErrors.cookTime.map((e, i) => (
-                <FieldError
-                  aria-live="polite"
-                  key={i}
-                  className="text-sm text-destructive"
-                >
-                  {e}
-                </FieldError>
-              ))}
-            </div>
+            <FieldError
+              aria-live="polite"
+              errors={state.fieldErrors.cookTime}
+            />
           )}
         </Field>
         <Field data-invalid={!!state?.fieldErrors.servings?.length}>
@@ -148,17 +131,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           />
         </Field>
         {!!state?.fieldErrors.servings?.length && (
-          <div>
-            {state.fieldErrors.servings.map((e, i) => (
-              <FieldError
-                aria-live="polite"
-                key={i}
-                className="text-sm text-destructive"
-              >
-                {e}
-              </FieldError>
-            ))}
-          </div>
+          <FieldError aria-live="polite" errors={state.fieldErrors.servings} />
         )}
       </FieldGroup>
 
@@ -179,17 +152,10 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           className="font-mono text-sm"
         />
         {!!state?.fieldErrors.ingredients?.length && (
-          <div>
-            {state.fieldErrors.ingredients.map((e, i) => (
-              <FieldError
-                aria-live="polite"
-                key={i}
-                className="text-sm text-destructive"
-              >
-                {e}
-              </FieldError>
-            ))}
-          </div>
+          <FieldError
+            aria-live="polite"
+            errors={state.fieldErrors.ingredients}
+          />
         )}
       </Field>
 
@@ -204,17 +170,10 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           disabled={pending}
         />
         {!!state?.fieldErrors.instructions?.length && (
-          <div>
-            {state.fieldErrors.instructions.map((e, i) => (
-              <FieldError
-                aria-live="polite"
-                key={i}
-                className="text-sm text-destructive"
-              >
-                {e}
-              </FieldError>
-            ))}
-          </div>
+          <FieldError
+            aria-live="polite"
+            errors={state.fieldErrors.instructions}
+          />
         )}
       </Field>
 
@@ -241,31 +200,14 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
               disabled={pending}
             />
             {!!state?.fieldErrors.sourceUrl?.length && (
-              <div>
-                {state.fieldErrors.sourceUrl.map((e, i) => (
-                  <FieldError
-                    aria-live="polite"
-                    key={i}
-                    className="text-sm text-destructive"
-                  >
-                    {e}
-                  </FieldError>
-                ))}
-              </div>
+              <FieldError
+                aria-live="polite"
+                errors={state.fieldErrors.sourceUrl}
+              />
             )}
           </Field>
         </div>
       )}
-
-      {state?.formErrors.map((e, i) => (
-        <p
-          aria-live="polite"
-          key={i}
-          className="rounded-lg bg-destructive-muted border-destructive/90 p-3 text-sm text-destructive-muted-foreground"
-        >
-          {e}
-        </p>
-      ))}
 
       <Button
         type="submit"

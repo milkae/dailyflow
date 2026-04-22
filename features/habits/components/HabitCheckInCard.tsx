@@ -20,7 +20,6 @@ import {
   toggleHabitCompletion,
   submitHabitEntryForm,
 } from "@/features/habits/actions";
-import { TextInput } from "../../../components/shared/TextInput";
 import { withCallbacks } from "@/utils/action-state";
 import { Field } from "@/components/ui/field";
 import {
@@ -30,6 +29,7 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   habit: TypedHabitWithEntries;
@@ -121,7 +121,7 @@ export function HabitCheckInCard({ habit }: Props) {
           </DialogHeader>
           <form action={formAction} className="space-y-4">
             <Field>
-              <TextInput
+              <Input
                 name="note"
                 placeholder="How did it go? Any thoughts?"
                 defaultValue={todayEntry?.note ?? undefined}
