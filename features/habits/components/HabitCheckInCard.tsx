@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/item";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 
 type Props = {
   habit: TypedHabitWithEntries;
@@ -45,11 +46,26 @@ export function HabitCheckInCard({ habit }: Props) {
   const streak = calculateStreak(habit);
   const submitForm = submitHabitEntryForm.bind(null, habit.id);
   const [, formAction] = useActionState(
-    withCallbacks(submitForm, { onSuccess: () => setDialogOpen(false) }),
+    withCallbacks(submitForm, {
+      onSuccess: () => {
+        setDialogOpen(false);
+        toast.success("Note saved successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to save note. Please try again.");
+      },
+    }),
     null,
   );
   const [, toggleAction, isToggling] = useActionState(
-    toggleHabitCompletion,
+    withCallbacks(toggleHabitCompletion, {
+      onSuccess: () => {
+        toast.success("Habit completion updated!");
+      },
+      onError: () => {
+        toast.error("Failed to update habit completion. Please try again.");
+      },
+    }),
     null,
   );
 

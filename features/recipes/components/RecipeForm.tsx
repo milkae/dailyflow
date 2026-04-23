@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/field";
 import { withCallbacks } from "@/utils/action-state";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 type Props = {
   recipe?: Recipe;
@@ -24,7 +25,19 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
     id: recipe?.id,
   });
   const [state, formAction, pending] = useActionState(
-    withCallbacks(submitRecipe, { onSuccess }),
+    withCallbacks(submitRecipe, {
+      onSuccess: () => {
+        onSuccess?.();
+        toast.success(
+          recipe
+            ? "Recipe updated successfully!"
+            : "Recipe created successfully!",
+        );
+      },
+      onError: () => {
+        toast.error("Failed to save recipe. Please try again.");
+      },
+    }),
     null,
   );
 

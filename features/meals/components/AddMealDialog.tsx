@@ -19,6 +19,7 @@ import { withCallbacks } from "@/utils/action-state";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 type Props = {
   open: boolean;
@@ -43,7 +44,19 @@ export function AddMealDialog({
     id: existingMeal?.id,
   });
   const [state, formAction, pending] = useActionState(
-    withCallbacks(submitMealForm, { onSuccess: () => onOpenChange(false) }),
+    withCallbacks(submitMealForm, {
+      onSuccess: () => {
+        onOpenChange(false);
+        toast.success(
+          existingMeal
+            ? "Meal updated successfully!"
+            : "Meal added successfully!",
+        );
+      },
+      onError: () => {
+        toast.error("Failed to save meal. Please try again.");
+      },
+    }),
     null,
   );
   const [selectedRecipeId, onSelectRecipe] = useState<string>(

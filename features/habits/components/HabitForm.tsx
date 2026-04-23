@@ -35,6 +35,7 @@ import { AlertCircleIcon, Plus } from "lucide-react";
 import { TypedHabit } from "@/features/habits/types";
 import { withCallbacks } from "@/utils/action-state";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 const frequencies = Object.values(Frequency).map((v) => ({
   value: v,
@@ -59,7 +60,17 @@ export const HabitForm = ({
   trigger?: ReactElement;
 }) => {
   const [state, formAction, pending] = useActionState(
-    withCallbacks(createOrUpdateHabit, { onSuccess: () => setOpen(false) }),
+    withCallbacks(createOrUpdateHabit, {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success(
+          habit ? "Habit updated successfully!" : "Habit created successfully!",
+        );
+      },
+      onError: () => {
+        toast.error("Failed to save habit. Please try again.");
+      },
+    }),
     null,
   );
   const [selectedFrequency, setFrequency] = useState<Frequency>(
