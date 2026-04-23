@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { CheckCircle2, MessageSquare, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +30,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 type Props = {
   habit: TypedHabitWithEntries;
@@ -45,6 +46,10 @@ export function HabitCheckInCard({ habit }: Props) {
   const submitForm = submitHabitEntryForm.bind(null, habit.id);
   const [, formAction] = useActionState(
     withCallbacks(submitForm, { onSuccess: () => setDialogOpen(false) }),
+    null,
+  );
+  const [, toggleAction, isToggling] = useActionState(
+    toggleHabitCompletion,
     null,
   );
 
@@ -100,7 +105,13 @@ export function HabitCheckInCard({ habit }: Props) {
           <Button
             variant="ghost"
             size="icon-xs"
-            onClick={() => toggleHabitCompletion(habit.id, !isCompleted)}
+            onClick={() =>
+              startTransition(() =>
+                toggleAction({ id: habit.id, completion: !isCompleted }),
+              )
+            }
+            disabled={isToggling}
+            aria-label={isCompleted ? "Mark as incomplete" : "Mark as complete"}
             className={cn(
               "rounded-full border-2 bg-clip-border",
               "hover:scale-110 active:scale-95",
@@ -109,7 +120,11 @@ export function HabitCheckInCard({ habit }: Props) {
                 : "border-muted-foreground/40 hover:border-primary hover:bg-primary/5",
             )}
           >
-            {isCompleted && <CheckCircle2 className="size-4" />}
+            {isToggling ? (
+              <Spinner className="size-4" />
+            ) : isCompleted ? (
+              <CheckCircle2 className="size-4" />
+            ) : null}
           </Button>
         </ItemActions>
       </Item>

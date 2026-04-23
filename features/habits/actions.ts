@@ -132,9 +132,13 @@ export async function deleteHabitEntry(id: string, date = new Date()) {
 
   updateTag("dashboard");
   revalidatePath("/");
+  return { status: Status.SUCCESS };
 }
 
-export async function toggleHabitCompletion(id: string, completion: boolean) {
+export async function toggleHabitCompletion(
+  _initialState: ActionState,
+  { id, completion }: { id: string; completion: boolean },
+) {
   if (!completion) {
     return deleteHabitEntry(id);
   }
