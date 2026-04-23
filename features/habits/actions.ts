@@ -177,3 +177,18 @@ export const getHabitsForUser = cache(
     return habits.map(parseHabit);
   },
 );
+
+export const getHabit = cache(async (id: string) => {
+  const session = await verifySession();
+
+  const habit = await prisma.habit.findUnique({
+    where: { id, userId: session.userId },
+    include: {
+      entries: {
+        orderBy: { date: "desc" },
+      },
+    },
+  });
+
+  return habit && parseHabit(habit);
+});

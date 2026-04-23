@@ -7,6 +7,7 @@ import { verifySession } from "@/lib/dal";
 import { logError } from "@/lib/logger";
 import { createRecipeSchema } from "@/lib/validators";
 import { ActionState, Status } from "@/utils/action-state";
+import { cache } from "react";
 
 export async function createOrUpdateRecipe(
   { id }: { id?: string },
@@ -100,3 +101,13 @@ export async function getAllRecipes() {
   const session = await verifySession();
   return prisma.recipe.findMany({ where: { userId: session.userId } });
 }
+
+export const getRecipe = cache(async (id: string) => {
+  const session = await verifySession();
+
+  const recipe = await prisma.recipe.findUnique({
+    where: { id, userId: session.userId },
+  });
+
+  return recipe;
+});

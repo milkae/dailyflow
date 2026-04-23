@@ -1,6 +1,19 @@
 import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
 import { RecipeDetail } from "@/features/recipes/components/RecipeDetail";
+import { Metadata } from "next";
+import { getRecipe } from "@/features/recipes/actions";
+
+export async function generateMetadata(
+  params: Promise<{ id: string }>,
+): Promise<Metadata> {
+  const { id } = await params;
+  const recipe = await getRecipe(id);
+
+  return {
+    title: recipe?.name,
+    description: recipe?.description,
+  };
+}
 
 export default async function RecipeDetailPage({
   params,
@@ -8,10 +21,7 @@ export default async function RecipeDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-
-  const recipe = await prisma.recipe.findUnique({
-    where: { id },
-  });
+  const recipe = await getRecipe(id);
 
   if (!recipe) {
     return notFound();

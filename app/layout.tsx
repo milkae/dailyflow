@@ -4,6 +4,7 @@ import { Geist } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "../components/providers/AppProviders";
+import { Metadata } from "next";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -15,6 +16,37 @@ const navigationData = [
   { title: "Habits", href: "/habits" },
   { title: "Meals", href: "/meals" },
 ];
+
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL!),
+  title: {
+    default: "DailyFlow",
+    template: "%s | DailyFlow",
+  },
+  description:
+    "DailyFlow helps you track habits, plan meals, and manage recipes in one clean productivity app.",
+  keywords: [
+    "DailyFlow",
+    "habit tracker",
+    "meal planner",
+    "recipe manager",
+    "productivity",
+    "health",
+  ],
+  openGraph: {
+    title: "DailyFlow",
+    description:
+      "DailyFlow helps you track habits, plan meals, and manage recipes in one clean productivity app.",
+    type: "website",
+    siteName: "DailyFlow",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DailyFlow",
+    description:
+      "DailyFlow helps you track habits, plan meals, and manage recipes in one clean productivity app.",
+  },
+};
 
 export default function RootLayout({
   children,

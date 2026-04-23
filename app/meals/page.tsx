@@ -7,6 +7,12 @@ import { getWeekMeals } from "@/features/meals/actions";
 import { Suspense } from "react";
 import { WeeklyMealPlannerSkeleton } from "@/features/meals/components/WeeklyMealPlannerSkeleton";
 import { getAllRecipes } from "@/features/recipes/actions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Meals",
+  description: "Plan weekly meals with DailyFlow.",
+};
 
 export default async function MealsPage() {
   const mealsPromise = getWeekMeals();

@@ -4,6 +4,13 @@ import { HabitsStats } from "@/features/habits/components/HabitsStats";
 import { HabitForm } from "@/features/habits/components/HabitForm";
 import { Heading } from "@/components/ui/typography";
 import { getHabits } from "@/features/habits/actions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Habits",
+  description:
+    "Manage habits, track progress, and stay consistent with DailyFlow habit tools.",
+};
 
 export default async function HabitsPage() {
   const habits = await getHabits();

@@ -6,6 +6,13 @@ import { BookOpen } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { Heading } from "@/components/ui/typography";
 import { headers } from "next/headers";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Recipes",
+  description:
+    "Browse, create, and manage your personal recipe collection in DailyFlow.",
+};
 
 export default async function RecipesPage() {
   const session = await auth.api.getSession({

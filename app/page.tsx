@@ -4,6 +4,13 @@ import { QuickStats } from "@/features/dashboard/components/QuickStats";
 import { TodayHabits } from "@/features/dashboard/components/TodayHabits";
 import { TodayMeals } from "@/features/dashboard/components/TodayMeals";
 import { getUserId } from "@/lib/dal";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description:
+    "Your DailyFlow dashboard for today's habits, meals, and productivity insights.",
+};
 
 export default async function DashboardPage() {
   const userId = await getUserId();
