@@ -12,6 +12,7 @@ import {
 import { NavLink } from "./NavLink";
 import { useState } from "react";
 import { AuthButton } from "@/components/shared/AuthButton";
+import { usePathname } from "next/navigation";
 
 type NavigationItem = {
   title: string;
@@ -24,6 +25,7 @@ export const MobileNav = ({
   navigationData: NavigationItem[];
 }) => {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -40,11 +42,12 @@ export const MobileNav = ({
           <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col gap-4 pl-4">
-          {navigationData.map((item, index) => (
+          {navigationData.map((item) => (
             <NavLink
-              key={index}
+              key={item.href}
               item={item}
               onNavigate={() => setOpen(false)}
+              pathname={pathname}
               className="text-lg"
             />
           ))}

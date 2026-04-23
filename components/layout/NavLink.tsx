@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/utils/cn";
 
 type NavigationItem = {
@@ -9,14 +8,17 @@ type NavigationItem = {
 
 export const NavLink = ({
   item,
+  pathname,
   onNavigate,
   className,
 }: {
   item: NavigationItem;
+  pathname: string;
   onNavigate?: () => void;
   className?: string;
 }) => {
-  const pathname = usePathname();
+  const isActive =
+    pathname === item.href || pathname.startsWith(item.href + "/");
 
   return (
     <Link
@@ -25,7 +27,7 @@ export const NavLink = ({
       className={cn(
         "font-medium hover:text-primary transition-colors",
         {
-          "underline text-primary": pathname === item.href,
+          "underline text-primary": isActive,
         },
         className,
       )}

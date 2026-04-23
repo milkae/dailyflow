@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Providers from "../components/providers/AppProviders";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -63,7 +64,9 @@ export default function RootLayout({
         <Providers>
           <TooltipProvider>
             <div className="min-h-screen flex flex-col">
-              <Navbar navigationData={navigationData} />
+              <Suspense fallback={null}>
+                <Navbar navigationData={navigationData} />
+              </Suspense>
               <main className="flex flex-col flex-1 container py-6 md:py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {children}
               </main>

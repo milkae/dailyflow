@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { NavLink } from "./NavLink";
 import { AuthButton } from "@/components/shared/AuthButton";
 
@@ -13,13 +14,16 @@ export const DesktopNav = ({
 }: {
   navigationData: NavigationItem[];
 }) => {
+  const pathname = usePathname();
+
   return (
     <>
       <nav className="hidden md:flex items-center gap-6">
-        {navigationData.map((item, index) => (
+        {navigationData.map((item) => (
           <NavLink
-            key={index}
+            key={item.href}
             item={item}
+            pathname={pathname}
             className="text-sm text-muted-foreground"
           />
         ))}
