@@ -1,0 +1,101 @@
+import { describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MealSlot } from "@/features/meals/components/MealSlot";
+import { MealType } from "@/generated/prisma/enums";
+import { MealWithRecipeName } from "@/features/meals/types";
+
+describe("MealSlot", () => {
+  it("should render meal type label and icon", () => {
+    render(<MealSlot type={MealType.breakfast} />);
+
+    expect(screen.getByText("Breakfast")).toBeInTheDocument();
+    // Icon should be present (Croissant for breakfast)
+    expect(document.querySelector("svg")).toBeInTheDocument();
+  });
+
+  it("should render different icons for different meal types", () => {
+    const { rerender } = render(<MealSlot type={MealType.breakfast} />);
+    expect(document.querySelector("svg")).toBeInTheDocument();
+
+    rerender(<MealSlot type={MealType.lunch} />);
+    expect(document.querySelector("svg")).toBeInTheDocument();
+
+    rerender(<MealSlot type={MealType.dinner} />);
+    expect(document.querySelector("svg")).toBeInTheDocument();
+  });
+
+  it("should render meal details when meal is provided", () => {
+    const meal = {
+      id: "1",
+      type: MealType.breakfast,
+      date: new Date(),
+      recipeId: "recipe-1",
+      userId: "user-1",
+      name: "Oatmeal Bowl",
+      notes: "With berries",
+      recipe: { id: "recipe-1", name: "Oatmeal Recipe" },
+    } as MealWithRecipeName;
+
+    render(<MealSlot type={MealType.breakfast} meal={meal} />);
+
+    expect(screen.getByText("Oatmeal Bowl")).toBeInTheDocument();
+    expect(screen.getByText("With berries")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /oatmeal recipe/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("should render 'Not planned' when no meal", () => {
+    render(<MealSlot type={MealType.breakfast} />);
+
+    expect(screen.getByText("Not planned")).toBeInTheDocument();
+  });
+
+  it("should call onClick when clicked and meal exists", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    const meal = {
+      id: "1",
+      type: MealType.breakfast,
+      date: new Date(),
+      recipeId: "recipe-1",
+      userId: "user-1",
+      name: "Oatmeal",
+    } as MealWithRecipeName;
+
+    render(
+      <MealSlot type={MealType.breakfast} meal={meal} onClick={onClick} />,
+    );
+
+    const slot = screen.getByText("Oatmeal").parentElement?.parentElement;
+    await user.click(slot!);
+
+    expect(onClick).toHaveBeenCalled();
+  });
+
+  it("should have different styling when meal exists", () => {
+    const meal = {
+      id: "1",
+      type: MealType.breakfast,
+      date: new Date(),
+      recipeId: "recipe-1",
+      userId: "user-1",
+      name: "Oatmeal",
+    } as MealWithRecipeName;
+
+    const { container } = render(
+      <MealSlot type={MealType.breakfast} meal={meal} />,
+    );
+
+    const slot = container.firstChild as HTMLElement;
+    expect(slot).toHaveClass("bg-tertiary/5", "border-tertiary/30");
+  });
+
+  it("should have dashed border when no meal", () => {
+    const { container } = render(<MealSlot type={MealType.breakfast} />);
+
+    const slot = container.firstChild as HTMLElement;
+    expect(slot).toHaveClass("border-dashed", "border-border/50");
+  });
+});

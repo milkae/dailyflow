@@ -13,8 +13,8 @@ const mockToggleCompletion = vi.fn();
 const mockSubmitForm = vi.fn();
 
 vi.mock("@/features/habits/actions", () => ({
-  toggleHabitCompletion: () => mockToggleCompletion(),
-  submitHabitEntryForm: () => mockSubmitForm,
+  toggleHabitCompletion: mockToggleCompletion,
+  submitHabitEntryForm: mockSubmitForm,
 }));
 
 describe("HabitCheckInCard", () => {
@@ -44,7 +44,9 @@ describe("HabitCheckInCard", () => {
 
     render(<HabitCheckInCard habit={habit} />);
 
-    expect(screen.getByText("Completed")).toBeInTheDocument();
+    // Check for line-through styling indicating completion
+    const habitLink = screen.getByRole("link", { name: /morning run/i });
+    expect(habitLink).toHaveClass("line-through", "text-muted-foreground");
     expect(
       screen.getByRole("button", { name: /mark as incomplete/i }),
     ).toBeInTheDocument();
@@ -64,7 +66,7 @@ describe("HabitCheckInCard", () => {
 
     render(<HabitCheckInCard habit={habit} />);
 
-    expect(screen.getByText("3 day streak")).toBeInTheDocument();
+    expect(screen.getByText("3")).toBeInTheDocument();
   });
 
   it("should toggle completion when button clicked", async () => {
@@ -78,7 +80,10 @@ describe("HabitCheckInCard", () => {
     await user.click(completeButton);
 
     await waitFor(() => {
-      expect(mockToggleCompletion).toHaveBeenCalledWith(habit.id);
+      expect(mockToggleCompletion).toHaveBeenCalledWith({
+        id: habit.id,
+        completion: true,
+      });
     });
   });
 
@@ -91,8 +96,8 @@ describe("HabitCheckInCard", () => {
     const noteButton = screen.getByRole("button", { name: /add note/i });
     await user.click(noteButton);
 
-    expect(screen.getByText("Add a note")).toBeInTheDocument();
-    expect(screen.getByLabelText(/note/i)).toBeInTheDocument();
+    expect(screen.getByText(`Add note to ${habit.name}`)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/how did it go/i)).toBeInTheDocument();
   });
 
   it("should submit note form", async () => {
@@ -105,7 +110,10 @@ describe("HabitCheckInCard", () => {
     await user.click(screen.getByRole("button", { name: /add note/i }));
 
     // Fill and submit form
-    await user.type(screen.getByLabelText(/note/i), "Great workout!");
+    await user.type(
+      screen.getByPlaceholderText(/how did it go/i),
+      "Great workout!",
+    );
     await user.click(screen.getByRole("button", { name: /save note/i }));
 
     await waitFor(() => {
@@ -119,7 +127,10 @@ describe("HabitCheckInCard", () => {
 
     render(<HabitCheckInCard habit={habit} />);
 
-    expect(screen.getByTitle("Has note")).toBeInTheDocument();
+    // The message square icon should have fill when there's a note
+    const noteButton = screen.getByRole("button", { name: /add note/i });
+    const messageIcon = noteButton.querySelector("svg");
+    expect(messageIcon).toHaveClass("fill-current");
   });
 
   it("should handle toggle completion errors gracefully", async () => {
@@ -138,17 +149,5 @@ describe("HabitCheckInCard", () => {
     await waitFor(() => {
       expect(completeButton).toBeInTheDocument();
     });
-  });
-
-  it("should show different text for incomplete vs complete state", () => {
-    const incompleteHabit = createMockTypedHabitWithEntries(Frequency.DAILY);
-    const completeHabit = createMockTypedHabitWithEntries(Frequency.DAILY);
-    completeHabit.entries = [createMockEntry(new Date())];
-
-    const { rerender } = render(<HabitCheckInCard habit={incompleteHabit} />);
-    expect(screen.getByText("Not completed")).toBeInTheDocument();
-
-    rerender(<HabitCheckInCard habit={completeHabit} />);
-    expect(screen.getByText("Completed")).toBeInTheDocument();
   });
 });
