@@ -5,6 +5,7 @@ import { HabitForm } from "@/features/habits/components/HabitForm";
 import { Heading } from "@/components/ui/typography";
 import { getHabits } from "@/features/habits/actions";
 import { Metadata } from "next";
+import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 export const metadata: Metadata = {
   title: "Habits",
@@ -35,11 +36,21 @@ export default async function HabitsPage() {
         </TabsList>
 
         <TabsContent value="overview">
-          <HabitsOverview habits={habits} />
+          <ErrorBoundary
+            title="Habits Overview Error"
+            description="Failed to load your habits overview."
+          >
+            <HabitsOverview habits={habits} />
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="stats">
-          <HabitsStats habits={habits} />
+          <ErrorBoundary
+            title="Habits Stats Error"
+            description="Failed to load your habits statistics."
+          >
+            <HabitsStats habits={habits} />
+          </ErrorBoundary>
         </TabsContent>
       </Tabs>
     </div>
