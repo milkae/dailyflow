@@ -7,6 +7,14 @@ import prisma from "@/lib/prisma";
 import { Heading } from "@/components/ui/typography";
 import { headers } from "next/headers";
 import { Metadata } from "next";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 export const metadata: Metadata = {
   title: "Recipes",
@@ -59,18 +67,20 @@ export default async function RecipesPage() {
       {recipes.length > 0 ? (
         <RecipeGrid recipes={recipes} />
       ) : (
-        <div className="text-center py-16 rounded-lg border-2 border-dashed">
-          <div className="rounded-full bg-tertiary/10 w-20 h-20 flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="h-10 w-10 text-tertiary" />
-          </div>
-          <Heading as="h3" className="text-xl mb-2">
-            No recipes yet
-          </Heading>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Start building your recipe collection
-          </p>
-          <CreateRecipeDialog />
-        </div>
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <BookOpen className="h-10 w-10 text-tertiary" />
+            </EmptyMedia>
+            <EmptyTitle> No recipes yet</EmptyTitle>
+            <EmptyDescription>
+              Start building your recipe collection
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <CreateRecipeDialog />
+          </EmptyContent>
+        </Empty>
       )}
     </div>
   );

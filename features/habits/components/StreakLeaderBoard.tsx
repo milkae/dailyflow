@@ -4,6 +4,7 @@ import { Flame } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { calculateStreak } from "@/utils/habits";
 import { TypedHabitWithEntries } from "@/features/habits/types";
+import { Empty, EmptyDescription } from "@/components/ui/empty";
 import Link from "next/link";
 
 export const StreakLeaderboard = ({
@@ -13,9 +14,9 @@ export const StreakLeaderboard = ({
 }) => {
   if (habits.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p className="text-sm">No habits yet</p>
-      </div>
+      <Empty>
+        <EmptyDescription>No habits yet</EmptyDescription>
+      </Empty>
     );
   }
 
@@ -30,9 +31,9 @@ export const StreakLeaderboard = ({
 
   if (sortedHabits.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p className="text-sm">No habits with streaks yet</p>
-      </div>
+      <Empty>
+        <EmptyDescription>No habits with streaks yet</EmptyDescription>
+      </Empty>
     );
   }
 

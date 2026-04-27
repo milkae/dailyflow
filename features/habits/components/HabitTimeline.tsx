@@ -3,6 +3,7 @@ import { Check, MessageSquare } from "lucide-react";
 import { TypedHabitWithEntries } from "@/features/habits/types";
 import { Heading } from "../../../components/ui/typography";
 import { Entry } from "@/generated/prisma/browser";
+import { Empty, EmptyDescription } from "@/components/ui/empty";
 
 export const HabitTimeline = ({ habit }: { habit: TypedHabitWithEntries }) => {
   const entriesByMonth = habit.entries.reduce(
@@ -25,9 +26,11 @@ export const HabitTimeline = ({ habit }: { habit: TypedHabitWithEntries }) => {
       <Heading as="h3">History</Heading>
 
       {habit.entries.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>No entries yet. Start tracking this habit!</p>
-        </div>
+        <Empty>
+          <EmptyDescription>
+            No entries yet. Start tracking this habit!
+          </EmptyDescription>
+        </Empty>
       ) : (
         <div className="space-y-4">
           {Object.entries(entriesByMonth).map(([month, entries]) => (

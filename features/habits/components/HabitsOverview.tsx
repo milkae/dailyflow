@@ -2,6 +2,7 @@
 
 import { TypedHabitWithEntries } from "@/features/habits/types";
 import { HabitOverviewCard } from "./HabitOverviewCard";
+import { Empty, EmptyDescription } from "@/components/ui/empty";
 
 export function HabitsOverview({
   habits,
@@ -17,9 +18,11 @@ export function HabitsOverview({
       </div>
 
       {habits.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground">
-          <p>No habits yet. Create your first one to get started!</p>
-        </div>
+        <Empty>
+          <EmptyDescription>
+            No habits yet. Create your first one to get started!
+          </EmptyDescription>
+        </Empty>
       )}
     </div>
   );

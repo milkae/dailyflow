@@ -6,6 +6,14 @@ import { HabitForm } from "@/features/habits/components/HabitForm";
 import { buttonVariants } from "@/components/ui/buttonVariants";
 import { Heading } from "../../../components/ui/typography";
 import { TypedHabitWithEntries } from "@/features/habits/types";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 export function TodayHabits({ habits }: { habits: TypedHabitWithEntries[] }) {
   return (
@@ -48,24 +56,26 @@ export function TodayHabits({ habits }: { habits: TypedHabitWithEntries[] }) {
 
 function EmptyState() {
   return (
-    <div className="rounded-lg border-2 border-dashed bg-muted/20 p-12 text-center">
-      <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-        <CalendarFold className="h-8 w-8 text-primary" />
-      </div>
-      <Heading as="h3" className="text-lg mb-2">
-        No habits for today
-      </Heading>
-      <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6">
-        Create your first habit to start tracking your progress
-      </p>
-      <HabitForm
-        trigger={
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Habit
-          </Button>
-        }
-      />
-    </div>
+    <Empty className="border border-dashed">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <CalendarFold className="h-8 w-8 text-primary" />
+        </EmptyMedia>
+        <EmptyTitle>No habits for today</EmptyTitle>
+        <EmptyDescription>
+          Create your first habit to start tracking your progress
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <HabitForm
+          trigger={
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Habit
+            </Button>
+          }
+        />
+      </EmptyContent>
+    </Empty>
   );
 }
