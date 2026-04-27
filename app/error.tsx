@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/typography";
 import { logError } from "@/lib/logger";
@@ -6,10 +7,10 @@ import { useEffect } from "react";
 
 export default function ErrorPage({
   error,
-  unstable_retry,
+  reset,
 }: {
   error: Error & { digest?: string };
-  unstable_retry(): void;
+  reset: () => void;
 }) {
   useEffect(() => {
     logError(error, "Uncaught error");
@@ -23,7 +24,7 @@ export default function ErrorPage({
       <Heading as="h3" className="mb-6">
         Something went wrong
       </Heading>
-      <Button size="lg" onClick={() => unstable_retry()}>
+      <Button size="lg" onClick={() => reset()}>
         Try again
       </Button>
     </div>
