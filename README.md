@@ -91,7 +91,7 @@ Update `.env.local` with your values:
 
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/dailyflow
-BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 GOOGLE_CLIENT_ID=your-client-id
 GOOGLE_CLIENT_SECRET=your-client-secret
 ```
