@@ -15,7 +15,7 @@ export const AuthButton = () => {
   const [loading, setLoading] = useState(false);
 
   if (isPending) {
-    return <div className="w-20 h-10 animate-pulse bg-muted rounded" />;
+    return <div className="w-20 h-7 animate-pulse bg-muted rounded" />;
   }
 
   return (

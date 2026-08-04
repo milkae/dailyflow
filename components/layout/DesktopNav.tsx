@@ -28,7 +28,7 @@ export const DesktopNav = ({
           />
         ))}
       </nav>
-      <div className="max-md:hidden">
+      <div className="max-md:hidden flex gap-2 items-center ml-auto">
         <AuthButton />
       </div>
     </>

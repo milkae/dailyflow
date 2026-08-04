@@ -28,34 +28,36 @@ export const MobileNav = ({
   const pathname = usePathname();
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger
-        render={
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <MenuIcon className="h-5 w-5" />
-            <span className="sr-only">Menu</span>
-          </Button>
-        }
-      />
-      <SheetContent side="right" className="w-75 sm:w-100">
-        <SheetHeader>
-          <SheetTitle>Navigation</SheetTitle>
-        </SheetHeader>
-        <nav className="flex flex-col gap-4 pl-4">
-          {navigationData.map((item) => (
-            <NavLink
-              key={item.href}
-              item={item}
-              onNavigate={() => setOpen(false)}
-              pathname={pathname}
-              className="text-lg"
-            />
-          ))}
-        </nav>
-        <div className="mt-auto mb-6 flex justify-center">
-          <AuthButton />
-        </div>
-      </SheetContent>
-    </Sheet>
+    <>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger
+          render={
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <MenuIcon className="h-5 w-5" />
+              <span className="sr-only">Menu</span>
+            </Button>
+          }
+        />
+        <SheetContent side="right" className="w-75 sm:w-100">
+          <SheetHeader>
+            <SheetTitle>Navigation</SheetTitle>
+          </SheetHeader>
+          <nav className="flex flex-col gap-4 pl-4">
+            {navigationData.map((item) => (
+              <NavLink
+                key={item.href}
+                item={item}
+                onNavigate={() => setOpen(false)}
+                pathname={pathname}
+                className="text-lg"
+              />
+            ))}
+          </nav>
+          <div className="mt-auto mb-6 flex justify-center">
+            <AuthButton />
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 };
