@@ -146,6 +146,20 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         {!!state?.fieldErrors.servings?.length && (
           <FieldError aria-live="polite" errors={state.fieldErrors.servings} />
         )}
+        <Field data-invalid={!!state?.fieldErrors.category?.length}>
+          <FieldLabel htmlFor="servings">Category</FieldLabel>
+          <Input
+            id="category"
+            type="string"
+            name="category"
+            defaultValue={recipe?.category || ""}
+            placeholder=""
+            disabled={pending}
+          />
+        </Field>
+        {!!state?.fieldErrors.category?.length && (
+          <FieldError aria-live="polite" errors={state.fieldErrors.category} />
+        )}
       </FieldGroup>
 
       <Field data-invalid={!!state?.fieldErrors.ingredients?.length}>
@@ -190,11 +204,11 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         )}
       </Field>
 
-      {recipe?.sourceUrl && (
-        <div className="space-y-2">
-          <Field data-invalid={!!state?.fieldErrors.sourceUrl?.length}>
-            <FieldLabel htmlFor="sourceUrl">
-              Source
+      <div className="space-y-2">
+        <Field data-invalid={!!state?.fieldErrors.sourceUrl?.length}>
+          <FieldLabel htmlFor="sourceUrl">
+            Source
+            {recipe?.sourceUrl && (
               <a
                 href={recipe?.sourceUrl}
                 target="_blank"
@@ -204,23 +218,48 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
                 <span>Open link</span>
                 <ExternalLink className="h-4 w-4" />
               </a>
-            </FieldLabel>
-
-            <Input
-              id="sourceUrl"
-              name="sourceUrl"
-              defaultValue={recipe?.sourceUrl}
-              disabled={pending}
-            />
-            {!!state?.fieldErrors.sourceUrl?.length && (
-              <FieldError
-                aria-live="polite"
-                errors={state.fieldErrors.sourceUrl}
-              />
             )}
-          </Field>
-        </div>
-      )}
+          </FieldLabel>
+
+          <Input
+            id="sourceUrl"
+            name="sourceUrl"
+            defaultValue={recipe?.sourceUrl || ""}
+            disabled={pending}
+          />
+          {!!state?.fieldErrors.sourceUrl?.length && (
+            <FieldError
+              aria-live="polite"
+              errors={state.fieldErrors.sourceUrl}
+            />
+          )}
+        </Field>
+      </div>
+      <div className="space-y-2">
+        <Field data-invalid={!!state?.fieldErrors.imageUrl?.length}>
+          <FieldLabel htmlFor="imageUrl">Image</FieldLabel>
+          {recipe?.imageUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={recipe.imageUrl}
+              alt="recipe image preview"
+              className="max-w-1/2 mx-auto"
+            />
+          )}
+          <Input
+            id="imageUrl"
+            name="imageUrl"
+            defaultValue={recipe?.imageUrl || ""}
+            disabled={pending}
+          />
+          {!!state?.fieldErrors.imageUrl?.length && (
+            <FieldError
+              aria-live="polite"
+              errors={state.fieldErrors.imageUrl}
+            />
+          )}
+        </Field>
+      </div>
 
       <Button
         type="submit"

@@ -104,10 +104,11 @@ export async function getAllRecipes() {
 
 export const getRecipe = cache(async (id: string) => {
   const session = await verifySession();
+  if (id) {
+    const recipe = await prisma.recipe.findUnique({
+      where: { id, userId: session.userId },
+    });
 
-  const recipe = await prisma.recipe.findUnique({
-    where: { id, userId: session.userId },
-  });
-
-  return recipe;
+    return recipe;
+  }
 });
