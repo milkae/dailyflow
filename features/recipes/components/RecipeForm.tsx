@@ -1,10 +1,9 @@
-import { useActionState } from "react";
+import { useActionState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createOrUpdateRecipe } from "@/features/recipes/actions";
 import { AlertCircleIcon, ExternalLink, Loader2 } from "lucide-react";
-import { Recipe } from "@/generated/prisma/browser";
 import {
   Field,
   FieldError,
@@ -14,9 +13,12 @@ import {
 import { withCallbacks } from "@/utils/action-state";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { RecipeImageField } from "./RecipeImageField";
+import { FormRecipe } from "../types";
+import { useRecipeImageUpload } from "../hooks";
 
 type Props = {
-  recipe?: Recipe;
+  recipe?: FormRecipe;
   onSuccess?: () => void;
 };
 
@@ -24,7 +26,8 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
   const submitRecipe = createOrUpdateRecipe.bind(null, {
     id: recipe?.id,
   });
-  const [state, formAction, pending] = useActionState(
+
+  const [state, formAction, actionPending] = useActionState(
     withCallbacks(submitRecipe, {
       onSuccess: () => {
         onSuccess?.();
@@ -40,9 +43,33 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
     }),
     null,
   );
+  const { upload, uploadProgress, uploading, uploadError } =
+    useRecipeImageUpload();
+
+  const [isTransitionPending, startTransition] = useTransition();
+
+  const pending = actionPending || isTransitionPending || uploading;
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const file = formData.get("imageFile") as File | null;
+    formData.delete("imageFile");
+
+    let imageKey = recipe?.imageUrl;
+    if (file) {
+      imageKey = await upload(file);
+    }
+
+    formData.set("imageUrl", imageKey || "");
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {state?.formErrors.map((e, i) => (
         <Alert
           variant="destructive"
@@ -236,29 +263,13 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         </Field>
       </div>
       <div className="space-y-2">
-        <Field data-invalid={!!state?.fieldErrors.imageUrl?.length}>
-          <FieldLabel htmlFor="imageUrl">Image</FieldLabel>
-          {recipe?.imageUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={recipe.imageUrl}
-              alt="recipe image preview"
-              className="max-w-1/2 mx-auto"
-            />
-          )}
-          <Input
-            id="imageUrl"
-            name="imageUrl"
-            defaultValue={recipe?.imageUrl || ""}
-            disabled={pending}
-          />
-          {!!state?.fieldErrors.imageUrl?.length && (
-            <FieldError
-              aria-live="polite"
-              errors={state.fieldErrors.imageUrl}
-            />
-          )}
-        </Field>
+        <RecipeImageField
+          existingImageUrl={recipe?.imageUrl}
+          disabled={pending}
+          serverErrors={
+            uploadError ? [uploadError] : state?.fieldErrors.imageUrl
+          }
+        />
       </div>
 
       <Button
@@ -266,7 +277,12 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         disabled={pending}
         className="w-full bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
       >
-        {pending ? (
+        {uploadProgress !== null ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            Uploading image... {uploadProgress}%
+          </>
+        ) : pending ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             Saving Recipe...
