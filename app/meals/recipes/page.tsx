@@ -34,14 +34,6 @@ export default async function RecipesPage() {
   const recipes = await prisma.recipe.findMany({
     where: { userId: session.user.id },
     orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      prepTime: true,
-      cookTime: true,
-      createdAt: true,
-    },
   });
 
   return (

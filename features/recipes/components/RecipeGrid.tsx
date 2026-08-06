@@ -1,16 +1,18 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemHeader,
+  ItemTitle,
+} from "@/components/ui/item";
 import { Clock } from "lucide-react";
 import Link from "next/link";
-
-type Recipe = {
-  id: string;
-  name: string;
-  description: string | null;
-  prepTime: number | null;
-  cookTime: number | null;
-};
+import Image from "next/image";
+import { Recipe } from "@/generated/prisma/client";
+import { getRecipeImageUrl } from "@/lib/recipe-image";
 
 type Props = {
   recipes: Recipe[];
@@ -18,26 +20,22 @@ type Props = {
 
 export function RecipeGrid({ recipes }: Props) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ItemGroup className="grid grid-cols-3 gap-4">
       {recipes.map((recipe) => (
-        <Link
-          key={recipe.id}
-          href={`/meals/recipes/${recipe.id}`}
-          className="group"
-        >
-          <Card className="h-full hover:border-tertiary transition-all hover:shadow-lg">
-            <div className="p-6 space-y-4">
-              <div>
-                <h3 className="font-semibold group-hover:text-tertiary transition-colors line-clamp-2 mb-2">
-                  {recipe.name}
-                </h3>
-
-                {recipe.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {recipe.description}
-                  </p>
-                )}
-              </div>
+        <Link key={recipe.id} href={`/meals/recipes/${recipe.id}`}>
+          <Item variant="outline">
+            <ItemHeader>
+              <Image
+                src={getRecipeImageUrl(recipe.imageUrl) || "/placehorder.png"}
+                alt={recipe.name}
+                width={128}
+                height={128}
+                className="aspect-square w-full rounded-sm object-cover"
+              />
+            </ItemHeader>
+            <ItemContent>
+              <ItemTitle>{recipe.name}</ItemTitle>
+              <ItemDescription>{recipe.description}</ItemDescription>
               {!!(recipe.prepTime || recipe.cookTime) && (
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                   {!!recipe.prepTime && (
@@ -54,10 +52,10 @@ export function RecipeGrid({ recipes }: Props) {
                   )}
                 </div>
               )}
-            </div>
-          </Card>
+            </ItemContent>
+          </Item>
         </Link>
       ))}
-    </div>
+    </ItemGroup>
   );
 }

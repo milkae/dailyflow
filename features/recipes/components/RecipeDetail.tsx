@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Recipe } from "@/generated/prisma/browser";
 import { buttonVariants } from "@/components/ui/buttonVariants";
+import Image from "next/image";
+import { getRecipeImageUrl } from "@/lib/recipe-image";
 
 type Props = {
   recipe: Recipe;
@@ -69,6 +71,14 @@ export function RecipeDetail({ recipe }: Props) {
         {/* Header */}
         <div>
           <div className="flex items-start justify-between gap-4 mb-4">
+            {recipe.imageUrl && (
+              <Image
+                src={getRecipeImageUrl(recipe.imageUrl) || ""}
+                alt={recipe.name}
+                width={400}
+                height={400}
+              />
+            )}
             <div className="flex-1">
               <h1 className="text-4xl font-bold mb-2">{recipe.name}</h1>
               {recipe.description && (
