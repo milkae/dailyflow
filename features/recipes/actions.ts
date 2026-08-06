@@ -1,13 +1,14 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { verifySession } from "@/lib/dal";
-import { logError } from "@/lib/logger";
-import { createRecipeSchema } from "@/lib/validators";
 import { ActionState, Status } from "@/utils/action-state";
 import { cache } from "react";
+import { logError } from "@/lib/logger";
+import { deleteRecipeImage, uploadExternalImage } from "./image";
+import { createRecipeSchema } from "@/lib/validators";
+import z from "zod";
 
 export async function createOrUpdateRecipe(
   { id }: { id?: string },
@@ -15,7 +16,9 @@ export async function createOrUpdateRecipe(
   formData: FormData,
 ) {
   const session = await verifySession();
+
   const formDataObj = Object.fromEntries(formData.entries());
+
   const validatedFields = createRecipeSchema.safeParse(formDataObj);
 
   if (!validatedFields.success) {
@@ -24,48 +27,64 @@ export async function createOrUpdateRecipe(
 
   const recipe = validatedFields.data;
 
-  try {
-    if (id) {
-      const existing = await prisma.recipe.findUnique({
+  const existing = id
+    ? await prisma.recipe.findUnique({
         where: { id, userId: session.userId },
-      });
+      })
+    : null;
 
-      if (!existing) {
-        return {
-          formErrors: ["Recipe not found"],
-          fieldErrors: {},
-          status: Status.ERROR,
-        };
-      }
+  if (id && !existing) {
+    return {
+      formErrors: ["Recipe not found"],
+      fieldErrors: {},
+      status: Status.ERROR,
+    };
+  }
 
+  if (recipe.imageUrl?.startsWith("http")) {
+    recipe.imageUrl = await uploadExternalImage(recipe.imageUrl);
+  }
+
+  try {
+    if (existing) {
       await prisma.recipe.update({
         where: { id, userId: session.userId },
         data: recipe,
       });
 
-      revalidatePath(`/meals/recipes/${id}`);
-    } else {
-      if (recipe.sourceUrl) {
-        const existing = await prisma.recipe.findFirst({
-          where: { sourceUrl: recipe.sourceUrl, userId: session.userId },
-        });
-        if (existing) {
-          await prisma.recipe.update({
-            where: { id: existing.id, userId: session.userId },
-            data: recipe,
-          });
-          revalidatePath(`/meals/recipes`);
-          return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
-        }
+      if (existing.imageUrl && existing.imageUrl !== recipe.imageUrl) {
+        await deleteRecipeImage(existing.imageUrl);
       }
 
-      await prisma.recipe.create({
-        data: {
-          ...recipe,
-          userId: session.userId,
-        },
-      });
+      revalidatePath(`/meals/recipes/${id}`);
+      revalidatePath("/meals/recipes");
+      return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
     }
+
+    if (recipe.sourceUrl) {
+      const existingBySource = await prisma.recipe.findFirst({
+        where: { sourceUrl: recipe.sourceUrl, userId: session.userId },
+      });
+
+      if (existingBySource) {
+        await prisma.recipe.update({
+          where: { id: existingBySource.id, userId: session.userId },
+          data: recipe,
+        });
+        if (
+          existingBySource.imageUrl &&
+          existingBySource.imageUrl !== recipe.imageUrl
+        ) {
+          await deleteRecipeImage(existingBySource.imageUrl);
+        }
+        revalidatePath("/meals/recipes");
+        return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
+      }
+    }
+
+    await prisma.recipe.create({
+      data: { ...recipe, userId: session.userId },
+    });
 
     revalidatePath("/meals/recipes");
     return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
@@ -93,7 +112,9 @@ export async function deleteRecipe(recipeId: string) {
   await prisma.recipe.delete({
     where: { id: recipeId, userId: session.userId },
   });
-
+  if (recipe.imageUrl) {
+    await deleteRecipeImage(recipe.imageUrl);
+  }
   revalidatePath("/meals/recipes");
 }
 

@@ -14,15 +14,17 @@ import { withCallbacks } from "@/utils/action-state";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { RecipeImageField } from "./RecipeImageField";
-import { FormRecipe } from "../types";
+import { ParsedRecipe } from "../types";
 import { useRecipeImageUpload } from "../hooks";
+import { Recipe } from "@/generated/prisma/client";
 
 type Props = {
-  recipe?: FormRecipe;
+  recipe?: Recipe;
+  parsedRecipe?: ParsedRecipe;
   onSuccess?: () => void;
 };
 
-export function RecipeForm({ recipe, onSuccess }: Props) {
+export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
   const submitRecipe = createOrUpdateRecipe.bind(null, {
     id: recipe?.id,
   });
@@ -49,18 +51,16 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
   const [isTransitionPending, startTransition] = useTransition();
 
   const pending = actionPending || isTransitionPending || uploading;
+  const defaults = recipe || parsedRecipe;
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const file = formData.get("imageFile") as File | null;
     formData.delete("imageFile");
 
-    let imageKey = recipe?.imageUrl;
-    if (file) {
-      imageKey = await upload(file);
-    }
-
+    const imageKey =
+      file && file.size ? await upload(file) : defaults?.imageUrl;
     formData.set("imageUrl", imageKey || "");
 
     startTransition(() => {
@@ -90,7 +90,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           id="recipe-name"
           name="name"
           required
-          defaultValue={recipe?.name}
+          defaultValue={defaults?.name}
           placeholder="Peanut butter noodles"
           disabled={pending}
         />
@@ -109,7 +109,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         <Textarea
           id="recipe-description"
           name="description"
-          defaultValue={recipe?.description || ""}
+          defaultValue={defaults?.description || ""}
           placeholder="Rich, creamy, savory, and spicy, they come together in under 20 minute"
           rows={2}
           disabled={pending}
@@ -131,7 +131,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             id="prep-time"
             type="number"
             name="prepTime"
-            defaultValue={recipe?.prepTime || ""}
+            defaultValue={defaults?.prepTime || ""}
             placeholder="15"
             disabled={pending}
           />
@@ -148,7 +148,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             id="cook-time"
             type="number"
             name="cookTime"
-            defaultValue={recipe?.cookTime || ""}
+            defaultValue={defaults?.cookTime || ""}
             placeholder="20"
             disabled={pending}
           />
@@ -165,7 +165,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             id="servings"
             type="number"
             name="servings"
-            defaultValue={recipe?.servings || ""}
+            defaultValue={defaults?.servings || ""}
             placeholder="4"
             disabled={pending}
           />
@@ -179,7 +179,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
             id="category"
             type="string"
             name="category"
-            defaultValue={recipe?.category || ""}
+            defaultValue={defaults?.category || ""}
             placeholder=""
             disabled={pending}
           />
@@ -199,7 +199,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         <Textarea
           id="ingredients"
           name="ingredients"
-          defaultValue={recipe?.ingredients}
+          defaultValue={defaults?.ingredients}
           placeholder="8oz noodles&#10;1/2 cup peanut butter&#10;3 Tbsp soy sauce&#10;1 Tbsp agave or maple syrup&#10;1 Tbsp white vinegar&#10;..."
           rows={6}
           disabled={pending}
@@ -218,7 +218,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         <Textarea
           id="instructions"
           name="instructions"
-          defaultValue={recipe?.instructions}
+          defaultValue={defaults?.instructions}
           placeholder="1. Bring a large pot of water to boil. Cook the noodles according to package instructions.&#10;2. While the noobles cooks, whisk together the peanut butter sauce ingredients...&#10;..."
           rows={8}
           disabled={pending}
@@ -235,9 +235,9 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         <Field data-invalid={!!state?.fieldErrors.sourceUrl?.length}>
           <FieldLabel htmlFor="sourceUrl">
             Source
-            {recipe?.sourceUrl && (
+            {defaults?.sourceUrl && (
               <a
-                href={recipe?.sourceUrl}
+                href={defaults?.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-tertiary hover:underline"
@@ -251,7 +251,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
           <Input
             id="sourceUrl"
             name="sourceUrl"
-            defaultValue={recipe?.sourceUrl || ""}
+            defaultValue={defaults?.sourceUrl || ""}
             disabled={pending}
           />
           {!!state?.fieldErrors.sourceUrl?.length && (
@@ -264,7 +264,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
       </div>
       <div className="space-y-2">
         <RecipeImageField
-          existingImageUrl={recipe?.imageUrl}
+          existingImageUrl={defaults?.imageUrl}
           disabled={pending}
           serverErrors={
             uploadError ? [uploadError] : state?.fieldErrors.imageUrl
@@ -277,7 +277,7 @@ export function RecipeForm({ recipe, onSuccess }: Props) {
         disabled={pending}
         className="w-full bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
       >
-        {uploadProgress !== null ? (
+        {uploading && uploadProgress !== null ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             Uploading image... {uploadProgress}%

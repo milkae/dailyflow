@@ -3,14 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-
-export const MAX_SIZE_MB = 5;
-export const ACCEPTED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
+import { getRecipeImageUrl } from "@/lib/recipe-image";
+import Image from "next/image";
+import { ACCEPTED_TYPES, MAX_SIZE_MB } from "../types";
 
 type Props = {
   existingImageUrl?: string | null;
@@ -65,14 +60,22 @@ export function RecipeImageField({
   return (
     <Field data-invalid={!!errors?.length}>
       <FieldLabel htmlFor="recipe-image">Image</FieldLabel>
-      {preview && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={preview}
-          alt="recipe image preview"
-          className="max-w-1/2 mx-auto rounded-md"
-        />
-      )}
+      {preview &&
+        (["http", "blob"].some((str) => preview.startsWith(str)) ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={preview}
+            alt="recipe image preview"
+            className="max-w-1/2 mx-auto rounded-md"
+          />
+        ) : (
+          <Image
+            src={getRecipeImageUrl(preview) ?? "/placeholder.png"}
+            alt="recipe image preview"
+            width={400}
+            height={400}
+          />
+        ))}
       <Input
         id="recipe-image"
         name="imageFile"

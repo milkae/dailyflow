@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus } from "lucide-react";
-import { Recipe } from "@/generated/prisma/browser";
 import { RecipeForm } from "@/features/recipes/components/RecipeForm";
 import {
   Dialog,
@@ -16,6 +15,7 @@ import {
   DialogTrigger,
 } from "../../../components/ui/dialog";
 import { logError } from "@/lib/logger";
+import { ParsedRecipe } from "../types";
 
 export const CreateRecipeDialog = ({
   open,
@@ -27,7 +27,7 @@ export const CreateRecipeDialog = ({
   const [tab, setTab] = useState<"url" | "manual">("url");
   const [url, setUrl] = useState("");
   const [isParsing, setIsParsing] = useState(false);
-  const [currentRecipe, setCurrentRecipe] = useState<Recipe | undefined>();
+  const [parsedRecipe, setParsedRecipe] = useState<ParsedRecipe>();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleParseUrl = async () => {
@@ -42,8 +42,8 @@ export const CreateRecipeDialog = ({
       });
 
       if (response.ok) {
-        const data = (await response.json()) as Recipe;
-        setCurrentRecipe(data);
+        const data = (await response.json()) as ParsedRecipe;
+        setParsedRecipe(data);
         setTab("manual");
       } else {
         alert(
@@ -64,7 +64,7 @@ export const CreateRecipeDialog = ({
     handleOpenState(false);
     setTab("url");
     setUrl("");
-    setCurrentRecipe(undefined);
+    setParsedRecipe(undefined);
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -72,7 +72,7 @@ export const CreateRecipeDialog = ({
     if (!open) {
       setTab("url");
       setUrl("");
-      setCurrentRecipe(undefined);
+      setParsedRecipe(undefined);
     }
   };
 
@@ -144,7 +144,7 @@ export const CreateRecipeDialog = ({
           </TabsContent>
 
           <TabsContent value="manual" className="space-y-4 mt-4">
-            <RecipeForm recipe={currentRecipe} onSuccess={handleSuccess} />
+            <RecipeForm parsedRecipe={parsedRecipe} onSuccess={handleSuccess} />
           </TabsContent>
         </Tabs>
       </DialogContent>

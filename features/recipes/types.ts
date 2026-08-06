@@ -1,5 +1,3 @@
-import { Recipe } from "@/generated/prisma/client";
-
 export const MAX_SIZE_BYTES = 5 * 1024 * 1024;
 export const MIN_SIZE_BYTES = 1;
 export const ACCEPTED_TYPES = [
@@ -10,23 +8,15 @@ export const ACCEPTED_TYPES = [
 ];
 export const MAX_SIZE_MB = 5;
 
-export type RecipeImage =
-  | {
-      type: "none";
-    }
-  | {
-      type: "upload";
-      file: File;
-    }
-  | {
-      type: "external";
-      url: string;
-    }
-  | {
-      type: "existing";
-      key: string;
-    };
-
-export interface FormRecipe extends Recipe {
-  image: RecipeImage;
+export interface ParsedRecipe {
+  name: string;
+  description?: string;
+  ingredients: string;
+  instructions: string;
+  prepTime?: number;
+  cookTime?: number;
+  servings?: number;
+  category?: string;
+  sourceUrl: string;
+  imageUrl?: string;
 }
