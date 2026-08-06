@@ -20,6 +20,7 @@ model User {
   habits        Habit[]
   recipes       Recipe[]
   meals         Meal[]
+  todos         Todo[]
 
   @@unique([email])
   @@map("user")
@@ -155,4 +156,17 @@ model Recipe {
   @@index([userId])
   @@index([category])
   @@map("recipe")
+}
+
+model Todo {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  urgent      Boolean?
+  createdAt   DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("todo")
 }

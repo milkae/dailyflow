@@ -81,3 +81,8 @@ export type Meal = Prisma.MealModel
  * 
  */
 export type Recipe = Prisma.RecipeModel
+/**
+ * Model Todo
+ * 
+ */
+export type Todo = Prisma.TodoModel

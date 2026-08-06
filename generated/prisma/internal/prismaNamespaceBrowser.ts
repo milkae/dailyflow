@@ -58,7 +58,8 @@ export const ModelName = {
   Habit: 'Habit',
   Entry: 'Entry',
   Meal: 'Meal',
-  Recipe: 'Recipe'
+  Recipe: 'Recipe',
+  Todo: 'Todo'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -192,6 +193,18 @@ export const RecipeScalarFieldEnum = {
 } as const
 
 export type RecipeScalarFieldEnum = (typeof RecipeScalarFieldEnum)[keyof typeof RecipeScalarFieldEnum]
+
+
+export const TodoScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  urgent: 'urgent',
+  createdAt: 'createdAt',
+  userId: 'userId'
+} as const
+
+export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
 
 
 export const SortOrder = {
