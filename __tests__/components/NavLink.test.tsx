@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { NavLink } from "@/components/layout/NavLink";
+import { NavLink } from "@/app/_components/layout/NavLink";
 
 describe("NavLink", () => {
   it("should render link with correct href and text", async () => {

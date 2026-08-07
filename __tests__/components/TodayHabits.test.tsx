@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { TodayHabits } from "@/features/dashboard/components/TodayHabits";
+import { TodayHabits } from "@/app/_components/TodayHabits";
 import { createMockTypedHabitWithEntries } from "@/__tests__/tests-utils";
 
 describe("TodayHabits", () => {

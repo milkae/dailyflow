@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Heading } from "@/components/ui/typography";
+import { Button } from "@/app/_components/ui/button";
+import { Heading } from "@/app/_components/ui/typography";
 import { logError } from "@/lib/logger";
 import { useEffect } from "react";
 

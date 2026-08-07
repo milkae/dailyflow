@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Target } from "lucide-react";
-import { StatCard } from "@/features/dashboard/components/StatCard";
+import { StatCard } from "@/app/_components/StatCard";
 
 describe("StatCard", () => {
   it("should render label, value, and icon", () => {

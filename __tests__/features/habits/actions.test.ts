@@ -19,7 +19,7 @@ import {
   deleteHabitEntry,
   toggleHabitCompletion,
   deleteHabit,
-} from "@/features/habits/actions";
+} from "@/app/(habits)/actions";
 import { revalidatePath, updateTag } from "next/cache";
 import { Frequency } from "@/generated/prisma/browser";
 import {

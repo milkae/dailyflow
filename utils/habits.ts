@@ -1,6 +1,6 @@
 import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
 import { habitFrequencySchema } from "../lib/validators";
-import { TypedHabitWithEntries } from "../features/habits/types";
+import { TypedHabitWithEntries } from "../app/(habits)/types";
 import { normalizeDate } from "./date";
 import { logError } from "@/lib/logger";
 

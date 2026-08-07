@@ -13,7 +13,7 @@ vi.mock("@/lib/dal", () => ({
 }));
 
 import { prismaMock } from "@/singleton";
-import { addOrUpdateMeal, deleteMeal } from "@/features/meals/actions";
+import { addOrUpdateMeal, deleteMeal } from "@/app/(meals)/actions";
 import { revalidatePath, updateTag } from "next/cache";
 import { MealType } from "@/generated/prisma/browser";
 import {

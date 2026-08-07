@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { TodayMeals } from "@/features/dashboard/components/TodayMeals";
+import { TodayMeals } from "@/app/_components/TodayMeals";
 import { MealType } from "@/generated/prisma/enums";
-import { MealWithRecipeName } from "@/features/meals/types";
+import { MealWithRecipeName } from "@/app/(meals)/types";
 
 describe("TodayMeals", () => {
   it("should render meals section header", () => {

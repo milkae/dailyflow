@@ -1,6 +1,6 @@
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Heading } from "@/components/ui/typography";
+import { Card } from "@/app/_components/ui/card";
+import { Skeleton } from "@/app/_components/ui/skeleton";
+import { Heading } from "@/app/_components/ui/typography";
 
 export default function Loading() {
   return (

@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { MealSlot } from "@/features/meals/components/MealSlot";
+import { MealSlot } from "@/app/(meals)/_components/MealSlot";
 import { MealType } from "@/generated/prisma/enums";
-import { MealWithRecipeName } from "@/features/meals/types";
+import { MealWithRecipeName } from "@/app/(meals)/types";
 
 describe("MealSlot", () => {
   it("should render meal type label and icon", () => {

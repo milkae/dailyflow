@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { HabitsOverview } from "@/features/habits/components/HabitsOverview";
+import { HabitsOverview } from "@/app/(habits)/_components/HabitsOverview";
 import { createMockTypedHabitWithEntries } from "@/__tests__/tests-utils";
 
 describe("HabitsOverview", () => {

@@ -54,8 +54,6 @@ export const createRecipeSchema = z.object({
 
 export const createMealSchema = z.object({
   name: z.string().min(1).max(100),
-  type: z.enum(["breakfast", "lunch", "dinner", "snack"]),
-  date: z.coerce.date(),
   recipeId: z.string().optional(),
   notes: z.string().max(500).optional(),
 });

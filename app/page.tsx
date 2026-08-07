@@ -1,8 +1,8 @@
-import { getDashboardData } from "@/features/dashboard/actions";
-import { DashboardHeader } from "@/features/dashboard/components/DashboardHeader";
-import { QuickStats } from "@/features/dashboard/components/QuickStats";
-import { TodayHabits } from "@/features/dashboard/components/TodayHabits";
-import { TodayMeals } from "@/features/dashboard/components/TodayMeals";
+import { getDashboardData } from "@/app/actions";
+import { DashboardHeader } from "@/app/_components/DashboardHeader";
+import { QuickStats } from "@/app/_components/QuickStats";
+import { TodayHabits } from "@/app/_components/TodayHabits";
+import { TodayMeals } from "@/app/_components/TodayMeals";
 import { getUserId } from "@/lib/dal";
 import { Metadata } from "next";
 

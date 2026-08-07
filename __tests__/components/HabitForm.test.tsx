@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { HabitForm } from "@/features/habits/components/HabitForm";
+import { HabitForm } from "@/app/(habits)/_components/HabitForm";
 import { Frequency } from "@/generated/prisma/enums";
 import { createMockTypedHabitWithEntries } from "@/__tests__/tests-utils";
 

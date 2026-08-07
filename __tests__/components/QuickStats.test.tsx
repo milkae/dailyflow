@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { QuickStats } from "@/features/dashboard/components/QuickStats";
+import { QuickStats } from "@/app/_components/QuickStats";
 
 describe("QuickStats", () => {
   it("should render all stat cards", () => {

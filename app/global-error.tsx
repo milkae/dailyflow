@@ -1,12 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/app/_components/ui/button";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/app/_components/ui/alert";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { logError } from "@/lib/logger";
 import { useEffect } from "react";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/buttonVariants";
+import { buttonVariants } from "@/app/_components/ui/buttonVariants";
 
 export default function GlobalError({
   error,

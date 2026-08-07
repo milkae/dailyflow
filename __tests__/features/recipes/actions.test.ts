@@ -16,7 +16,7 @@ import {
   createOrUpdateRecipe,
   deleteRecipe,
   getAllRecipes,
-} from "@/features/recipes/actions";
+} from "@/app/(recipes)/actions";
 import { revalidatePath } from "next/cache";
 import {
   createFormData,
@@ -57,7 +57,7 @@ describe("createOrUpdateRecipe", () => {
           userId: MOCK_USER_ID,
         }),
       });
-      expect(revalidatePath).toHaveBeenCalledWith("/meals/recipes");
+      expect(revalidatePath).toHaveBeenCalledWith("/recipes");
     });
 
     it("should create recipe with optional fields", async () => {
@@ -285,7 +285,7 @@ describe("createOrUpdateRecipe", () => {
         data: expect.any(Object),
       });
       expect(prismaMock.recipe.create).not.toHaveBeenCalled();
-      expect(revalidatePath).toHaveBeenCalledWith("/meals/recipes");
+      expect(revalidatePath).toHaveBeenCalledWith("/recipes");
     });
 
     it("should create new recipe if sourceUrl is unique", async () => {
@@ -358,9 +358,7 @@ describe("createOrUpdateRecipe", () => {
         where: { id: MOCK_RECIPE_ID, userId: MOCK_USER_ID },
         data: expect.objectContaining({ name: "Updated Recipe" }),
       });
-      expect(revalidatePath).toHaveBeenCalledWith(
-        `/meals/recipes/${MOCK_RECIPE_ID}`,
-      );
+      expect(revalidatePath).toHaveBeenCalledWith(`/recipes/${MOCK_RECIPE_ID}`);
     });
 
     it("should update all fields including optional ones", async () => {
@@ -476,7 +474,7 @@ describe("createOrUpdateRecipe", () => {
   });
 
   describe("revalidation", () => {
-    it("should revalidate /meals/recipes on successful create", async () => {
+    it("should revalidate /recipes on successful create", async () => {
       const recipe = createMockRecipe();
       prismaMock.recipe.findFirst.mockResolvedValue(null);
       prismaMock.recipe.create.mockResolvedValue(recipe);
@@ -493,10 +491,10 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(revalidatePath).toHaveBeenCalledWith("/meals/recipes");
+      expect(revalidatePath).toHaveBeenCalledWith("/recipes");
     });
 
-    it("should revalidate /meals/recipes on sourceUrl update", async () => {
+    it("should revalidate /recipes on sourceUrl update", async () => {
       const recipe = createMockRecipe();
       const existingRecipe = createMockRecipe({ id: "recipe-2" });
       prismaMock.recipe.findFirst.mockResolvedValue(existingRecipe);
@@ -515,7 +513,7 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(revalidatePath).toHaveBeenCalledWith("/meals/recipes");
+      expect(revalidatePath).toHaveBeenCalledWith("/recipes");
     });
 
     it("should revalidate specific recipe path on update", async () => {
@@ -535,9 +533,7 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(revalidatePath).toHaveBeenCalledWith(
-        `/meals/recipes/${MOCK_RECIPE_ID}`,
-      );
+      expect(revalidatePath).toHaveBeenCalledWith(`/recipes/${MOCK_RECIPE_ID}`);
     });
   });
 });
@@ -560,7 +556,7 @@ describe("deleteRecipe", () => {
     expect(prismaMock.recipe.delete).toHaveBeenCalledWith({
       where: { id: MOCK_RECIPE_ID, userId: MOCK_USER_ID },
     });
-    expect(revalidatePath).toHaveBeenCalledWith("/meals/recipes");
+    expect(revalidatePath).toHaveBeenCalledWith("/recipes");
   });
 
   it("should throw Unauthorized error if recipe not found", async () => {
@@ -595,7 +591,7 @@ describe("deleteRecipe", () => {
 
     await deleteRecipe(MOCK_RECIPE_ID);
 
-    expect(revalidatePath).toHaveBeenCalledWith("/meals/recipes");
+    expect(revalidatePath).toHaveBeenCalledWith("/recipes");
   });
 });
 

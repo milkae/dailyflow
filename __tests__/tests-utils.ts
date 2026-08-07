@@ -1,5 +1,5 @@
 import { Frequency, MealType } from "@/generated/prisma/enums";
-import type { TypedHabitWithEntries } from "@/features/habits/types";
+import type { TypedHabitWithEntries } from "@/app/(habits)/types";
 import { Entry } from "@/generated/prisma/browser";
 
 export const getByNestedText =

@@ -1,5 +1,5 @@
-import { Card } from "@/components/ui/card";
-import { Heading } from "@/components/ui/typography";
+import { Card } from "@/app/_components/ui/card";
+import { Heading } from "@/app/_components/ui/typography";
 import { SignIn } from "./sign-in";
 import { Metadata } from "next";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { HabitOverviewCard } from "@/features/habits/components/HabitOverviewCard";
+import { HabitOverviewCard } from "@/app/(habits)/_components/HabitOverviewCard";
 import { createMockTypedHabitWithEntries } from "@/__tests__/tests-utils";
 import { Frequency } from "@/generated/prisma/enums";
 

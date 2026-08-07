@@ -1,9 +1,9 @@
 import "./globals.css";
 
 import { Geist } from "next/font/google";
-import { Navbar } from "@/components/layout/Navbar";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import Providers from "../components/providers/AppProviders";
+import { Navbar } from "@/app/_components/layout/Navbar";
+import { TooltipProvider } from "@/app/_components/ui/tooltip";
+import Providers from "./_components/providers/AppProviders";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
