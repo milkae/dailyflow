@@ -163,6 +163,7 @@ model Todo {
   name        String
   description String?
   urgent      Boolean?
+  isDone      Boolean?
   createdAt   DateTime @default(now())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
