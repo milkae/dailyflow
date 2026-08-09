@@ -17,6 +17,7 @@ import {
   AlertTitle,
 } from "@/app/_components/ui/alert";
 import { toast } from "sonner";
+import { RecipeImageField } from "./RecipeImageField";
 import { ParsedRecipe } from "../types";
 import { Recipe } from "@/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -278,7 +279,25 @@ export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
           )}
         />
       </div>
-      <div className="space-y-2"></div>
+      <div className="space-y-2">
+        <Controller
+          name="imageUrl"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <RecipeImageField
+              existingImageUrl={defaults?.imageUrl}
+              disabled={actionPending}
+              formErrors={
+                fieldState.invalid && fieldState.error?.message
+                  ? [fieldState.error?.message]
+                  : undefined
+              }
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+      </div>
 
       <Button
         type="submit"

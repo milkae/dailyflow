@@ -27,6 +27,8 @@ export function useRecipeImageUpload() {
           file.type,
         );
         await uploadWithProgress(url, fields, file, setUploadProgress);
+        setUploadProgress(null);
+
         return key;
       } catch {
         setUploadError("Image upload failed. Please try again.");
