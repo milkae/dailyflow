@@ -59,6 +59,7 @@ export const ModelName = {
   Entry: 'Entry',
   Meal: 'Meal',
   Recipe: 'Recipe',
+  RecipeCategory: 'RecipeCategory',
   Todo: 'Todo'
 } as const
 
@@ -186,13 +187,22 @@ export const RecipeScalarFieldEnum = {
   servings: 'servings',
   imageUrl: 'imageUrl',
   sourceUrl: 'sourceUrl',
-  category: 'category',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId'
+  userId: 'userId',
+  mealTypes: 'mealTypes'
 } as const
 
 export type RecipeScalarFieldEnum = (typeof RecipeScalarFieldEnum)[keyof typeof RecipeScalarFieldEnum]
+
+
+export const RecipeCategoryScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name'
+} as const
+
+export type RecipeCategoryScalarFieldEnum = (typeof RecipeCategoryScalarFieldEnum)[keyof typeof RecipeCategoryScalarFieldEnum]
 
 
 export const TodoScalarFieldEnum = {

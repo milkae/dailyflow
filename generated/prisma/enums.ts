@@ -21,10 +21,10 @@ export type Frequency = (typeof Frequency)[keyof typeof Frequency]
 
 
 export const MealType = {
-  breakfast: 'breakfast',
-  lunch: 'lunch',
-  dinner: 'dinner',
-  snack: 'snack'
+  BREAKFAST: 'BREAKFAST',
+  LUNCH: 'LUNCH',
+  DINNER: 'DINNER',
+  SNACK: 'SNACK'
 } as const
 
 export type MealType = (typeof MealType)[keyof typeof MealType]

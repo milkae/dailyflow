@@ -9,7 +9,7 @@ import {
 } from "@/app/_components/ui/dialog";
 import { Button } from "@/app/_components/ui/button";
 import { addOrUpdateMeal } from "@/app/(meals)/actions";
-import { Meal, Recipe } from "@/generated/prisma/client";
+import { Meal, MealType, Recipe } from "@/generated/prisma/client";
 import { capitalize } from "@/utils/string";
 import { Textarea } from "@/app/_components/ui/textarea";
 import { Field, FieldError, FieldGroup } from "@/app/_components/ui/field";
@@ -28,7 +28,7 @@ import { toast } from "sonner";
 type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  mealType: MealType;
   date: Date;
   existingMeal?: Meal;
   recipes?: Recipe[];

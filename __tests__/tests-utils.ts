@@ -84,7 +84,7 @@ export const createFormData = (data: Record<string, unknown>) => {
 export const createMockMeal = (overrides = {}) => ({
   id: MOCK_MEAL_ID,
   name: "Pasta Carbonara",
-  type: MealType.lunch,
+  type: MealType.LUNCH,
   date: new Date("2024-04-15"),
   recipeId: null,
   notes: null,

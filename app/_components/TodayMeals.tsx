@@ -32,7 +32,7 @@ export function TodayMeals({ meals }: { meals: MealWithRecipeName[] }) {
 
       <div className="space-y-3">
         {Object.values(MealType).map((type) => {
-          if (type === MealType.snack) {
+          if (type === MealType.SNACK) {
             return;
           }
           return <MealSlot key={type} type={type} meal={mealsByType[type]} />;

@@ -31,17 +31,17 @@ describe("Meal Server Actions", () => {
   describe("addOrUpdateMeal", () => {
     describe("Create new meal", () => {
       it("should create breakfast meal with valid data", async () => {
-        const meal = createMockMeal({ type: MealType.breakfast });
+        const meal = createMockMeal({ type: MealType.BREAKFAST });
         const date = new Date("2024-04-15");
         prismaMock.meal.upsert.mockResolvedValue(meal);
 
         const formData = createFormData({
           name: meal.name,
-          type: MealType.breakfast,
+          type: MealType.BREAKFAST,
         });
 
         const result = await addOrUpdateMeal(
-          { date, type: MealType.breakfast },
+          { date, type: MealType.BREAKFAST },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -53,14 +53,14 @@ describe("Meal Server Actions", () => {
           update: expect.any(Object),
           create: expect.objectContaining({
             name: meal.name,
-            type: MealType.breakfast,
+            type: MealType.BREAKFAST,
             userId: MOCK_USER_ID,
           }),
         });
       });
 
       it("should create lunch meal", async () => {
-        const meal = createMockMeal({ type: MealType.lunch });
+        const meal = createMockMeal({ type: MealType.LUNCH });
         const date = new Date("2024-04-15");
         prismaMock.meal.upsert.mockResolvedValue(meal);
 
@@ -69,7 +69,7 @@ describe("Meal Server Actions", () => {
         });
 
         const result = await addOrUpdateMeal(
-          { date, type: MealType.lunch },
+          { date, type: MealType.LUNCH },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -78,12 +78,12 @@ describe("Meal Server Actions", () => {
         expect(prismaMock.meal.upsert).toHaveBeenCalledWith({
           where: expect.any(Object),
           update: expect.any(Object),
-          create: expect.objectContaining({ type: MealType.lunch }),
+          create: expect.objectContaining({ type: MealType.LUNCH }),
         });
       });
 
       it("should create dinner meal", async () => {
-        const meal = createMockMeal({ type: MealType.dinner });
+        const meal = createMockMeal({ type: MealType.DINNER });
         const date = new Date("2024-04-15");
         prismaMock.meal.upsert.mockResolvedValue(meal);
 
@@ -92,7 +92,7 @@ describe("Meal Server Actions", () => {
         });
 
         const result = await addOrUpdateMeal(
-          { date, type: MealType.dinner },
+          { date, type: MealType.DINNER },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -101,12 +101,12 @@ describe("Meal Server Actions", () => {
         expect(prismaMock.meal.upsert).toHaveBeenCalledWith({
           where: expect.any(Object),
           update: expect.any(Object),
-          create: expect.objectContaining({ type: MealType.dinner }),
+          create: expect.objectContaining({ type: MealType.DINNER }),
         });
       });
 
       it("should create snack meal", async () => {
-        const meal = createMockMeal({ type: MealType.snack });
+        const meal = createMockMeal({ type: MealType.SNACK });
         const date = new Date("2024-04-15");
         prismaMock.meal.upsert.mockResolvedValue(meal);
 
@@ -115,7 +115,7 @@ describe("Meal Server Actions", () => {
         });
 
         const result = await addOrUpdateMeal(
-          { date, type: MealType.snack },
+          { date, type: MealType.SNACK },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -124,7 +124,7 @@ describe("Meal Server Actions", () => {
         expect(prismaMock.meal.upsert).toHaveBeenCalledWith({
           where: expect.any(Object),
           update: expect.any(Object),
-          create: expect.objectContaining({ type: MealType.snack }),
+          create: expect.objectContaining({ type: MealType.SNACK }),
         });
       });
 
@@ -141,7 +141,7 @@ describe("Meal Server Actions", () => {
         });
 
         const result = await addOrUpdateMeal(
-          { date, type: MealType.lunch },
+          { date, type: MealType.LUNCH },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -165,7 +165,7 @@ describe("Meal Server Actions", () => {
         });
 
         const result = await addOrUpdateMeal(
-          { date, type: MealType.lunch },
+          { date, type: MealType.LUNCH },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -186,7 +186,7 @@ describe("Meal Server Actions", () => {
         const formData = createFormData({ name: meal.name });
 
         await addOrUpdateMeal(
-          { date: dateWithTime, type: MealType.lunch },
+          { date: dateWithTime, type: MealType.LUNCH },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -204,7 +204,7 @@ describe("Meal Server Actions", () => {
         const formData = createFormData({ name: meal.name });
 
         await addOrUpdateMeal(
-          { date: new Date(), type: MealType.lunch },
+          { date: new Date(), type: MealType.LUNCH },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -230,7 +230,7 @@ describe("Meal Server Actions", () => {
         });
 
         const result = await addOrUpdateMeal(
-          { date, type: MealType.lunch, id: MOCK_MEAL_ID },
+          { date, type: MealType.LUNCH, id: MOCK_MEAL_ID },
           { formErrors: [], fieldErrors: {} },
           formData,
         );
@@ -257,7 +257,7 @@ describe("Meal Server Actions", () => {
         });
 
         await addOrUpdateMeal(
-          { date, type: MealType.lunch, id: MOCK_MEAL_ID },
+          { date, type: MealType.LUNCH, id: MOCK_MEAL_ID },
           { formErrors: [], fieldErrors: {} },
           formData,
         );

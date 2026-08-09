@@ -2,7 +2,7 @@
 CREATE TYPE "Frequency" AS ENUM ('DAILY', 'WEEKLY', 'MONTHLY', 'SPECIFIC_DAYS', 'INTERVAL');
 
 -- CreateEnum
-CREATE TYPE "MealType" AS ENUM ('breakfast', 'lunch', 'dinner', 'snack');
+CREATE TYPE "MealType" AS ENUM ('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK');
 
 -- CreateTable
 CREATE TABLE "Habit" (

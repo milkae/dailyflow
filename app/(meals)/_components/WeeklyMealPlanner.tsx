@@ -28,10 +28,10 @@ import Link from "next/link";
 import { MealWithRecipeName } from "@/app/(meals)/types";
 
 const MealIcons = {
-  [MealType.breakfast]: <Croissant />,
-  [MealType.lunch]: <Salad />,
-  [MealType.snack]: <Cookie />,
-  [MealType.dinner]: <Soup />,
+  [MealType.BREAKFAST]: <Croissant />,
+  [MealType.LUNCH]: <Salad />,
+  [MealType.SNACK]: <Cookie />,
+  [MealType.DINNER]: <Soup />,
 };
 
 interface MealsListProps {

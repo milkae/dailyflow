@@ -7,10 +7,10 @@ import { MealType } from "@/generated/prisma/enums";
 import { Skeleton } from "@/app/_components/ui/skeleton";
 
 const MealIcons = {
-  [MealType.breakfast]: <Croissant />,
-  [MealType.lunch]: <Salad />,
-  [MealType.snack]: <Cookie />,
-  [MealType.dinner]: <Soup />,
+  [MealType.BREAKFAST]: <Croissant />,
+  [MealType.LUNCH]: <Salad />,
+  [MealType.SNACK]: <Cookie />,
+  [MealType.DINNER]: <Soup />,
 };
 
 export const WeeklyMealPlannerSkeleton = () => {

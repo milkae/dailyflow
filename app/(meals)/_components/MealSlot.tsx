@@ -5,10 +5,10 @@ import Link from "next/link";
 import { MealWithRecipeName } from "@/app/(meals)/types";
 
 const mealConfig = {
-  [MealType.breakfast]: { label: "Breakfast", icon: Croissant },
-  [MealType.lunch]: { label: "Lunch", icon: Salad },
-  [MealType.dinner]: { label: "Dinner", icon: Soup },
-  [MealType.snack]: { label: "Snack", icon: Cookie },
+  [MealType.BREAKFAST]: { label: "Breakfast", icon: Croissant },
+  [MealType.LUNCH]: { label: "Lunch", icon: Salad },
+  [MealType.DINNER]: { label: "Dinner", icon: Soup },
+  [MealType.SNACK]: { label: "Snack", icon: Cookie },
 };
 
 type Props = {

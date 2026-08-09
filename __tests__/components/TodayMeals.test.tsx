@@ -38,7 +38,7 @@ describe("TodayMeals", () => {
     const meals = [
       {
         id: "1",
-        type: MealType.breakfast,
+        type: MealType.BREAKFAST,
         date: new Date(),
         recipeId: "recipe-1",
         userId: "user-1",
@@ -46,7 +46,7 @@ describe("TodayMeals", () => {
       },
       {
         id: "2",
-        type: MealType.lunch,
+        type: MealType.LUNCH,
         date: new Date(),
         recipeId: "recipe-2",
         userId: "user-1",

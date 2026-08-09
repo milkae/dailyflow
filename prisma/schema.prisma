@@ -129,33 +129,40 @@ model Meal {
 }
 
 enum MealType {
-  breakfast
-  lunch
-  dinner
-  snack
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
 }
 
 model Recipe {
-  id           String   @id @default(cuid())
+  id           String           @id @default(cuid())
   name         String
   description  String?
   ingredients  String
   instructions String
   prepTime     Int?
   cookTime     Int?
-  servings     Int      @default(4)
+  servings     Int              @default(4)
   imageUrl     String?
   sourceUrl    String?
-  category     String?
+  categories   RecipeCategory[]
   meals        Meal[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
   userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealTypes    MealType[]
 
   @@index([userId])
-  @@index([category])
   @@map("recipe")
+}
+
+model RecipeCategory {
+  id      String   @id @default(cuid())
+  slug    String   @unique
+  name    String
+  recipes Recipe[]
 }
 
 model Todo {
