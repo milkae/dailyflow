@@ -1,4 +1,4 @@
-import { useActionState, useTransition } from "react";
+import { useActionState } from "react";
 import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 import { Textarea } from "@/app/_components/ui/textarea";
@@ -17,16 +17,30 @@ import {
   AlertTitle,
 } from "@/app/_components/ui/alert";
 import { toast } from "sonner";
-import { RecipeImageField } from "./RecipeImageField";
 import { ParsedRecipe } from "../types";
-import { useRecipeImageUpload } from "../hooks";
 import { Recipe } from "@/generated/prisma/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
 
 type Props = {
   recipe?: Recipe;
   parsedRecipe?: ParsedRecipe;
   onSuccess?: () => void;
 };
+
+const formSchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().max(1000).nullish(),
+  ingredients: z.string().min(1, "Ingredients required"),
+  instructions: z.string().min(1, "Instructions required"),
+  prepTime: z.number().int().min(0).nullish(),
+  cookTime: z.number().int().min(0).nullish(),
+  servings: z.number().int().min(1).default(4).optional(),
+  sourceUrl: z.string().nullish(),
+  category: z.string().nullish(),
+  imageUrl: z.string().nullish(),
+});
 
 export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
   const submitRecipe = createOrUpdateRecipe.bind(null, {
@@ -49,31 +63,16 @@ export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
     }),
     null,
   );
-  const { upload, uploadProgress, uploading, uploadError } =
-    useRecipeImageUpload();
 
-  const [isTransitionPending, startTransition] = useTransition();
-
-  const pending = actionPending || isTransitionPending || uploading;
   const defaults = recipe || parsedRecipe;
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const file = formData.get("imageFile") as File | null;
-    formData.delete("imageFile");
-
-    const imageKey =
-      file && file.size ? await upload(file) : defaults?.imageUrl;
-    formData.set("imageUrl", imageKey || "");
-
-    startTransition(() => {
-      formAction(formData);
-    });
-  }
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaults,
+  });
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={form.handleSubmit(formAction)} className="space-y-4">
       {state?.formErrors.map((e, i) => (
         <Alert
           variant="destructive"
@@ -86,207 +85,207 @@ export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
           <AlertDescription>{e}</AlertDescription>
         </Alert>
       ))}
-      <Field data-invalid={!!state?.fieldErrors.name?.length}>
-        <FieldLabel htmlFor="recipe-name">
-          Recipe Name <span className="text-destructive">*</span>
-        </FieldLabel>
-        <Input
-          id="recipe-name"
-          name="name"
-          required
-          defaultValue={defaults?.name}
-          placeholder="Peanut butter noodles"
-          disabled={pending}
-        />
-        {!!state?.fieldErrors.name?.length && (
-          <FieldError aria-live="polite" errors={state.fieldErrors.name} />
-        )}
-      </Field>
-
-      <Field data-invalid={!!state?.fieldErrors.description?.length}>
-        <FieldLabel htmlFor="recipe-description">
-          Description{" "}
-          <span className="text-muted-foreground text-sm font-normal">
-            (optional)
-          </span>
-        </FieldLabel>
-        <Textarea
-          id="recipe-description"
-          name="description"
-          defaultValue={defaults?.description || ""}
-          placeholder="Rich, creamy, savory, and spicy, they come together in under 20 minute"
-          rows={2}
-          disabled={pending}
-          className="resize-none"
-          aria-invalid={!!state?.fieldErrors.description?.length}
-        />
-        {!!state?.fieldErrors.description?.length && (
-          <FieldError
-            aria-live="polite"
-            errors={state.fieldErrors.description}
-          />
-        )}
-      </Field>
-
-      <FieldGroup className="grid grid-cols-2 gap-4">
-        <Field data-invalid={!!state?.fieldErrors.prepTime?.length}>
-          <FieldLabel htmlFor="prep-time">Prep (min)</FieldLabel>
-          <Input
-            id="prep-time"
-            type="number"
-            name="prepTime"
-            defaultValue={defaults?.prepTime || ""}
-            placeholder="15"
-            disabled={pending}
-          />
-          {!!state?.fieldErrors.prepTime?.length && (
-            <FieldError
-              aria-live="polite"
-              errors={state.fieldErrors.prepTime}
+      <Controller
+        name="name"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="recipe-name">
+              Recipe Name <span className="text-destructive">*</span>
+            </FieldLabel>
+            <Input
+              {...field}
+              id="recipe-name"
+              placeholder="Peanut butter noodles"
+              aria-invalid={fieldState.invalid}
             />
-          )}
-        </Field>
-        <Field data-invalid={!!state?.fieldErrors.cookTime?.length}>
-          <FieldLabel htmlFor="cook-time">Cook (min)</FieldLabel>
-          <Input
-            id="cook-time"
-            type="number"
-            name="cookTime"
-            defaultValue={defaults?.cookTime || ""}
-            placeholder="20"
-            disabled={pending}
-          />
-          {!!state?.fieldErrors.cookTime?.length && (
-            <FieldError
-              aria-live="polite"
-              errors={state.fieldErrors.cookTime}
-            />
-          )}
-        </Field>
-        <Field data-invalid={!!state?.fieldErrors.servings?.length}>
-          <FieldLabel htmlFor="servings">Servings</FieldLabel>
-          <Input
-            id="servings"
-            type="number"
-            name="servings"
-            defaultValue={defaults?.servings || ""}
-            placeholder="4"
-            disabled={pending}
-          />
-        </Field>
-        {!!state?.fieldErrors.servings?.length && (
-          <FieldError aria-live="polite" errors={state.fieldErrors.servings} />
-        )}
-        <Field data-invalid={!!state?.fieldErrors.category?.length}>
-          <FieldLabel htmlFor="servings">Category</FieldLabel>
-          <Input
-            id="category"
-            type="string"
-            name="category"
-            defaultValue={defaults?.category || ""}
-            placeholder=""
-            disabled={pending}
-          />
-        </Field>
-        {!!state?.fieldErrors.category?.length && (
-          <FieldError aria-live="polite" errors={state.fieldErrors.category} />
-        )}
-      </FieldGroup>
-
-      <Field data-invalid={!!state?.fieldErrors.ingredients?.length}>
-        <FieldLabel htmlFor="ingredients">
-          Ingredients{" "}
-          <span className="text-muted-foreground text-sm font-normal">
-            (one per line)
-          </span>
-        </FieldLabel>
-        <Textarea
-          id="ingredients"
-          name="ingredients"
-          defaultValue={defaults?.ingredients}
-          placeholder="8oz noodles&#10;1/2 cup peanut butter&#10;3 Tbsp soy sauce&#10;1 Tbsp agave or maple syrup&#10;1 Tbsp white vinegar&#10;..."
-          rows={6}
-          disabled={pending}
-          className="font-mono text-sm"
-        />
-        {!!state?.fieldErrors.ingredients?.length && (
-          <FieldError
-            aria-live="polite"
-            errors={state.fieldErrors.ingredients}
-          />
-        )}
-      </Field>
-
-      <Field data-invalid={!!state?.fieldErrors.instructions?.length}>
-        <FieldLabel htmlFor="instructions">Instructions</FieldLabel>
-        <Textarea
-          id="instructions"
-          name="instructions"
-          defaultValue={defaults?.instructions}
-          placeholder="1. Bring a large pot of water to boil. Cook the noodles according to package instructions.&#10;2. While the noobles cooks, whisk together the peanut butter sauce ingredients...&#10;..."
-          rows={8}
-          disabled={pending}
-        />
-        {!!state?.fieldErrors.instructions?.length && (
-          <FieldError
-            aria-live="polite"
-            errors={state.fieldErrors.instructions}
-          />
-        )}
-      </Field>
-
-      <div className="space-y-2">
-        <Field data-invalid={!!state?.fieldErrors.sourceUrl?.length}>
-          <FieldLabel htmlFor="sourceUrl">
-            Source
-            {defaults?.sourceUrl && (
-              <a
-                href={defaults?.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-tertiary hover:underline"
-              >
-                <span>Open link</span>
-                <ExternalLink className="h-4 w-4" />
-              </a>
+            {fieldState.invalid && (
+              <FieldError
+                aria-live="polite"
+                errors={[fieldState.error?.message]}
+              />
             )}
-          </FieldLabel>
-
-          <Input
-            id="sourceUrl"
-            name="sourceUrl"
-            defaultValue={defaults?.sourceUrl || ""}
-            disabled={pending}
-          />
-          {!!state?.fieldErrors.sourceUrl?.length && (
-            <FieldError
-              aria-live="polite"
-              errors={state.fieldErrors.sourceUrl}
+          </Field>
+        )}
+      />
+      <Controller
+        name="description"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="recipe-description">
+              Description{" "}
+              <span className="text-muted-foreground text-sm font-normal">
+                (optional)
+              </span>
+            </FieldLabel>
+            <Textarea
+              {...field}
+              value={field.value ?? ""}
+              id="recipe-description"
+              placeholder="Rich, creamy, savory, and spicy, they come together in under 20 minute"
+              rows={2}
+              className="resize-none"
+              aria-invalid={fieldState.invalid}
             />
+            {fieldState.invalid && (
+              <FieldError
+                aria-live="polite"
+                errors={[fieldState.error?.message]}
+              />
+            )}
+          </Field>
+        )}
+      />
+      <FieldGroup className="grid grid-cols-2 gap-4">
+        <Controller
+          name="prepTime"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="prep-time">Prep (min)</FieldLabel>
+              <Input
+                {...field}
+                value={field.value ?? undefined}
+                id="prep-time"
+                name="prepTime"
+                placeholder="15"
+              />
+              {fieldState.invalid && (
+                <FieldError
+                  aria-live="polite"
+                  errors={[fieldState.error?.message]}
+                />
+              )}
+            </Field>
           )}
-        </Field>
-      </div>
+        />
+        <Controller
+          name="cookTime"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="cook-time">Cook (min)</FieldLabel>
+              <Input
+                {...field}
+                value={field.value ?? undefined}
+                id="cook-time"
+                placeholder="20"
+              />
+              {fieldState.invalid && (
+                <FieldError
+                  aria-live="polite"
+                  errors={[fieldState.error?.message]}
+                />
+              )}
+            </Field>
+          )}
+        />
+        <Controller
+          name="servings"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="servings">Servings</FieldLabel>
+              <Input {...field} id="servings" placeholder="4" />
+              {fieldState.invalid && (
+                <FieldError
+                  aria-live="polite"
+                  errors={[fieldState.error?.message]}
+                />
+              )}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+      <Controller
+        name="ingredients"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="ingredients">
+              Ingredients{" "}
+              <span className="text-muted-foreground text-sm font-normal">
+                (one per line)
+              </span>
+            </FieldLabel>
+            <Textarea
+              {...field}
+              id="ingredients"
+              placeholder="8oz noodles&#10;1/2 cup peanut butter&#10;3 Tbsp soy sauce&#10;1 Tbsp agave or maple syrup&#10;1 Tbsp white vinegar&#10;..."
+              rows={6}
+              className="font-mono text-sm"
+            />
+            {fieldState.invalid && (
+              <FieldError
+                aria-live="polite"
+                errors={[fieldState.error?.message]}
+              />
+            )}
+          </Field>
+        )}
+      />
+      <Controller
+        name="instructions"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid}>
+            <FieldLabel htmlFor="instructions">Instructions</FieldLabel>
+            <Textarea
+              {...field}
+              id="instructions"
+              placeholder="1. Bring a large pot of water to boil. Cook the noodles according to package instructions.&#10;2. While the noobles cooks, whisk together the peanut butter sauce ingredients...&#10;..."
+              rows={8}
+            />
+            {fieldState.invalid && (
+              <FieldError
+                aria-live="polite"
+                errors={[fieldState.error?.message]}
+              />
+            )}
+          </Field>
+        )}
+      />
       <div className="space-y-2">
-        <RecipeImageField
-          existingImageUrl={defaults?.imageUrl}
-          disabled={pending}
-          serverErrors={
-            uploadError ? [uploadError] : state?.fieldErrors.imageUrl
-          }
+        <Controller
+          name="sourceUrl"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="sourceUrl">
+                Source
+                {field.value && (
+                  <a
+                    href={field.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-tertiary hover:underline"
+                  >
+                    <span>Open link</span>
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+              </FieldLabel>
+
+              <Input {...field} value={field.value ?? ""} id="sourceUrl" />
+              {fieldState.invalid && (
+                <FieldError
+                  aria-live="polite"
+                  errors={[fieldState.error?.message]}
+                />
+              )}
+            </Field>
+          )}
         />
       </div>
+      <div className="space-y-2"></div>
 
       <Button
         type="submit"
-        disabled={pending}
+        disabled={actionPending}
         className="w-full bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
       >
-        {uploading && uploadProgress !== null ? (
-          <>
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Uploading image... {uploadProgress}%
-          </>
-        ) : pending ? (
+        {actionPending ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             Saving Recipe...

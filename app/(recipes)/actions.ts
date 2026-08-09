@@ -7,25 +7,14 @@ import { ActionState, Status } from "@/utils/action-state";
 import { cache } from "react";
 import { logError } from "@/lib/logger";
 import { deleteRecipeImage, uploadExternalImage } from "@/app/(recipes)/image";
-import { createRecipeSchema } from "@/lib/validators";
-import z from "zod";
+import { RecipeCreateWithoutUserInput } from "@/generated/prisma/models";
 
 export async function createOrUpdateRecipe(
   { id }: { id?: string },
   _initialState: ActionState,
-  formData: FormData,
+  recipe: RecipeCreateWithoutUserInput,
 ) {
   const session = await verifySession();
-
-  const formDataObj = Object.fromEntries(formData.entries());
-
-  const validatedFields = createRecipeSchema.safeParse(formDataObj);
-
-  if (!validatedFields.success) {
-    return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
-  }
-
-  const recipe = validatedFields.data;
 
   const existing = id
     ? await prisma.recipe.findUnique({
