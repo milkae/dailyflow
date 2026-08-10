@@ -15,12 +15,16 @@ async function main() {
     { slug: "drink", name: "Drink" },
   ];
 
-  for (const category of categories) {
-    await prisma.recipeCategory.upsert({
-      where: { slug: category.slug },
-      update: { name: category.name },
-      create: category,
-    });
+  const users = await prisma.user.findMany();
+
+  for (const user of users) {
+    for (const category of categories) {
+      await prisma.recipeCategory.upsert({
+        where: { userId_slug: { slug: category.slug, userId: user.id } },
+        update: { name: category.name },
+        create: { ...category, userId: user.id },
+      });
+    }
   }
 }
 main()

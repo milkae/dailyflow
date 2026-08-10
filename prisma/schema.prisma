@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  habits        Habit[]
-  recipes       Recipe[]
-  meals         Meal[]
-  todos         Todo[]
+  id               String           @id
+  name             String
+  email            String
+  emailVerified    Boolean          @default(false)
+  image            String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  habits           Habit[]
+  recipes          Recipe[]
+  meals            Meal[]
+  todos            Todo[]
+  recipeCategories RecipeCategory[]
 
   @@unique([email])
   @@map("user")
@@ -160,9 +161,14 @@ model Recipe {
 
 model RecipeCategory {
   id      String   @id @default(cuid())
-  slug    String   @unique
+  slug    String
   name    String
   recipes Recipe[]
+  userId  String
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slug])
+  @@index([userId])
 }
 
 model Todo {

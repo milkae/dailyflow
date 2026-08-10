@@ -1325,7 +1325,8 @@ export type RecipeScalarFieldEnum = (typeof RecipeScalarFieldEnum)[keyof typeof 
 export const RecipeCategoryScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
-  name: 'name'
+  name: 'name',
+  userId: 'userId'
 } as const
 
 export type RecipeCategoryScalarFieldEnum = (typeof RecipeCategoryScalarFieldEnum)[keyof typeof RecipeCategoryScalarFieldEnum]

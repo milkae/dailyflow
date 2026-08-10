@@ -28,18 +28,21 @@ export type RecipeCategoryMinAggregateOutputType = {
   id: string | null
   slug: string | null
   name: string | null
+  userId: string | null
 }
 
 export type RecipeCategoryMaxAggregateOutputType = {
   id: string | null
   slug: string | null
   name: string | null
+  userId: string | null
 }
 
 export type RecipeCategoryCountAggregateOutputType = {
   id: number
   slug: number
   name: number
+  userId: number
   _all: number
 }
 
@@ -48,18 +51,21 @@ export type RecipeCategoryMinAggregateInputType = {
   id?: true
   slug?: true
   name?: true
+  userId?: true
 }
 
 export type RecipeCategoryMaxAggregateInputType = {
   id?: true
   slug?: true
   name?: true
+  userId?: true
 }
 
 export type RecipeCategoryCountAggregateInputType = {
   id?: true
   slug?: true
   name?: true
+  userId?: true
   _all?: true
 }
 
@@ -139,6 +145,7 @@ export type RecipeCategoryGroupByOutputType = {
   id: string
   slug: string
   name: string
+  userId: string
   _count: RecipeCategoryCountAggregateOutputType | null
   _min: RecipeCategoryMinAggregateOutputType | null
   _max: RecipeCategoryMaxAggregateOutputType | null
@@ -166,30 +173,38 @@ export type RecipeCategoryWhereInput = {
   id?: Prisma.StringFilter<"RecipeCategory"> | string
   slug?: Prisma.StringFilter<"RecipeCategory"> | string
   name?: Prisma.StringFilter<"RecipeCategory"> | string
+  userId?: Prisma.StringFilter<"RecipeCategory"> | string
   recipes?: Prisma.RecipeListRelationFilter
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type RecipeCategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   recipes?: Prisma.RecipeOrderByRelationAggregateInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type RecipeCategoryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  slug?: string
+  userId_slug?: Prisma.RecipeCategoryUserIdSlugCompoundUniqueInput
   AND?: Prisma.RecipeCategoryWhereInput | Prisma.RecipeCategoryWhereInput[]
   OR?: Prisma.RecipeCategoryWhereInput[]
   NOT?: Prisma.RecipeCategoryWhereInput | Prisma.RecipeCategoryWhereInput[]
+  slug?: Prisma.StringFilter<"RecipeCategory"> | string
   name?: Prisma.StringFilter<"RecipeCategory"> | string
+  userId?: Prisma.StringFilter<"RecipeCategory"> | string
   recipes?: Prisma.RecipeListRelationFilter
-}, "id" | "slug">
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+}, "id" | "userId_slug">
 
 export type RecipeCategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   _count?: Prisma.RecipeCategoryCountOrderByAggregateInput
   _max?: Prisma.RecipeCategoryMaxOrderByAggregateInput
   _min?: Prisma.RecipeCategoryMinOrderByAggregateInput
@@ -202,6 +217,7 @@ export type RecipeCategoryScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"RecipeCategory"> | string
   slug?: Prisma.StringWithAggregatesFilter<"RecipeCategory"> | string
   name?: Prisma.StringWithAggregatesFilter<"RecipeCategory"> | string
+  userId?: Prisma.StringWithAggregatesFilter<"RecipeCategory"> | string
 }
 
 export type RecipeCategoryCreateInput = {
@@ -209,12 +225,14 @@ export type RecipeCategoryCreateInput = {
   slug: string
   name: string
   recipes?: Prisma.RecipeCreateNestedManyWithoutCategoriesInput
+  user: Prisma.UserCreateNestedOneWithoutRecipeCategoriesInput
 }
 
 export type RecipeCategoryUncheckedCreateInput = {
   id?: string
   slug: string
   name: string
+  userId: string
   recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutCategoriesInput
 }
 
@@ -223,12 +241,14 @@ export type RecipeCategoryUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   recipes?: Prisma.RecipeUpdateManyWithoutCategoriesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutRecipeCategoriesNestedInput
 }
 
 export type RecipeCategoryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   recipes?: Prisma.RecipeUncheckedUpdateManyWithoutCategoriesNestedInput
 }
 
@@ -236,6 +256,7 @@ export type RecipeCategoryCreateManyInput = {
   id?: string
   slug: string
   name: string
+  userId: string
 }
 
 export type RecipeCategoryUpdateManyMutationInput = {
@@ -248,6 +269,7 @@ export type RecipeCategoryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecipeCategoryListRelationFilter = {
@@ -260,22 +282,72 @@ export type RecipeCategoryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type RecipeCategoryUserIdSlugCompoundUniqueInput = {
+  userId: string
+  slug: string
+}
+
 export type RecipeCategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type RecipeCategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type RecipeCategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
+}
+
+export type RecipeCategoryCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.RecipeCategoryCreateWithoutUserInput, Prisma.RecipeCategoryUncheckedCreateWithoutUserInput> | Prisma.RecipeCategoryCreateWithoutUserInput[] | Prisma.RecipeCategoryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.RecipeCategoryCreateOrConnectWithoutUserInput | Prisma.RecipeCategoryCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.RecipeCategoryCreateManyUserInputEnvelope
+  connect?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+}
+
+export type RecipeCategoryUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.RecipeCategoryCreateWithoutUserInput, Prisma.RecipeCategoryUncheckedCreateWithoutUserInput> | Prisma.RecipeCategoryCreateWithoutUserInput[] | Prisma.RecipeCategoryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.RecipeCategoryCreateOrConnectWithoutUserInput | Prisma.RecipeCategoryCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.RecipeCategoryCreateManyUserInputEnvelope
+  connect?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+}
+
+export type RecipeCategoryUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.RecipeCategoryCreateWithoutUserInput, Prisma.RecipeCategoryUncheckedCreateWithoutUserInput> | Prisma.RecipeCategoryCreateWithoutUserInput[] | Prisma.RecipeCategoryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.RecipeCategoryCreateOrConnectWithoutUserInput | Prisma.RecipeCategoryCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.RecipeCategoryUpsertWithWhereUniqueWithoutUserInput | Prisma.RecipeCategoryUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.RecipeCategoryCreateManyUserInputEnvelope
+  set?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  disconnect?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  delete?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  connect?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  update?: Prisma.RecipeCategoryUpdateWithWhereUniqueWithoutUserInput | Prisma.RecipeCategoryUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.RecipeCategoryUpdateManyWithWhereWithoutUserInput | Prisma.RecipeCategoryUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.RecipeCategoryScalarWhereInput | Prisma.RecipeCategoryScalarWhereInput[]
+}
+
+export type RecipeCategoryUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.RecipeCategoryCreateWithoutUserInput, Prisma.RecipeCategoryUncheckedCreateWithoutUserInput> | Prisma.RecipeCategoryCreateWithoutUserInput[] | Prisma.RecipeCategoryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.RecipeCategoryCreateOrConnectWithoutUserInput | Prisma.RecipeCategoryCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.RecipeCategoryUpsertWithWhereUniqueWithoutUserInput | Prisma.RecipeCategoryUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.RecipeCategoryCreateManyUserInputEnvelope
+  set?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  disconnect?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  delete?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  connect?: Prisma.RecipeCategoryWhereUniqueInput | Prisma.RecipeCategoryWhereUniqueInput[]
+  update?: Prisma.RecipeCategoryUpdateWithWhereUniqueWithoutUserInput | Prisma.RecipeCategoryUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.RecipeCategoryUpdateManyWithWhereWithoutUserInput | Prisma.RecipeCategoryUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.RecipeCategoryScalarWhereInput | Prisma.RecipeCategoryScalarWhereInput[]
 }
 
 export type RecipeCategoryCreateNestedManyWithoutRecipesInput = {
@@ -316,16 +388,68 @@ export type RecipeCategoryUncheckedUpdateManyWithoutRecipesNestedInput = {
   deleteMany?: Prisma.RecipeCategoryScalarWhereInput | Prisma.RecipeCategoryScalarWhereInput[]
 }
 
+export type RecipeCategoryCreateWithoutUserInput = {
+  id?: string
+  slug: string
+  name: string
+  recipes?: Prisma.RecipeCreateNestedManyWithoutCategoriesInput
+}
+
+export type RecipeCategoryUncheckedCreateWithoutUserInput = {
+  id?: string
+  slug: string
+  name: string
+  recipes?: Prisma.RecipeUncheckedCreateNestedManyWithoutCategoriesInput
+}
+
+export type RecipeCategoryCreateOrConnectWithoutUserInput = {
+  where: Prisma.RecipeCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.RecipeCategoryCreateWithoutUserInput, Prisma.RecipeCategoryUncheckedCreateWithoutUserInput>
+}
+
+export type RecipeCategoryCreateManyUserInputEnvelope = {
+  data: Prisma.RecipeCategoryCreateManyUserInput | Prisma.RecipeCategoryCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type RecipeCategoryUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.RecipeCategoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.RecipeCategoryUpdateWithoutUserInput, Prisma.RecipeCategoryUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.RecipeCategoryCreateWithoutUserInput, Prisma.RecipeCategoryUncheckedCreateWithoutUserInput>
+}
+
+export type RecipeCategoryUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.RecipeCategoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.RecipeCategoryUpdateWithoutUserInput, Prisma.RecipeCategoryUncheckedUpdateWithoutUserInput>
+}
+
+export type RecipeCategoryUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.RecipeCategoryScalarWhereInput
+  data: Prisma.XOR<Prisma.RecipeCategoryUpdateManyMutationInput, Prisma.RecipeCategoryUncheckedUpdateManyWithoutUserInput>
+}
+
+export type RecipeCategoryScalarWhereInput = {
+  AND?: Prisma.RecipeCategoryScalarWhereInput | Prisma.RecipeCategoryScalarWhereInput[]
+  OR?: Prisma.RecipeCategoryScalarWhereInput[]
+  NOT?: Prisma.RecipeCategoryScalarWhereInput | Prisma.RecipeCategoryScalarWhereInput[]
+  id?: Prisma.StringFilter<"RecipeCategory"> | string
+  slug?: Prisma.StringFilter<"RecipeCategory"> | string
+  name?: Prisma.StringFilter<"RecipeCategory"> | string
+  userId?: Prisma.StringFilter<"RecipeCategory"> | string
+}
+
 export type RecipeCategoryCreateWithoutRecipesInput = {
   id?: string
   slug: string
   name: string
+  user: Prisma.UserCreateNestedOneWithoutRecipeCategoriesInput
 }
 
 export type RecipeCategoryUncheckedCreateWithoutRecipesInput = {
   id?: string
   slug: string
   name: string
+  userId: string
 }
 
 export type RecipeCategoryCreateOrConnectWithoutRecipesInput = {
@@ -349,31 +473,51 @@ export type RecipeCategoryUpdateManyWithWhereWithoutRecipesInput = {
   data: Prisma.XOR<Prisma.RecipeCategoryUpdateManyMutationInput, Prisma.RecipeCategoryUncheckedUpdateManyWithoutRecipesInput>
 }
 
-export type RecipeCategoryScalarWhereInput = {
-  AND?: Prisma.RecipeCategoryScalarWhereInput | Prisma.RecipeCategoryScalarWhereInput[]
-  OR?: Prisma.RecipeCategoryScalarWhereInput[]
-  NOT?: Prisma.RecipeCategoryScalarWhereInput | Prisma.RecipeCategoryScalarWhereInput[]
-  id?: Prisma.StringFilter<"RecipeCategory"> | string
-  slug?: Prisma.StringFilter<"RecipeCategory"> | string
-  name?: Prisma.StringFilter<"RecipeCategory"> | string
+export type RecipeCategoryCreateManyUserInput = {
+  id?: string
+  slug: string
+  name: string
+}
+
+export type RecipeCategoryUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  recipes?: Prisma.RecipeUpdateManyWithoutCategoriesNestedInput
+}
+
+export type RecipeCategoryUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  recipes?: Prisma.RecipeUncheckedUpdateManyWithoutCategoriesNestedInput
+}
+
+export type RecipeCategoryUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecipeCategoryUpdateWithoutRecipesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  user?: Prisma.UserUpdateOneRequiredWithoutRecipeCategoriesNestedInput
 }
 
 export type RecipeCategoryUncheckedUpdateWithoutRecipesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RecipeCategoryUncheckedUpdateManyWithoutRecipesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -411,7 +555,9 @@ export type RecipeCategorySelect<ExtArgs extends runtime.Types.Extensions.Intern
   id?: boolean
   slug?: boolean
   name?: boolean
+  userId?: boolean
   recipes?: boolean | Prisma.RecipeCategory$recipesArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.RecipeCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recipeCategory"]>
 
@@ -419,37 +565,49 @@ export type RecipeCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Type
   id?: boolean
   slug?: boolean
   name?: boolean
+  userId?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recipeCategory"]>
 
 export type RecipeCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   slug?: boolean
   name?: boolean
+  userId?: boolean
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["recipeCategory"]>
 
 export type RecipeCategorySelectScalar = {
   id?: boolean
   slug?: boolean
   name?: boolean
+  userId?: boolean
 }
 
-export type RecipeCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name", ExtArgs["result"]["recipeCategory"]>
+export type RecipeCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "userId", ExtArgs["result"]["recipeCategory"]>
 export type RecipeCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   recipes?: boolean | Prisma.RecipeCategory$recipesArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.RecipeCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type RecipeCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type RecipeCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type RecipeCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type RecipeCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $RecipeCategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RecipeCategory"
   objects: {
     recipes: Prisma.$RecipePayload<ExtArgs>[]
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     slug: string
     name: string
+    userId: string
   }, ExtArgs["result"]["recipeCategory"]>
   composites: {}
 }
@@ -845,6 +1003,7 @@ readonly fields: RecipeCategoryFieldRefs;
 export interface Prisma__RecipeCategoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   recipes<T extends Prisma.RecipeCategory$recipesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RecipeCategory$recipesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecipePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -877,6 +1036,7 @@ export interface RecipeCategoryFieldRefs {
   readonly id: Prisma.FieldRef<"RecipeCategory", 'String'>
   readonly slug: Prisma.FieldRef<"RecipeCategory", 'String'>
   readonly name: Prisma.FieldRef<"RecipeCategory", 'String'>
+  readonly userId: Prisma.FieldRef<"RecipeCategory", 'String'>
 }
     
 
@@ -1131,6 +1291,10 @@ export type RecipeCategoryCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    */
   data: Prisma.RecipeCategoryCreateManyInput | Prisma.RecipeCategoryCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecipeCategoryIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1201,6 +1365,10 @@ export type RecipeCategoryUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * Limit how many RecipeCategories to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecipeCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
