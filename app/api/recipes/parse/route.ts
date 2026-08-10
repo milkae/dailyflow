@@ -1,8 +1,103 @@
-import { Recipe } from "@/generated/prisma/browser";
+import { MealType } from "@/generated/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { JSDOM } from "jsdom";
 import { verifySession } from "@/lib/dal";
 import { logError } from "@/lib/logger";
+
+type RecipeCategorySlug = [
+  "appetizer",
+  "breakfast",
+  "main-course",
+  "side-dish",
+  "soup",
+  "salad",
+  "dessert",
+  "drink",
+][number];
+
+const MEAL_TYPE_ALIASES: Record<string, MealType[]> = {
+  breakfast: ["BREAKFAST"],
+  breakfasts: ["BREAKFAST"],
+
+  brunch: ["BREAKFAST"],
+  "breakfast & brunch": ["BREAKFAST"],
+
+  lunch: ["LUNCH"],
+  lunches: ["LUNCH"],
+
+  dinner: ["DINNER"],
+  dinners: ["DINNER"],
+  "main course": ["DINNER"],
+
+  snack: ["SNACK"],
+  snacks: ["SNACK"],
+};
+
+const CATEGORY_ALIASES: Record<string, RecipeCategorySlug> = {
+  // Main
+  main: "main-course",
+  "main course": "main-course",
+  "main courses": "main-course",
+  "main dish": "main-course",
+  "main dishes": "main-course",
+  entree: "main-course",
+  entrees: "main-course",
+  entrée: "main-course",
+  entrées: "main-course",
+
+  // Sides
+  side: "side-dish",
+  "side dish": "side-dish",
+  "side dishes": "side-dish",
+  sides: "side-dish",
+
+  // Appetizers
+  appetizer: "appetizer",
+  appetizers: "appetizer",
+  starter: "appetizer",
+  starters: "appetizer",
+
+  // Soup
+  soup: "soup",
+  soups: "soup",
+
+  // Salad
+  salad: "salad",
+  salads: "salad",
+
+  // Dessert
+  dessert: "dessert",
+  desserts: "dessert",
+  sweet: "dessert",
+  sweets: "dessert",
+
+  // Drinks
+  drink: "drink",
+  drinks: "drink",
+  beverage: "drink",
+  beverages: "drink",
+
+  // Breakfast
+  breakfast: "breakfast",
+  breakfasts: "breakfast",
+  brunch: "breakfast",
+  "breakfast & brunch": "breakfast",
+};
+
+export type ParsedRecipe = {
+  name: string;
+  description: string;
+  ingredients: string;
+  instructions: string;
+  prepTime: number | null;
+  cookTime: number | null;
+  servings: number;
+  imageUrl: string;
+  sourceUrl: string;
+  sourceCategory: string;
+  categories: RecipeCategorySlug[];
+  mealTypes: MealType[];
+};
 
 interface RecipeJsonLd {
   "@type": "Recipe" | string[];
@@ -48,7 +143,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(recipeData as Recipe);
+    return NextResponse.json(recipeData as ParsedRecipe);
   } catch (err) {
     const error = err instanceof Error ? err : new Error(String(err));
     logError(error, "Recipe parsing error");
@@ -59,47 +154,52 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function extractRecipe(dom: JSDOM, url: string) {
+function extractRecipe(dom: JSDOM, url: string): ParsedRecipe | null {
   const scripts = dom.window.document.querySelectorAll(
     'script[type="application/ld+json"]',
   );
 
-  if (scripts.length) {
-    try {
-      const scriptArray = Array.from(scripts);
-      for (let i = 0; i < scriptArray.length; i++) {
-        const script = scriptArray[i];
-        const parsed = JSON.parse(script.textContent);
-        const recipe = findRecipeNode(parsed);
-        if (recipe) {
-          return {
-            name: decodeHtmlEntities(recipe.name || ""),
-            description: decodeHtmlEntities(recipe.description || ""),
-            ingredients: Array.isArray(recipe.recipeIngredient)
-              ? recipe.recipeIngredient
-                  .map((i) => decodeHtmlEntities(i))
-                  .join("\n")
-              : decodeHtmlEntities(recipe.recipeIngredient || ""),
-            instructions: parseRecipeInstructions(recipe.recipeInstructions),
-            prepTime: parseDuration(recipe.prepTime),
-            cookTime: parseDuration(recipe.cookTime),
-            servings: parseServings(recipe.recipeYield),
-            imageUrl: Array.isArray(recipe.image)
-              ? (typeof recipe.image[0] === "string"
-                  ? recipe.image[0]
-                  : recipe.image[0]?.url) || ""
-              : (typeof recipe.image === "string"
-                  ? recipe.image
-                  : recipe.image?.url) || "",
-            sourceUrl: url,
-            category: recipe.recipeCategory,
-          } as Recipe;
-        }
+  if (!scripts.length) {
+    return null;
+  }
+
+  try {
+    const scriptArray = Array.from(scripts);
+
+    for (const script of scriptArray) {
+      const parsed = JSON.parse(script.textContent ?? "");
+      const recipe = findRecipeNode(parsed);
+
+      if (!recipe) {
+        continue;
       }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      logError(error, "Recipe parser: Failed to parse schema");
+
+      return {
+        name: decodeHtmlEntities(recipe.name || ""),
+        description: decodeHtmlEntities(recipe.description || ""),
+        ingredients: Array.isArray(recipe.recipeIngredient)
+          ? recipe.recipeIngredient.map((i) => decodeHtmlEntities(i)).join("\n")
+          : decodeHtmlEntities(recipe.recipeIngredient || ""),
+        instructions: parseRecipeInstructions(recipe.recipeInstructions),
+        prepTime: parseDuration(recipe.prepTime),
+        cookTime: parseDuration(recipe.cookTime),
+        servings: parseServings(recipe.recipeYield),
+        imageUrl: Array.isArray(recipe.image)
+          ? (typeof recipe.image[0] === "string"
+              ? recipe.image[0]
+              : recipe.image[0]?.url) || ""
+          : (typeof recipe.image === "string"
+              ? recipe.image
+              : recipe.image?.url) || "",
+        sourceUrl: url,
+        sourceCategory: recipe.recipeCategory || "",
+        categories: normalizeRecipeCategories(recipe.recipeCategory),
+        mealTypes: inferMealTypes(recipe.recipeCategory),
+      };
     }
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    logError(error, "Recipe parser: Failed to parse schema");
   }
 
   return null;
@@ -190,4 +290,53 @@ function decodeHtmlEntities(text: string): string {
   const textarea = new JSDOM("").window.document.createElement("textarea");
   textarea.innerHTML = text;
   return textarea.value;
+}
+
+function normalizeCategoryValue(value: unknown): string[] {
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  return value
+    .split(/[;,|]/)
+    .map((value) => value.trim().toLowerCase().replace(/\s+/g, " "))
+    .filter(Boolean);
+}
+
+export function normalizeRecipeCategories(
+  value: unknown,
+): RecipeCategorySlug[] {
+  const values = Array.isArray(value)
+    ? value.flatMap(normalizeCategoryValue)
+    : normalizeCategoryValue(value);
+
+  const categories = new Set<RecipeCategorySlug>();
+
+  for (const value of values) {
+    const category = CATEGORY_ALIASES[value];
+
+    if (category) {
+      categories.add(category);
+    }
+  }
+
+  return [...categories];
+}
+
+export function inferMealTypes(recipeCategory: unknown): MealType[] {
+  const values = Array.isArray(recipeCategory)
+    ? recipeCategory.flatMap(normalizeCategoryValue)
+    : normalizeCategoryValue(recipeCategory);
+
+  const mealTypes = new Set<MealType>();
+
+  for (const value of values) {
+    const types = MEAL_TYPE_ALIASES[value];
+
+    if (types) {
+      types.forEach((type) => mealTypes.add(type));
+    }
+  }
+
+  return [...mealTypes];
 }

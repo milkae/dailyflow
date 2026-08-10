@@ -18,14 +18,17 @@ import {
 } from "@/app/_components/ui/alert";
 import { toast } from "sonner";
 import { RecipeImageField } from "./RecipeImageField";
-import { ParsedRecipe } from "../types";
-import { Recipe } from "@/generated/prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { RecipeCategoryMultiSelect } from "./RecipeCategoryMultiSelect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
+import { RecipeGetPayload } from "@/generated/prisma/models";
+import { ParsedRecipe } from "@/app/api/recipes/parse/route";
+import { RecipeCategory } from "@/generated/prisma/client";
 
 type Props = {
-  recipe?: Recipe;
+  recipe?: RecipeGetPayload<{ include: { categories: true } }>;
   parsedRecipe?: ParsedRecipe;
   onSuccess?: () => void;
 };
@@ -39,11 +42,32 @@ const formSchema = z.object({
   cookTime: z.number().int().min(0).nullish(),
   servings: z.number().int().min(1).default(4).optional(),
   sourceUrl: z.string().nullish(),
-  category: z.string().nullish(),
+  categoryIds: z.array(z.string()).default([]).optional(),
   imageUrl: z.string().nullish(),
 });
 
+export type FormRecipe = z.infer<typeof formSchema>;
+
 export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
+  const { data: categories } = useQuery({
+    queryKey: ["recipeCategories"],
+    queryFn: async (): Promise<RecipeCategory[]> => {
+      const response = await fetch("/api/recipes/categories");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+
+      return response.json();
+    },
+  });
+
+  const initialCategoryIds =
+    parsedRecipe?.categories
+      .map((slug) => categories?.find((category) => category.slug === slug)?.id)
+      .filter((id): id is string => Boolean(id)) ||
+    recipe?.categories.map(({ id }) => id);
+
   const submitRecipe = createOrUpdateRecipe.bind(null, {
     id: recipe?.id,
   });
@@ -67,9 +91,9 @@ export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
 
   const defaults = recipe || parsedRecipe;
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormRecipe>({
     resolver: zodResolver(formSchema),
-    defaultValues: defaults,
+    defaultValues: { ...defaults, categoryIds: initialCategoryIds },
   });
 
   return (
@@ -189,6 +213,35 @@ export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="servings">Servings</FieldLabel>
               <Input {...field} id="servings" placeholder="4" />
+              {fieldState.invalid && (
+                <FieldError
+                  aria-live="polite"
+                  errors={[fieldState.error?.message]}
+                />
+              )}
+            </Field>
+          )}
+        />
+        <div>
+          <p>Parsed categories</p>
+          {parsedRecipe?.categories.map((c, i) => (
+            <p key={i}>{c}</p>
+          ))}
+          {parsedRecipe?.sourceCategory && (
+            <p>Source category: {parsedRecipe.sourceCategory}</p>
+          )}
+        </div>
+
+        <Controller
+          name="categoryIds"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="servings">Category</FieldLabel>
+              <RecipeCategoryMultiSelect
+                {...field}
+                categories={categories || []}
+              />
               {fieldState.invalid && (
                 <FieldError
                   aria-live="polite"

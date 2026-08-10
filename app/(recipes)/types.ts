@@ -7,16 +7,3 @@ export const ACCEPTED_TYPES = [
   "image/gif",
 ];
 export const MAX_SIZE_MB = 5;
-
-export interface ParsedRecipe {
-  name: string;
-  description?: string;
-  ingredients: string;
-  instructions: string;
-  prepTime?: number;
-  cookTime?: number;
-  servings?: number;
-  category?: string;
-  sourceUrl: string;
-  imageUrl?: string;
-}

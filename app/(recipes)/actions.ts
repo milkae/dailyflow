@@ -7,14 +7,24 @@ import { ActionState, Status } from "@/utils/action-state";
 import { cache } from "react";
 import { logError } from "@/lib/logger";
 import { deleteRecipeImage, uploadExternalImage } from "@/app/(recipes)/image";
-import { RecipeCreateWithoutUserInput } from "@/generated/prisma/models";
+import { FormRecipe } from "./_components/RecipeForm";
 
 export async function createOrUpdateRecipe(
   { id }: { id?: string },
   _initialState: ActionState,
-  recipe: RecipeCreateWithoutUserInput,
+  formRecipe: FormRecipe,
 ) {
   const session = await verifySession();
+
+  const { categoryIds, ...fields } = formRecipe;
+  const recipe = {
+    ...fields,
+    categories: {
+      connect: categoryIds?.map((id) => ({
+        id,
+      })),
+    },
+  };
 
   const existing = id
     ? await prisma.recipe.findUnique({

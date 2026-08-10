@@ -16,6 +16,7 @@ const navigationData = [
   { title: "Dashboard", href: "/" },
   { title: "Habits", href: "/habits" },
   { title: "Meals", href: "/meals" },
+  { title: "Recipes", href: "/recipes" },
 ];
 
 export const metadata: Metadata = {
