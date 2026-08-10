@@ -15,6 +15,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/app/_components/ui/empty";
+import { CategoryFilter } from "../_components/CategoryFilter";
 
 export const metadata: Metadata = {
   title: "Recipes",
@@ -22,7 +23,13 @@ export const metadata: Metadata = {
     "Browse, create, and manage your personal recipe collection in DailyFlow.",
 };
 
-export default async function RecipesPage() {
+export default async function RecipesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    category?: string;
+  }>;
+}) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -31,9 +38,29 @@ export default async function RecipesPage() {
     redirect("/sign-in");
   }
 
+  const { category } = await searchParams;
   const recipes = await prisma.recipe.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
+    where: category
+      ? {
+          categories: {
+            some: {
+              slug: category,
+            },
+          },
+        }
+      : undefined,
+    include: {
+      categories: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const categories = await prisma.recipeCategory.findMany({
+    orderBy: {
+      name: "asc",
+    },
   });
 
   return (
@@ -54,7 +81,7 @@ export default async function RecipesPage() {
         </div>
         <CreateRecipeDialog />
       </div>
-
+      <CategoryFilter categories={categories} selectedCategory={category} />
       {/* Grid */}
       {recipes.length > 0 ? (
         <RecipeGrid recipes={recipes} />
