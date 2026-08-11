@@ -55,9 +55,12 @@ const mealTypes = [
 
 function getToday() {
   const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
 
-  // Format for <input type="date">
-  return today.toISOString().split("T")[0];
+  // Format local calendar date for <input type="date"> to avoid UTC day shifts.
+  return `${year}-${month}-${day}`;
 }
 
 export function AddToMealPlanDialog({

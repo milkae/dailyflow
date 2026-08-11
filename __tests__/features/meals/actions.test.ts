@@ -13,13 +13,18 @@ vi.mock("@/lib/dal", () => ({
 }));
 
 import { prismaMock } from "@/singleton";
-import { addOrUpdateMeal, deleteMeal } from "@/app/(meals)/actions";
+import {
+  addOrUpdateMeal,
+  addRecipeToMealPlan,
+  deleteMeal,
+} from "@/app/(meals)/actions";
 import { revalidatePath, updateTag } from "next/cache";
 import { MealType } from "@/generated/prisma/browser";
 import {
   createFormData,
   createMockMeal,
   MOCK_MEAL_ID,
+  MOCK_RECIPE_ID,
   MOCK_USER_ID,
 } from "@/__tests__/tests-utils";
 
@@ -306,6 +311,51 @@ describe("Meal Server Actions", () => {
       prismaMock.meal.delete.mockRejectedValue(new Error("Record not found"));
 
       await expect(() => deleteMeal("non-existent-id")).rejects.toThrow();
+    });
+  });
+
+  describe("addRecipeToMealPlan", () => {
+    it("should normalize date to start of UTC day", async () => {
+      const dateWithTime = new Date("2024-04-15T14:30:45.123Z");
+      prismaMock.recipe.findFirst.mockResolvedValue({
+        id: MOCK_RECIPE_ID,
+        name: "Pesto Pasta",
+      });
+      prismaMock.meal.create.mockResolvedValue(createMockMeal());
+
+      await addRecipeToMealPlan({
+        recipeId: MOCK_RECIPE_ID,
+        date: dateWithTime,
+        type: MealType.DINNER,
+        name: "Pesto Pasta",
+        notes: "  great for tonight  ",
+      });
+
+      const callArgs = prismaMock.meal.create.mock.calls[0][0];
+      const mealDate = callArgs.data?.date as Date | undefined;
+      expect(mealDate?.getUTCHours()).toBe(0);
+      expect(mealDate?.getUTCMinutes()).toBe(0);
+    });
+
+    it("should revalidate dashboard, meals, and recipes routes", async () => {
+      prismaMock.recipe.findFirst.mockResolvedValue({
+        id: MOCK_RECIPE_ID,
+        name: "Pesto Pasta",
+      });
+      prismaMock.meal.create.mockResolvedValue(createMockMeal());
+
+      await addRecipeToMealPlan({
+        recipeId: MOCK_RECIPE_ID,
+        date: new Date("2024-04-15"),
+        type: MealType.DINNER,
+        name: "Pesto Pasta",
+        notes: "",
+      });
+
+      expect(updateTag).toHaveBeenCalledWith("dashboard");
+      expect(revalidatePath).toHaveBeenCalledWith("/");
+      expect(revalidatePath).toHaveBeenCalledWith("/meals");
+      expect(revalidatePath).toHaveBeenCalledWith("/recipes");
     });
   });
 });

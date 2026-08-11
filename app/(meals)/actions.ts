@@ -154,6 +154,7 @@ export async function addRecipeToMealPlan(
   }
 
   const { recipeId, date, type, notes, name } = result.data;
+  const normalizedDate = normalizeDate(date);
 
   // Make sure the recipe belongs to the current user.
   const recipe = await prisma.recipe.findFirst({
@@ -178,7 +179,7 @@ export async function addRecipeToMealPlan(
     data: {
       name,
       type,
-      date,
+      date: normalizedDate,
       recipeId: recipe.id,
       notes: notes?.trim() || null,
       userId: session.userId,
