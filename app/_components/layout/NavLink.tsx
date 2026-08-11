@@ -24,6 +24,7 @@ export const NavLink = ({
     <Link
       href={item.href}
       onNavigate={onNavigate}
+      onClick={onNavigate}
       className={cn(
         "font-medium hover:text-primary transition-colors",
         {
