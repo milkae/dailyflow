@@ -44,11 +44,7 @@ vi.mock("@/app/(recipes)/_components/RecipeGrid", () => ({
 }));
 
 vi.mock("@/app/(recipes)/_components/CategoryFilter", () => ({
-  CategoryFilter: ({
-    selectedCategory,
-  }: {
-    selectedCategory?: string;
-  }) => (
+  CategoryFilter: ({ selectedCategory }: { selectedCategory?: string }) => (
     <div
       data-testid="category-filter"
       data-selected-category={selectedCategory ?? ""}
@@ -95,7 +91,9 @@ describe("RecipesPage", () => {
 
     render(await RecipesPage({ searchParams: Promise.resolve({}) }));
 
-    expect(screen.getByText("2 recipes in your collection")).toBeInTheDocument();
+    expect(
+      screen.getByText("2 recipes in your collection"),
+    ).toBeInTheDocument();
     expect(prismaMock.recipe.findMany).toHaveBeenCalledWith({
       where: undefined,
       include: { categories: true },
@@ -111,9 +109,7 @@ describe("RecipesPage", () => {
   it("applies selected category filter to query and count", async () => {
     getSessionMock.mockResolvedValue({ user: { id: "user-1" } });
 
-    const recipes = [
-      createMockRecipe({ id: "recipe-3", name: "Granola" }),
-    ];
+    const recipes = [createMockRecipe({ id: "recipe-3", name: "Granola" })];
     const totalRecipes = 1;
     prismaMock.recipe.findMany.mockResolvedValue(recipes);
     prismaMock.recipe.count.mockResolvedValue(totalRecipes);
