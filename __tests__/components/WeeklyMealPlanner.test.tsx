@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WeeklyMealPlanner } from "@/app/(meals)/_components/WeeklyMealPlanner";
 import { MealType } from "@/generated/prisma/enums";
+import { Recipe } from "@/generated/prisma/browser";
 import { MealWithRecipeName } from "@/app/(meals)/types";
 import { createMockMeal } from "@/__tests__/tests-utils";
 
@@ -50,14 +51,17 @@ describe("WeeklyMealPlanner", () => {
   };
 
   const renderPlanner = () => {
-    const mealsData = [
+    const mealsData: {
+      date: Date;
+      meals: Record<MealType, MealWithRecipeName | null>;
+    }[] = [
       {
         date: new Date("2024-04-15T00:00:00.000Z"),
         meals: createMealsForDay(),
       },
     ];
 
-    const recipesData = [];
+    const recipesData: Recipe[] = [];
 
     render(
       <WeeklyMealPlanner
@@ -66,7 +70,7 @@ describe("WeeklyMealPlanner", () => {
             { date: Date; meals: Record<MealType, MealWithRecipeName | null> }[]
           >
         }
-        recipesPromise={recipesData as unknown as Promise<[]>}
+        recipesPromise={recipesData as unknown as Promise<Recipe[]>}
       />,
     );
   };
