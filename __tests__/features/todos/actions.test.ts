@@ -13,7 +13,11 @@ vi.mock("@/lib/dal", () => ({
 }));
 
 import { prismaMock } from "@/singleton";
-import { getAllTodos, createTodo, toggleTodoStatus } from "@/app/(todos)/actions";
+import {
+  getAllTodos,
+  createTodo,
+  toggleTodoStatus,
+} from "@/app/(todos)/actions";
 import { revalidatePath, updateTag } from "next/cache";
 import type { Todo } from "@/generated/prisma/client";
 import { createFormData, MOCK_USER_ID } from "@/__tests__/tests-utils";
