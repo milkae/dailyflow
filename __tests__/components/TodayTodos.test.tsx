@@ -1,7 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { Todo } from "@/generated/prisma/client";
 import { TodayTodos } from "@/app/_components/TodayTodos";
+
+const mockToggleTodoStatus = vi.fn();
+
+vi.mock("@/app/(todos)/actions", () => ({
+  toggleTodoStatus: (...args: unknown[]) => mockToggleTodoStatus(...args),
+}));
 
 const createTodo = (overrides: Partial<Todo> = {}): Todo => ({
   id: "todo-1",
@@ -15,6 +22,29 @@ const createTodo = (overrides: Partial<Todo> = {}): Todo => ({
 });
 
 describe("TodayTodos", () => {
+  it("allows quick completion from the dashboard preview", async () => {
+    const user = userEvent.setup();
+    mockToggleTodoStatus.mockResolvedValue({ status: "success" });
+
+    render(
+      <TodayTodos
+        todos={[createTodo({ id: "todo-1", name: "Write weekly recap" })]}
+        pendingTodosCount={1}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: /mark write weekly recap as complete/i,
+      }),
+    );
+
+    expect(mockToggleTodoStatus).toHaveBeenCalledWith(null, {
+      id: "todo-1",
+      completion: true,
+    });
+  });
+
   it("renders the todos section header", () => {
     render(<TodayTodos todos={[]} pendingTodosCount={0} />);
 
