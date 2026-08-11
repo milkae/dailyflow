@@ -261,8 +261,8 @@ describe("Habit Server Actions", () => {
 
       const callArgs = prismaMock.entry.upsert.mock.calls[0][0];
       const entryDate = callArgs.create?.date as Date | undefined;
-      expect(entryDate?.getHours()).toBe(0);
-      expect(entryDate?.getMinutes()).toBe(0);
+      expect(entryDate?.getUTCHours()).toBe(0);
+      expect(entryDate?.getUTCMinutes()).toBe(0);
     });
 
     it("should revalidate cache after creation", async () => {
@@ -305,7 +305,8 @@ describe("Habit Server Actions", () => {
 
       const callArgs = prismaMock.entry.deleteMany.mock.calls[0][0];
       const whereDate = callArgs?.where?.date as Date | undefined;
-      expect(whereDate?.getHours()).toBe(0);
+      expect(whereDate?.getUTCHours()).toBe(0);
+      expect(whereDate?.getUTCMinutes()).toBe(0);
     });
 
     it("should revalidate cache after deletion", async () => {
@@ -345,7 +346,10 @@ describe("Habit Server Actions", () => {
         note: null,
       });
 
-      await toggleHabitCompletion(MOCK_HABIT_ID, true);
+      await toggleHabitCompletion(null, {
+        id: MOCK_HABIT_ID,
+        completion: true,
+      });
 
       expect(prismaMock.entry.upsert).toHaveBeenCalled();
     });
@@ -353,7 +357,10 @@ describe("Habit Server Actions", () => {
     it("should delete entry when completion is false", async () => {
       prismaMock.entry.deleteMany.mockResolvedValue({ count: 1 });
 
-      await toggleHabitCompletion(MOCK_HABIT_ID, false);
+      await toggleHabitCompletion(null, {
+        id: MOCK_HABIT_ID,
+        completion: false,
+      });
 
       expect(prismaMock.entry.deleteMany).toHaveBeenCalled();
     });
@@ -368,14 +375,20 @@ describe("Habit Server Actions", () => {
       });
 
       // Toggle to true
-      await toggleHabitCompletion(MOCK_HABIT_ID, true);
+      await toggleHabitCompletion(null, {
+        id: MOCK_HABIT_ID,
+        completion: true,
+      });
       expect(prismaMock.entry.upsert).toHaveBeenCalled();
 
       vi.clearAllMocks();
       prismaMock.entry.deleteMany.mockResolvedValue({ count: 1 });
 
       // Toggle to false
-      await toggleHabitCompletion(MOCK_HABIT_ID, false);
+      await toggleHabitCompletion(null, {
+        id: MOCK_HABIT_ID,
+        completion: false,
+      });
       expect(prismaMock.entry.deleteMany).toHaveBeenCalled();
     });
   });

@@ -12,21 +12,26 @@ import { createHabitSchema } from "@/lib/validators";
 import { ActionState, Status } from "@/utils/action-state";
 import { JsonNull } from "@prisma/client/runtime/client";
 
-const getFrequencyConfig = (
-  frequency?: Frequency,
-  config?: number | number[],
-) => {
+const getFrequencyConfig = (frequency?: Frequency, config?: unknown) => {
   switch (frequency) {
     case Frequency.DAILY:
       return null;
     case Frequency.WEEKLY:
-      return { day: config };
+      return typeof config === "object" && config !== null
+        ? { day: (config as { day: number }).day }
+        : null;
     case Frequency.INTERVAL:
-      return { interval: config };
+      return typeof config === "object" && config !== null
+        ? { interval: (config as { interval: number }).interval }
+        : null;
     case Frequency.SPECIFIC_DAYS:
-      return { days: config };
+      return typeof config === "object" && config !== null
+        ? { days: (config as { days: number[] }).days }
+        : null;
     case Frequency.MONTHLY:
-      return { day: config };
+      return typeof config === "object" && config !== null
+        ? { day: (config as { day: number }).day }
+        : null;
   }
 };
 
