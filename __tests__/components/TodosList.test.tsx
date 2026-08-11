@@ -34,4 +34,26 @@ describe("TodosList", () => {
     expect(screen.getByText("Urgent")).toBeInTheDocument();
     expect(screen.getByText("Write weekly recap")).toBeInTheDocument();
   });
+
+  it("shows completed terminology for completed todos", () => {
+    render(
+      <TodosList todos={[createTodo({ id: "todo-2", isDone: true })]} />,
+    );
+
+    expect(screen.getByText("Completed")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /mark as open/i })).toHaveTextContent(
+      "Reopen",
+    );
+  });
+
+  it("shows pending terminology for open todos", () => {
+    render(
+      <TodosList todos={[createTodo({ id: "todo-3", isDone: false })]} />,
+    );
+
+    expect(screen.getByText("Pending")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /mark as complete/i })).toHaveTextContent(
+      "Complete",
+    );
+  });
 });

@@ -93,7 +93,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
           ) : null}
           {todo.isDone ? (
             <Badge variant="secondary" className="h-6 px-2.5">
-              Done
+              Completed
             </Badge>
           ) : (
             <Badge variant="outline" className="h-6 px-2.5">
@@ -124,7 +124,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
             );
           }}
           disabled={isToggling}
-          aria-label={todo.isDone ? "Mark as incomplete" : "Mark as complete"}
+          aria-label={todo.isDone ? "Mark as open" : "Mark as complete"}
           className="gap-2 rounded-full"
         >
           {isToggling ? (
@@ -134,7 +134,7 @@ const TodoItem = ({ todo }: { todo: Todo }) => {
           ) : (
             <CircleAlert className="size-4" />
           )}
-          {todo.isDone ? "Done" : "Complete"}
+          {todo.isDone ? "Reopen" : "Complete"}
         </Button>
       </ItemActions>
     </Item>
