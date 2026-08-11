@@ -193,16 +193,8 @@ describe("Meal Server Actions", () => {
 
         const callArgs = prismaMock.meal.upsert.mock.calls[0][0];
         const mealDate = callArgs.create?.date as Date | undefined;
-        expect(mealDate?.getHours()).toBe(0);
-        expect(mealDate?.getMinutes()).toBe(0);
-      });
-
-      it("should revalidate cache and paths after creation", async () => {
-        const meal = createMockMeal();
-        prismaMock.meal.upsert.mockResolvedValue(meal);
-
-        const formData = createFormData({ name: meal.name });
-
+        expect(mealDate?.getUTCHours()).toBe(0);
+        expect(mealDate?.getUTCMinutes()).toBe(0);
         await addOrUpdateMeal(
           { date: new Date(), type: MealType.LUNCH },
           { formErrors: [], fieldErrors: {} },
