@@ -31,7 +31,7 @@ export default async function MealsPage() {
           href="/recipes"
           className={
             buttonVariants() +
-            "bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
+            " bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
           }
         >
           <BookOpen className="h-4 w-4 mr-2" />
