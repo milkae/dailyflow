@@ -123,6 +123,7 @@ model Meal {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, date, type])
   @@index([date])
   @@index([userId])
   @@index([recipeId])

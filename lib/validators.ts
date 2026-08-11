@@ -1,3 +1,4 @@
+import { MealType } from "@/generated/prisma/enums";
 import { z } from "zod";
 
 export const habitFrequencySchema = z.discriminatedUnion("frequency", [
@@ -56,4 +57,6 @@ export const createMealSchema = z.object({
   name: z.string().min(1).max(100),
   recipeId: z.string().optional(),
   notes: z.string().max(500).optional(),
+  type: z.enum(MealType),
+  date: z.coerce.date(),
 });

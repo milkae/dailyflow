@@ -2,7 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import {
+  CalendarPlus,
+  Clock,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import {
   Item,
   ItemContent,
@@ -21,20 +27,26 @@ import { getRecipeImageUrl } from "@/lib/recipe-image";
 import { RecipeGetPayload } from "@/generated/prisma/models";
 import { Badge } from "@/app/_components/ui/badge";
 import { Button } from "@/app/_components/ui/button";
-import { EditRecipeDialog } from "./EditRecipeDialog";
-import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
-import { useState } from "react";
 
-type Props = { recipe: RecipeGetPayload<{ include: { categories: true } }> };
+type Props = {
+  recipe: RecipeGetPayload<{ include: { categories: true } }>;
+  onEdit: () => void;
+  onDelete: () => void;
+  onAddToMealPlan: () => void;
+};
 
 function getTotalTime(recipe: Recipe) {
   return (recipe.prepTime ?? 0) + (recipe.cookTime ?? 0);
 }
 
-export function RecipeItem({ recipe }: Props) {
+export function RecipeItem({
+  recipe,
+  onAddToMealPlan,
+  onDelete,
+  onEdit,
+}: Props) {
   const totalTime = getTotalTime(recipe);
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   return (
     <>
       <Item
@@ -74,14 +86,14 @@ export function RecipeItem({ recipe }: Props) {
               }
             />
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+              <DropdownMenuItem onClick={onEdit}>
                 <Pencil /> Edit recipe
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={onAddToMealPlan}>
+                <CalendarPlus /> Add to meal plan
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => setShowDeleteDialog(true)}
-              >
+              <DropdownMenuItem variant="destructive" onClick={onDelete}>
                 <Trash2 /> Delete recipe
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -103,16 +115,6 @@ export function RecipeItem({ recipe }: Props) {
           </ItemContent>
         </Link>
       </Item>
-      <EditRecipeDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        recipe={recipe}
-      />
-      <DeleteRecipeDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-        recipe={recipe}
-      />
     </>
   );
 }

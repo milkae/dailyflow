@@ -18,7 +18,11 @@ export async function addOrUpdateMeal(
   const session = await verifySession();
   const normalizedDate = normalizeDate(date);
   const formDataObj = Object.fromEntries(formData.entries());
-  const validatedFields = createMealSchema.safeParse(formDataObj);
+  const validatedFields = createMealSchema.safeParse({
+    ...formDataObj,
+    date,
+    type,
+  });
 
   if (!validatedFields.success) {
     return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
@@ -129,3 +133,62 @@ const getWeekMealsCached = async (
     return { date, meals: mealsForDay };
   });
 };
+
+export type AddMealState = {
+  success: boolean;
+  error?: string;
+};
+
+export async function addRecipeToMealPlan(
+  input: z.infer<typeof createMealSchema>,
+): Promise<AddMealState> {
+  const session = await verifySession();
+
+  const result = createMealSchema.safeParse(input);
+
+  if (!result.success) {
+    return {
+      success: false,
+      error: "Invalid meal information.",
+    };
+  }
+
+  const { recipeId, date, type, notes, name } = result.data;
+
+  // Make sure the recipe belongs to the current user.
+  const recipe = await prisma.recipe.findFirst({
+    where: {
+      id: recipeId,
+      userId: session.userId,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  if (!recipe) {
+    return {
+      success: false,
+      error: "Recipe not found.",
+    };
+  }
+
+  await prisma.meal.create({
+    data: {
+      name,
+      type,
+      date,
+      recipeId: recipe.id,
+      notes: notes?.trim() || null,
+      userId: session.userId,
+    },
+  });
+
+  revalidatePath("/meal-planner");
+  revalidatePath("/recipes");
+
+  return {
+    success: true,
+  };
+}
