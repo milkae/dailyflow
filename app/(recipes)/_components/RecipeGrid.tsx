@@ -1,60 +1,65 @@
 "use client";
 
+import { ItemGroup } from "@/app/_components/ui/item";
+
+import { RecipeGetPayload } from "@/generated/prisma/models";
+import { RecipeItem } from "./RecipeItem";
 import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemHeader,
-  ItemTitle,
-} from "@/app/_components/ui/item";
-import { Clock } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { Recipe } from "@/generated/prisma/client";
-import { getRecipeImageUrl } from "@/lib/recipe-image";
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/app/_components/ui/empty";
+import { BookOpen } from "lucide-react";
+import { CreateRecipeDialog } from "./CreateRecipeDialog";
 
 type Props = {
-  recipes: Recipe[];
+  recipes: RecipeGetPayload<{ include: { categories: true } }>[];
+  selectedCategory?: string;
 };
 
-export function RecipeGrid({ recipes }: Props) {
+export function RecipeGrid({ recipes, selectedCategory }: Props) {
+  if (!recipes.length && selectedCategory) {
+    return (
+      <Empty className="border border-dashed">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <BookOpen className="h-10 w-10 text-tertiary" />
+          </EmptyMedia>
+          <EmptyTitle>No {selectedCategory} recipes</EmptyTitle>
+          <EmptyDescription>
+            You don&apos;t have any recipes in this category yet.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
+  if (!recipes.length) {
+    return (
+      <Empty className="border border-dashed">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <BookOpen className="h-10 w-10 text-tertiary" />
+          </EmptyMedia>
+          <EmptyTitle> No recipes yet</EmptyTitle>
+          <EmptyDescription>
+            Start building your recipe collection
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          <CreateRecipeDialog />
+        </EmptyContent>
+      </Empty>
+    );
+  }
+
   return (
-    <ItemGroup className="grid grid-cols-3 gap-4">
+    <ItemGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {recipes.map((recipe) => (
-        <Link key={recipe.id} href={`/recipes/${recipe.id}`}>
-          <Item variant="outline">
-            <ItemHeader>
-              <Image
-                src={getRecipeImageUrl(recipe.imageUrl) || "/placehorder.png"}
-                alt={recipe.name}
-                width={128}
-                height={128}
-                className="aspect-square w-full rounded-sm object-cover"
-              />
-            </ItemHeader>
-            <ItemContent>
-              <ItemTitle>{recipe.name}</ItemTitle>
-              <ItemDescription>{recipe.description}</ItemDescription>
-              {!!(recipe.prepTime || recipe.cookTime) && (
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  {!!recipe.prepTime && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>Prep: {recipe.prepTime}min</span>
-                    </div>
-                  )}
-                  {!!recipe.cookTime && (
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>Cook: {recipe.cookTime}min</span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </ItemContent>
-          </Item>
-        </Link>
+        <RecipeItem key={recipe.id} recipe={recipe} />
       ))}
     </ItemGroup>
   );

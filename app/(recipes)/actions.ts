@@ -127,6 +127,7 @@ export const getRecipe = cache(async (id: string) => {
   if (id) {
     const recipe = await prisma.recipe.findUnique({
       where: { id, userId: session.userId },
+      include: { categories: true },
     });
 
     return recipe;

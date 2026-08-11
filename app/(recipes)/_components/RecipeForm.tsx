@@ -97,7 +97,10 @@ export function RecipeForm({ recipe, parsedRecipe, onSuccess }: Props) {
   });
 
   return (
-    <form onSubmit={form.handleSubmit(formAction)} className="space-y-4">
+    <form
+      onSubmit={form.handleSubmit((data) => formAction(data))}
+      className="space-y-4"
+    >
       {state?.formErrors.map((e, i) => (
         <Alert
           variant="destructive"

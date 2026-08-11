@@ -5,47 +5,27 @@ import { Card } from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
 import {
   ArrowLeft,
-  Edit,
   Trash2,
   Clock,
   ChefHat,
   ExternalLink,
+  Edit,
 } from "lucide-react";
 import Link from "next/link";
 import { EditRecipeDialog } from "@/app/(recipes)/_components/EditRecipeDialog";
-import { deleteRecipe } from "@/app/(recipes)/actions";
-import { useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/app/_components/ui/alert-dialog";
-import { Recipe } from "@/generated/prisma/browser";
 import { buttonVariants } from "@/app/_components/ui/buttonVariants";
 import Image from "next/image";
 import { getRecipeImageUrl } from "@/lib/recipe-image";
+import { RecipeGetPayload } from "@/generated/prisma/models";
+import { DeleteRecipeDialog } from "./DeleteRecipeDialog";
 
 type Props = {
-  recipe: Recipe;
+  recipe: RecipeGetPayload<{ include: { categories: true } }>;
 };
 
 export function RecipeDetail({ recipe }: Props) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const router = useRouter();
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    await deleteRecipe(recipe.id);
-    router.push("/recipes");
-    router.refresh();
-  };
 
   const ingredientsList = recipe.ingredients
     .split("\n")
@@ -186,34 +166,16 @@ export function RecipeDetail({ recipe }: Props) {
         </div>
       </main>
 
-      {/* Edit Dialog */}
       <EditRecipeDialog
         open={showEditDialog}
         onOpenChange={setShowEditDialog}
         recipe={recipe}
       />
-
-      {/* Delete Confirmation */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Recipe?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {`Are you sure you want to delete ${recipe.name}? This action cannot be undone.`}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteRecipeDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        recipe={recipe}
+      />
     </>
   );
 }

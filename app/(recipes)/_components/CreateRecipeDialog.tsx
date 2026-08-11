@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
 import { logError } from "@/lib/logger";
-import { ParsedRecipe } from "../types";
+import { ParsedRecipe } from "@/app/api/recipes/parse/route";
 
 export const CreateRecipeDialog = ({
   open,

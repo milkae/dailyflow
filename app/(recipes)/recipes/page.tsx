@@ -7,14 +7,6 @@ import prisma from "@/lib/prisma";
 import { Heading } from "@/app/_components/ui/typography";
 import { headers } from "next/headers";
 import { Metadata } from "next";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/app/_components/ui/empty";
 import { CategoryFilter } from "../_components/CategoryFilter";
 
 export const metadata: Metadata = {
@@ -39,29 +31,33 @@ export default async function RecipesPage({
   }
 
   const { category } = await searchParams;
-  const recipes = await prisma.recipe.findMany({
-    where: category
-      ? {
-          categories: {
-            some: {
-              slug: category,
-            },
-          },
-        }
-      : undefined,
-    include: {
-      categories: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
 
+  const [recipes, totalRecipes] = await prisma.$transaction([
+    prisma.recipe.findMany({
+      where: category
+        ? {
+            categories: {
+              some: {
+                slug: category,
+              },
+            },
+          }
+        : undefined,
+      include: {
+        categories: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    prisma.recipe.count(),
+  ]);
   const categories = await prisma.recipeCategory.findMany({
     orderBy: {
       name: "asc",
     },
   });
+  const selectedCategory = categories.find((c) => c.slug === category);
 
   return (
     <div className="space-y-6">
@@ -74,33 +70,15 @@ export default async function RecipesPage({
           <div>
             <Heading>Recipes</Heading>
             <p className="text-muted-foreground mt-1">
-              {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"} in
-              your collection
+              {totalRecipes} {totalRecipes === 1 ? "recipe" : "recipes"} in your
+              collection
             </p>
           </div>
         </div>
         <CreateRecipeDialog />
       </div>
       <CategoryFilter categories={categories} selectedCategory={category} />
-      {/* Grid */}
-      {recipes.length > 0 ? (
-        <RecipeGrid recipes={recipes} />
-      ) : (
-        <Empty className="border border-dashed">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <BookOpen className="h-10 w-10 text-tertiary" />
-            </EmptyMedia>
-            <EmptyTitle> No recipes yet</EmptyTitle>
-            <EmptyDescription>
-              Start building your recipe collection
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <CreateRecipeDialog />
-          </EmptyContent>
-        </Empty>
-      )}
+      <RecipeGrid recipes={recipes} selectedCategory={selectedCategory?.name} />
     </div>
   );
 }
