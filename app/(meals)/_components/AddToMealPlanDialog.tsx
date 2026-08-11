@@ -75,6 +75,23 @@ export function AddToMealPlanDialog({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  const resetForm = () => {
+    setDate(getToday());
+    setType(MealType.DINNER);
+    setNotes("");
+    setError(null);
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      resetForm();
+    } else {
+      setError(null);
+    }
+
+    onOpenChangeAction(nextOpen);
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -94,13 +111,12 @@ export function AddToMealPlanDialog({
         return;
       }
 
-      onOpenChangeAction(false);
-      setNotes("");
+      handleOpenChange(false);
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChangeAction}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add to meal plan</DialogTitle>
@@ -132,14 +148,14 @@ export function AddToMealPlanDialog({
 
           {/* Meal type */}
           <div className="space-y-2">
-            <Label>Meal</Label>
+            <Label htmlFor="meal-type">Meal</Label>
 
             <Select
               value={type}
               onValueChange={(value) => setType(value as MealType)}
               disabled={isPending}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="meal-type" className="w-full">
                 <SelectValue />
               </SelectTrigger>
 
@@ -170,13 +186,21 @@ export function AddToMealPlanDialog({
             />
           </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && (
+            <p
+              role="alert"
+              aria-live="polite"
+              className="text-sm text-destructive"
+            >
+              {error}
+            </p>
+          )}
 
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChangeAction(false)}
+              onClick={() => handleOpenChange(false)}
               disabled={isPending}
             >
               Cancel
