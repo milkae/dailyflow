@@ -18,8 +18,22 @@ vi.mock("sonner", () => ({
 }));
 
 vi.mock("@/app/_components/ui/dialog", () => ({
-  Dialog: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+  Dialog: ({
+    children,
+    onOpenChange,
+  }: {
+    children: React.ReactNode;
+    onOpenChange?: (open: boolean) => void;
+  }) => (
+    <div>
+      <button type="button" onClick={() => onOpenChange?.(true)}>
+        Mock Open Dialog
+      </button>
+      <button type="button" onClick={() => onOpenChange?.(false)}>
+        Mock Close Dialog
+      </button>
+      {children}
+    </div>
   ),
   DialogContent: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -71,6 +85,14 @@ describe("AddToMealPlanDialog", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
+  const getToday = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   it("associates the Meal label with its control", () => {
     render(
@@ -154,5 +176,32 @@ describe("AddToMealPlanDialog", () => {
 
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(onOpenChangeAction).toHaveBeenCalledWith(false);
+  });
+
+  it("resets date and notes when dialog is opened", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <AddToMealPlanDialog
+        recipe={recipe}
+        open={true}
+        onOpenChangeAction={vi.fn()}
+      />,
+    );
+
+    const dateInput = screen.getByLabelText("Date") as HTMLInputElement;
+    const notesInput = screen.getByLabelText("Notes (optional)");
+
+    await user.clear(dateInput);
+    await user.type(dateInput, "2024-01-15");
+    await user.type(notesInput, "Prep ingredients tonight");
+
+    expect(dateInput).toHaveValue("2024-01-15");
+    expect(notesInput).toHaveValue("Prep ingredients tonight");
+
+    await user.click(screen.getByRole("button", { name: "Mock Open Dialog" }));
+
+    expect(dateInput).toHaveValue(getToday());
+    expect(notesInput).toHaveValue("");
   });
 });
