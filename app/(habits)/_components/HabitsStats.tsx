@@ -39,14 +39,14 @@ export function HabitsStats({ habits }: { habits: TypedHabitWithEntries[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-3 md:gap-4 grid-cols-3 auto-rows-fr">
+      <div className="grid grid-cols-1 gap-3 auto-rows-fr sm:grid-cols-3 sm:gap-4">
         {stats.map((stat, id) => (
-          <Card className="p-2 gap-2 md:gap-4 text-center md:p-6" key={id}>
-            <div className="flex items-center md:gap-3">
-              <span className="max-md:hidden">{stat.icon}</span>
-              <h4>{stat.label}</h4>
+          <Card className="gap-2 p-3 text-center sm:gap-4 sm:p-6" key={id}>
+            <div className="flex items-center justify-center gap-2 sm:gap-3">
+              <span className="text-muted-foreground">{stat.icon}</span>
+              <h4 className="text-sm font-medium">{stat.label}</h4>
             </div>
-            <div className="text-2xl md:text-5xl text-center text-primary">
+            <div className="text-center text-3xl font-semibold text-primary sm:text-5xl">
               {stat.stat}
             </div>
           </Card>

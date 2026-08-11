@@ -318,10 +318,12 @@ describe("Meal Server Actions", () => {
   describe("addRecipeToMealPlan", () => {
     it("should normalize date to start of UTC day", async () => {
       const dateWithTime = new Date("2024-04-15T14:30:45.123Z");
-      prismaMock.recipe.findFirst.mockResolvedValue(createMockRecipe({
-        id: MOCK_RECIPE_ID,
-        name: "Pesto Pasta",
-      }));
+      prismaMock.recipe.findFirst.mockResolvedValue(
+        createMockRecipe({
+          id: MOCK_RECIPE_ID,
+          name: "Pesto Pasta",
+        }),
+      );
       prismaMock.meal.create.mockResolvedValue(createMockMeal());
 
       await addRecipeToMealPlan({
@@ -339,10 +341,12 @@ describe("Meal Server Actions", () => {
     });
 
     it("should revalidate dashboard, meals, and recipes routes", async () => {
-      prismaMock.recipe.findFirst.mockResolvedValue(createMockRecipe({
-        id: MOCK_RECIPE_ID,
-        name: "Pesto Pasta",
-      }));
+      prismaMock.recipe.findFirst.mockResolvedValue(
+        createMockRecipe({
+          id: MOCK_RECIPE_ID,
+          name: "Pesto Pasta",
+        }),
+      );
       prismaMock.meal.create.mockResolvedValue(createMockMeal());
 
       await addRecipeToMealPlan({
