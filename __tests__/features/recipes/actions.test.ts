@@ -48,7 +48,11 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(result).toEqual({ formErrors: [], fieldErrors: {} });
+      expect(result).toEqual({
+        formErrors: [],
+        fieldErrors: {},
+        status: "SUCCESS",
+      });
       expect(prismaMock.recipe.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           name: recipe.name,
@@ -81,7 +85,11 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(result).toEqual({ formErrors: [], fieldErrors: {} });
+      expect(result).toEqual({
+        formErrors: [],
+        fieldErrors: {},
+        status: "SUCCESS",
+      });
       expect(prismaMock.recipe.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           description: recipe.description,
@@ -273,7 +281,11 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(result).toEqual({ formErrors: [], fieldErrors: {} });
+      expect(result).toEqual({
+        formErrors: [],
+        fieldErrors: {},
+        status: "SUCCESS",
+      });
       expect(prismaMock.recipe.findFirst).toHaveBeenCalledWith({
         where: {
           sourceUrl: recipe.sourceUrl,
@@ -306,7 +318,11 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(result).toEqual({ formErrors: [], fieldErrors: {} });
+      expect(result).toEqual({
+        formErrors: [],
+        fieldErrors: {},
+        status: "SUCCESS",
+      });
       expect(prismaMock.recipe.findFirst).toHaveBeenCalled();
       expect(prismaMock.recipe.create).toHaveBeenCalled();
     });
@@ -350,7 +366,11 @@ describe("createOrUpdateRecipe", () => {
         formData,
       );
 
-      expect(result).toEqual({ formErrors: [], fieldErrors: {} });
+      expect(result).toEqual({
+        formErrors: [],
+        fieldErrors: {},
+        status: "SUCCESS",
+      });
       expect(prismaMock.recipe.findUnique).toHaveBeenCalledWith({
         where: { id: MOCK_RECIPE_ID, userId: MOCK_USER_ID },
       });
@@ -527,12 +547,17 @@ describe("createOrUpdateRecipe", () => {
         instructions: recipe.instructions,
       });
 
-      await createOrUpdateRecipe(
+      const result = await createOrUpdateRecipe(
         { id: MOCK_RECIPE_ID },
         { formErrors: [], fieldErrors: {} },
         formData,
       );
 
+      expect(result).toEqual({
+        formErrors: [],
+        fieldErrors: {},
+        status: "SUCCESS",
+      });
       expect(revalidatePath).toHaveBeenCalledWith(`/recipes/${MOCK_RECIPE_ID}`);
     });
   });

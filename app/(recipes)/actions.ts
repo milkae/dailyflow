@@ -8,22 +8,45 @@ import { cache } from "react";
 import { logError } from "@/lib/logger";
 import { deleteRecipeImage, uploadExternalImage } from "@/app/(recipes)/image";
 import { FormRecipe } from "./_components/RecipeForm";
+import { createRecipeSchema } from "@/lib/validators";
+import { z } from "zod";
 
 export async function createOrUpdateRecipe(
   { id }: { id?: string },
   _initialState: ActionState,
-  formRecipe: FormRecipe,
+  formRecipe: FormRecipe | FormData,
 ) {
   const session = await verifySession();
+  const formRecipeObj =
+    formRecipe instanceof FormData
+      ? Object.fromEntries(formRecipe.entries())
+      : formRecipe;
 
-  const { categoryIds, ...fields } = formRecipe;
+  const categoryIds =
+    typeof formRecipeObj.categoryIds === "string"
+      ? [formRecipeObj.categoryIds]
+      : Array.isArray(formRecipeObj.categoryIds)
+        ? formRecipeObj.categoryIds
+        : undefined;
+
+  const validatedRecipe = createRecipeSchema.safeParse({
+    ...formRecipeObj,
+    categoryIds,
+  });
+
+  if (!validatedRecipe.success) {
+    return {
+      ...z.flattenError(validatedRecipe.error),
+      status: Status.ERROR,
+    };
+  }
+
+  const { categoryIds: validatedCategoryIds, ...fields } = validatedRecipe.data;
   const recipe = {
     ...fields,
-    categories: {
-      connect: categoryIds?.map((id) => ({
-        id,
-      })),
-    },
+    ...(Array.isArray(validatedCategoryIds) && validatedCategoryIds.length > 0
+      ? { categories: { connect: validatedCategoryIds.map((id) => ({ id })) } }
+      : {}),
   };
 
   const existing = id

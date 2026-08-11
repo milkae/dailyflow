@@ -49,7 +49,7 @@ export const createRecipeSchema = z.object({
   cookTime: z.coerce.number().int().min(0).optional(),
   servings: z.coerce.number().int().min(1).default(4),
   sourceUrl: z.string().optional(),
-  category: z.string().optional(),
+  categoryIds: z.array(z.string()).optional(),
   imageUrl: z.string().optional(),
 });
 
