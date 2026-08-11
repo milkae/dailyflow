@@ -21,9 +21,7 @@ describe("TodayHabits", () => {
 
     expect(screen.getByText("No habits for today")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Create your first habit to start tracking your progress",
-      ),
+      screen.getByText("Create your first habit to stay consistent today."),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /create habit/i }),

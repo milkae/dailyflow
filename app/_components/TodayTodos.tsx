@@ -87,7 +87,7 @@ export function TodayTodos({
             <EmptyMedia variant="icon">
               <ListTodo className="h-8 w-8 text-primary" />
             </EmptyMedia>
-            <EmptyTitle>No open todos</EmptyTitle>
+            <EmptyTitle>No pending todos</EmptyTitle>
             <EmptyDescription>
               Capture your next task to keep today focused.
             </EmptyDescription>

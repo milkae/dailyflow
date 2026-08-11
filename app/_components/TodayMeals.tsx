@@ -1,10 +1,18 @@
-import { Plus, ArrowRight } from "lucide-react";
+import { Plus, ArrowRight, CookingPot } from "lucide-react";
 import Link from "next/link";
 import { MealSlot } from "@/app/(meals)/_components/MealSlot";
 import { buttonVariants } from "@/app/_components/ui/buttonVariants";
 import { MealType } from "@/generated/prisma/enums";
 import { Heading } from "@/app/_components/ui/typography";
 import { MealWithRecipeName } from "@/app/(meals)/types";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/app/_components/ui/empty";
 
 export function TodayMeals({ meals }: { meals: MealWithRecipeName[] }) {
   const mealsByType = meals.reduce(
@@ -39,17 +47,28 @@ export function TodayMeals({ meals }: { meals: MealWithRecipeName[] }) {
         })}
       </div>
 
-      {meals.length === 0 && (
-        <Link
-          href="/meals"
-          className={
-            buttonVariants({ variant: "outline", size: "sm" }) + " w-full"
-          }
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Plan Meals
-        </Link>
-      )}
+      {meals.length === 0 ? (
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <CookingPot className="h-8 w-8 text-primary" />
+            </EmptyMedia>
+            <EmptyTitle>No meals planned today</EmptyTitle>
+            <EmptyDescription>
+              Plan your meals to keep today simple and intentional.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Link
+              href="/meals"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Plan Meals
+            </Link>
+          </EmptyContent>
+        </Empty>
+      ) : null}
     </section>
   );
 }

@@ -113,7 +113,7 @@ describe("TodayTodos", () => {
   it("renders an empty state when there are no open todos", () => {
     render(<TodayTodos todos={[]} pendingTodosCount={0} />);
 
-    expect(screen.getByText("No open todos")).toBeInTheDocument();
+    expect(screen.getByText("No pending todos")).toBeInTheDocument();
     expect(
       screen.getByText("Capture your next task to keep today focused."),
     ).toBeInTheDocument();
