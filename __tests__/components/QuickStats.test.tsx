@@ -33,7 +33,7 @@ describe("QuickStats", () => {
 
     const progressBar = screen.getByRole("progressbar");
     expect(progressBar).toBeInTheDocument();
-    expect(progressBar).toHaveStyle({ width: "60%" });
+    expect(progressBar.firstChild).toHaveStyle({ width: "60%" });
   });
 
   it("should not render progress bar when no habits", () => {

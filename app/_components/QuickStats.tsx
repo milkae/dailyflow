@@ -24,7 +24,14 @@ export function QuickStats({ stats }: { stats: DashboardStats }) {
       icon: TrendingUp,
       iconColor: "bg-accent/10 ring-accent/20 text-accent",
       footer: total > 0 && (
-        <div className="h-1 bg-muted rounded-full overflow-hidden">
+        <div
+          role="progressbar"
+          aria-label="Completion rate"
+          aria-valuenow={rate}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          className="h-1 bg-muted rounded-full overflow-hidden"
+        >
           <div
             className="h-full bg-linear-to-r from-success to-accent transition-all duration-700 ease-out"
             style={{ width: `${rate}%` }}
