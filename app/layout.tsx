@@ -15,6 +15,7 @@ const geist = Geist({
 const navigationData = [
   { title: "Dashboard", href: "/" },
   { title: "Habits", href: "/habits" },
+  { title: "Todos", href: "/todos" },
   { title: "Meals", href: "/meals" },
   { title: "Recipes", href: "/recipes" },
 ];

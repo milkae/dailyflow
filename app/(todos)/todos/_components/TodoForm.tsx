@@ -16,7 +16,7 @@ import {
 } from "@/app/_components/ui/field";
 import { Input } from "@/app/_components/ui/input";
 import { withCallbacks } from "@/utils/action-state";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, Sparkles } from "lucide-react";
 import { useActionState } from "react";
 import { toast } from "sonner";
 
@@ -34,7 +34,7 @@ export const TodoForm = () => {
   );
 
   return (
-    <form className="space-y-4 flex gap-4 max-w-sm mx-auto" action={formAction}>
+    <form className="flex flex-col gap-4" action={formAction}>
       {state?.formErrors.map((e, i) => (
         <Alert
           variant="destructive"
@@ -43,49 +43,63 @@ export const TodoForm = () => {
           key={i}
         >
           <AlertCircleIcon />
-          <AlertTitle>An Error Occured</AlertTitle>
+          <AlertTitle>An Error Occurred</AlertTitle>
           <AlertDescription>{e}</AlertDescription>
         </Alert>
       ))}
-      <FieldGroup>
-        <Field data-invalid={!!state?.fieldErrors.name?.length}>
-          <Input
-            name="name"
-            placeholder="Todo name"
-            required
-            disabled={pending}
-            aria-invalid={!!state?.fieldErrors.name?.length}
-          />
-          {!!state?.fieldErrors.name?.length && (
-            <FieldError aria-live="polite" errors={state.fieldErrors.name} />
-          )}
-        </Field>
-        <Field data-invalid={!!state?.fieldErrors.name?.length}>
-          <Input
-            name="description"
-            placeholder="Todo description"
-            disabled={pending}
-            aria-invalid={!!state?.fieldErrors.description?.length}
-          />
-          {!!state?.fieldErrors.description?.length && (
-            <FieldError
-              aria-live="polite"
-              errors={state.fieldErrors.description}
+
+      <div className="rounded-xl border border-border/70 bg-muted/30 p-4">
+        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+          <Sparkles className="size-4 text-primary" />
+          Quick capture
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Keep it short, clear, and add urgency only when it really matters.
+        </p>
+
+        <FieldGroup className="mt-4 gap-3">
+          <Field data-invalid={!!state?.fieldErrors.name?.length}>
+            <Input
+              name="name"
+              placeholder="What needs attention?"
+              required
+              disabled={pending}
+              aria-invalid={!!state?.fieldErrors.name?.length}
             />
-          )}
-        </Field>
-        <Field orientation="horizontal" className="w-fit">
-          <FieldLabel htmlFor="urgent">Urgent</FieldLabel>
-          <Checkbox
-            id="urgent"
-            name="urgent"
-            aria-invalid={!!state?.fieldErrors.urgent?.length}
-          />
-        </Field>
-      </FieldGroup>
-      <Button type="submit" disabled={pending}>
-        Create Todo
-      </Button>
+            {!!state?.fieldErrors.name?.length && (
+              <FieldError aria-live="polite" errors={state.fieldErrors.name} />
+            )}
+          </Field>
+          <Field data-invalid={!!state?.fieldErrors.description?.length}>
+            <Input
+              name="description"
+              placeholder="Optional detail"
+              disabled={pending}
+              aria-invalid={!!state?.fieldErrors.description?.length}
+            />
+            {!!state?.fieldErrors.description?.length && (
+              <FieldError
+                aria-live="polite"
+                errors={state.fieldErrors.description}
+              />
+            )}
+          </Field>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/70 bg-background/70 px-3 py-2">
+            <Field orientation="horizontal" className="w-fit">
+              <FieldLabel htmlFor="urgent">Urgent</FieldLabel>
+              <Checkbox
+                id="urgent"
+                name="urgent"
+                aria-invalid={!!state?.fieldErrors.urgent?.length}
+              />
+            </Field>
+            <Button type="submit" disabled={pending} className="min-w-32">
+              {pending ? "Creating..." : "Add todo"}
+            </Button>
+          </div>
+        </FieldGroup>
+      </div>
     </form>
   );
 };
