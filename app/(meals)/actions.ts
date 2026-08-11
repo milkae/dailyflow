@@ -185,7 +185,9 @@ export async function addRecipeToMealPlan(
     },
   });
 
-  revalidatePath("/meal-planner");
+  updateTag("dashboard");
+  revalidatePath("/");
+  revalidatePath("/meals");
   revalidatePath("/recipes");
 
   return {

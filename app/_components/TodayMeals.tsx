@@ -43,7 +43,7 @@ export function TodayMeals({ meals }: { meals: MealWithRecipeName[] }) {
         <Link
           href="/meals"
           className={
-            buttonVariants({ variant: "outline", size: "sm" }) + "w-full"
+            buttonVariants({ variant: "outline", size: "sm" }) + " w-full"
           }
         >
           <Plus className="h-4 w-4 mr-2" />

@@ -172,7 +172,7 @@ export const HabitForm = ({
             <Field data-invalid={!!state?.fieldErrors.frequency?.length}>
               <FieldLabel htmlFor="frequency">Frequency</FieldLabel>
               <Select
-                id="frenquency"
+                id="frequency"
                 name="frequency"
                 defaultValue={habit?.frequency || frequencies[0].value}
                 onValueChange={(value) => setFrequency(value as Frequency)}
