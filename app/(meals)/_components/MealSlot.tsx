@@ -20,9 +20,25 @@ type Props = {
 export function MealSlot({ type, meal, onClick }: Props) {
   const config = mealConfig[type];
   const Icon = config.icon;
+  const isInteractive = !!onClick;
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick) {
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       onClick={onClick}
+      role={isInteractive ? "button" : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      onKeyDown={handleKeyDown}
       className={cn(
         "rounded-lg border p-3.5 transition-all duration-200",
         meal
