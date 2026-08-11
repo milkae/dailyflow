@@ -5,9 +5,16 @@ import { AddToMealPlanDialog } from "@/app/(meals)/_components/AddToMealPlanDial
 import { createMockRecipe } from "@/__tests__/tests-utils";
 
 const mockAddRecipeToMealPlan = vi.fn();
+const mockToastSuccess = vi.fn();
 
 vi.mock("@/app/(meals)/actions", () => ({
   addRecipeToMealPlan: (...args: unknown[]) => mockAddRecipeToMealPlan(...args),
+}));
+
+vi.mock("sonner", () => ({
+  toast: {
+    success: (...args: unknown[]) => mockToastSuccess(...args),
+  },
 }));
 
 vi.mock("@/app/_components/ui/dialog", () => ({
@@ -119,6 +126,9 @@ describe("AddToMealPlanDialog", () => {
     await waitFor(() => {
       expect(onOpenChangeAction).toHaveBeenCalledWith(false);
     });
+    expect(mockToastSuccess).toHaveBeenCalledWith(
+      "Added Pesto Pasta to your meal plan.",
+    );
   });
 
   it("clears visible errors when cancel is clicked", async () => {

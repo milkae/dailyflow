@@ -27,6 +27,7 @@ import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 import { Label } from "@/app/_components/ui/label";
 import { Textarea } from "@/app/_components/ui/textarea";
+import { toast } from "sonner";
 
 type Props = {
   recipe: Recipe;
@@ -110,6 +111,8 @@ export function AddToMealPlanDialog({
         setError(result.error ?? "Something went wrong.");
         return;
       }
+
+      toast.success(`Added ${recipe.name} to your meal plan.`);
 
       handleOpenChange(false);
     });
