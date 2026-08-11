@@ -6,7 +6,7 @@ import { verifySession } from "@/lib/dal";
 import { createTodoSchema } from "./validators";
 import { ActionState, Status } from "@/utils/action-state";
 import z from "zod";
-import { revalidatePath, updateTag } from "next/cache";
+import { invalidateDashboardAndPaths } from "@/lib/cache-invalidation";
 
 export const getAllTodos = cache(async () => {
   const session = await verifySession();
@@ -34,9 +34,7 @@ export const createTodo = async (
     data: { ...todo, userId: session.userId },
   });
 
-  updateTag("dashboard");
-  revalidatePath("/");
-  revalidatePath("/todos");
+  invalidateDashboardAndPaths(["/todos"]);
   return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
 };
 
@@ -49,8 +47,6 @@ export const toggleTodoStatus = async (
     where: { id, userId: session.userId },
     data: { isDone: completion },
   });
-  updateTag("dashboard");
-  revalidatePath("/");
-  revalidatePath("/todos");
+  invalidateDashboardAndPaths(["/todos"]);
   return { status: Status.SUCCESS };
 };
