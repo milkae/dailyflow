@@ -17,25 +17,26 @@ export const getAllTodos = cache(async () => {
   return todos;
 });
 
-export const createTodo = cache(
-  async (_initialState: ActionState, formData: FormData) => {
-    const session = await verifySession();
-    const formDataObj = Object.fromEntries(formData.entries());
-    const validatedFields = createTodoSchema.safeParse(formDataObj);
+export const createTodo = async (
+  _initialState: ActionState,
+  formData: FormData,
+) => {
+  const session = await verifySession();
+  const formDataObj = Object.fromEntries(formData.entries());
+  const validatedFields = createTodoSchema.safeParse(formDataObj);
 
-    if (!validatedFields.success) {
-      return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
-    }
+  if (!validatedFields.success) {
+    return { ...z.flattenError(validatedFields.error), status: Status.ERROR };
+  }
 
-    const todo = validatedFields.data;
-    await prisma.todo.create({
-      data: { ...todo, userId: session.userId },
-    });
+  const todo = validatedFields.data;
+  await prisma.todo.create({
+    data: { ...todo, userId: session.userId },
+  });
 
-    revalidatePath("/todos");
-    return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
-  },
-);
+  revalidatePath("/todos");
+  return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
+};
 
 export const toggleTodoStatus = async (
   _initialState: ActionState,
