@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, type KeyboardEvent } from "react";
 import { Card } from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
 import {
@@ -51,6 +51,26 @@ interface MealsListProps {
 const MealsList = ({ date, meals, onSelection }: MealsListProps) => {
   return Object.entries(meals).map(([type, meal]) => {
     const mealType = type as MealType;
+
+    const selectMeal = () => {
+      if (!meal) {
+        return;
+      }
+
+      onSelection({ date: meal.date, type: mealType, meal });
+    };
+
+    const handleMealKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+      if (!meal) {
+        return;
+      }
+
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        selectMeal();
+      }
+    };
+
     return (
       <div key={`${date}-${type}`} className="space-y-2">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -63,6 +83,7 @@ const MealsList = ({ date, meals, onSelection }: MealsListProps) => {
             <Button
               variant="ghost"
               size="icon"
+              aria-label={`Delete ${mealType.toLowerCase()} meal`}
               className="absolute -top-2 -right-2 h-6 w-6 rounded-full border bg-background hover:bg-destructive/90 dark:hover:bg-destructive/90 text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={() => deleteMeal(meal.id)}
             >
@@ -70,9 +91,10 @@ const MealsList = ({ date, meals, onSelection }: MealsListProps) => {
             </Button>
             <div
               className="cursor-pointer"
-              onClick={() =>
-                onSelection({ date: meal.date, type: mealType, meal })
-              }
+              role="button"
+              tabIndex={0}
+              onClick={selectMeal}
+              onKeyDown={handleMealKeyDown}
             >
               <p className="text-sm font-medium mb-1">{meal.name}</p>
               {meal.notes && (
