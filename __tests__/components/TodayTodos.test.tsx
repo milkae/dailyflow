@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { Todo } from "@/generated/prisma/client";
 import { TodayTodos } from "@/app/_components/TodayTodos";
+import { Status } from "@/utils/action-state";
 
 const mockCreateTodo = vi.fn();
 const mockToggleTodoStatus = vi.fn();
@@ -48,7 +49,7 @@ describe("TodayTodos", () => {
 
   it("allows quick completion from the dashboard preview", async () => {
     const user = userEvent.setup();
-    mockToggleTodoStatus.mockResolvedValue({ status: "success" });
+    mockToggleTodoStatus.mockResolvedValue({ status: Status.SUCCESS });
 
     render(
       <TodayTodos
@@ -66,6 +67,10 @@ describe("TodayTodos", () => {
     expect(mockToggleTodoStatus).toHaveBeenCalledWith(null, {
       id: "todo-1",
       completion: true,
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText("Write weekly recap")).not.toBeInTheDocument();
     });
   });
 

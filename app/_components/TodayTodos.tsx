@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, CircleAlert, ListTodo } from "lucide-react";
 import type { Todo } from "@/generated/prisma/client";
@@ -28,6 +28,24 @@ export function TodayTodos({
   todos: Todo[];
   pendingTodosCount: number;
 }) {
+  const [visibleTodos, setVisibleTodos] = useState(todos);
+  const [visiblePendingTodosCount, setVisiblePendingTodosCount] =
+    useState(pendingTodosCount);
+
+  useEffect(() => {
+    setVisibleTodos(todos);
+    setVisiblePendingTodosCount(pendingTodosCount);
+  }, [todos, pendingTodosCount]);
+
+  const handleTodoCompleted = (todoId: string) => {
+    setVisibleTodos((currentTodos) =>
+      currentTodos.filter((todo) => todo.id !== todoId),
+    );
+    setVisiblePendingTodosCount((currentCount) =>
+      Math.max(0, currentCount - 1),
+    );
+  };
+
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
@@ -43,17 +61,23 @@ export function TodayTodos({
         </Link>
       </div>
 
-      {todos.length > 0 ? (
+      {visibleTodos.length > 0 ? (
         <div className="space-y-3">
-          {todos.map((todo) => (
-            <TodoPreviewItem key={todo.id} todo={todo} />
+          {visibleTodos.map((todo) => (
+            <TodoPreviewItem
+              key={todo.id}
+              todo={todo}
+              onCompleted={handleTodoCompleted}
+            />
           ))}
 
-          {pendingTodosCount > todos.length ? (
+          {visiblePendingTodosCount > visibleTodos.length ? (
             <p className="text-sm text-muted-foreground">
-              {pendingTodosCount - todos.length} more open{" "}
-              {pendingTodosCount - todos.length === 1 ? "todo" : "todos"} in
-              your list.
+              {visiblePendingTodosCount - visibleTodos.length} more open{" "}
+              {visiblePendingTodosCount - visibleTodos.length === 1
+                ? "todo"
+                : "todos"}{" "}
+              in your list.
             </p>
           ) : null}
         </div>
@@ -132,10 +156,17 @@ function DashboardTodoQuickAdd() {
   );
 }
 
-function TodoPreviewItem({ todo }: { todo: Todo }) {
+function TodoPreviewItem({
+  todo,
+  onCompleted,
+}: {
+  todo: Todo;
+  onCompleted: (todoId: string) => void;
+}) {
   const [, toggleAction, isToggling] = useActionState(
     withCallbacks(toggleTodoStatus, {
       onSuccess: () => {
+        onCompleted(todo.id);
         toast.success("Todo completed!");
       },
       onError: () => {
