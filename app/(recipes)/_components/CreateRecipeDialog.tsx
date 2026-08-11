@@ -21,6 +21,7 @@ import {
 } from "@/app/_components/ui/dialog";
 import { logError } from "@/lib/logger";
 import { ParsedRecipe } from "@/app/api/recipes/parse/route";
+import { toast } from "sonner";
 
 export const CreateRecipeDialog = ({
   open,
@@ -51,14 +52,16 @@ export const CreateRecipeDialog = ({
         setParsedRecipe(data);
         setTab("manual");
       } else {
-        alert(
+        toast.error(
           "Could not parse this recipe URL. Please enter details manually.",
         );
       }
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
       logError(error, "Recipe parse error");
-      alert("Failed to import recipe. Please try again or enter manually.");
+      toast.error(
+        "Failed to import recipe. Please try again or enter manually.",
+      );
     }
     setIsParsing(false);
   };
