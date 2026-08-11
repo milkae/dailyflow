@@ -1,9 +1,9 @@
-import { CheckCircle2, Target, TrendingUp } from "lucide-react";
+import { CheckCircle2, ListTodo, Target, TrendingUp } from "lucide-react";
 import { StatCard } from "./StatCard";
 import { DashboardStats } from "@/app/actions";
 
 export function QuickStats({ stats }: { stats: DashboardStats }) {
-  const { total, completed, rate } = stats;
+  const { total, completed, rate, pendingTodos } = stats;
 
   const statCards = [
     {
@@ -39,10 +39,16 @@ export function QuickStats({ stats }: { stats: DashboardStats }) {
         </div>
       ),
     },
+    {
+      label: "Open Todos",
+      value: pendingTodos,
+      icon: ListTodo,
+      iconColor: "bg-tertiary/10 ring-tertiary/20 text-tertiary",
+    },
   ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {statCards.map((stat) => (
         <StatCard key={stat.label} {...stat} />
       ))}

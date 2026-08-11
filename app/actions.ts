@@ -11,6 +11,7 @@ export type DashboardStats = {
   completed: number;
   rate: number;
   mealsCount: number;
+  pendingTodos: number;
 };
 
 export type DashboardData = {
@@ -28,7 +29,7 @@ const getDashboardDataCached = async (userId: string) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  const [habits, meals] = await Promise.all([
+  const [habits, meals, pendingTodos] = await Promise.all([
     getHabitsForUser({ userId }),
     prisma.meal.findMany({
       where: {
@@ -36,6 +37,12 @@ const getDashboardDataCached = async (userId: string) => {
         date: { gte: today, lt: tomorrow },
       },
       include: { recipe: { select: { id: true, name: true } } },
+    }),
+    prisma.todo.count({
+      where: {
+        userId,
+        isDone: false,
+      },
     }),
   ]);
 
@@ -59,6 +66,7 @@ const getDashboardDataCached = async (userId: string) => {
       completed: completedToday,
       rate: completionRate,
       mealsCount: meals.length,
+      pendingTodos,
     },
   };
 };
