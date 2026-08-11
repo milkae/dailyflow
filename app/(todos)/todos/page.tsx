@@ -26,7 +26,7 @@ export default async function TodosPage() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
-      <section className="overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-primary/10 via-background to-muted/50 p-6 shadow-sm">
+      <section className="overflow-hidden rounded-2xl border border-border/70 bg-linear-to-br from-primary/10 via-background to-muted/50 p-6 shadow-sm">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-3">
             <Badge variant="secondary" className="gap-1.5">

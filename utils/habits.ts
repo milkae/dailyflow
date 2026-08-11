@@ -1,10 +1,13 @@
 import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
 import { habitFrequencySchema } from "../lib/validators";
-import { TypedHabitWithEntries } from "../app/(habits)/types";
 import { normalizeDate } from "./date";
 import { logError } from "@/lib/logger";
+import type { TypedHabitWithEntries } from "@/app/(habits)/types";
 
-export function isHabitActiveOnDate(habit: TypedHabitWithEntries, date: Date) {
+export function isHabitActiveOnDate(
+  habit: Habit & { entries: Entry[] },
+  date: Date,
+) {
   switch (habit.frequency) {
     case Frequency.DAILY:
       return true;
@@ -84,7 +87,7 @@ export function getLastWeekHabits(
   });
 }
 
-export const calculateStreak = (habit: Habit & { entries: Entry[] }) => {
+export const calculateStreak = (habit: TypedHabitWithEntries) => {
   const today = normalizeDate(new Date());
 
   const entries = habit.entries

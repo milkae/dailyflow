@@ -9,6 +9,13 @@ vi.mock("@/lib/prisma", () => ({
   prisma: prismaMock,
 }));
 
+vi.mock("@/lib/dal", () => ({
+  getUserId: vi.fn(async () => "user-1"),
+  getSession: vi.fn(async () => ({ user: { id: "user-1" } })),
+  requireUser: vi.fn(async () => ({ id: "user-1" })),
+  verifySession: vi.fn(async () => ({ isAuth: true, userId: "user-1" })),
+}));
+
 beforeEach(() => {
   mockReset(prismaMock);
 });

@@ -114,7 +114,7 @@ export function RecipeGrid({ recipes, selectedCategory }: Props) {
           <AddToMealPlanDialog
             recipe={selectedRecipe}
             open={!!selectedRecipe && dialog === "meal-plan"}
-            onOpenChange={(open: boolean) => {
+            onOpenChangeAction={(open: boolean) => {
               if (!open) {
                 setSelectedRecipe(null);
                 setDialog(null);

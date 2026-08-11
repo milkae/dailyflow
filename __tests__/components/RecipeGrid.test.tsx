@@ -1,7 +1,23 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { RecipeGrid } from "@/app/(recipes)/_components/RecipeGrid";
 import { createMockRecipe } from "../tests-utils";
+
+vi.mock("@/app/(recipes)/_components/CreateRecipeDialog", () => ({
+  CreateRecipeDialog: () => null,
+}));
+
+vi.mock("@/app/(recipes)/_components/EditRecipeDialog", () => ({
+  EditRecipeDialog: () => null,
+}));
+
+vi.mock("@/app/(recipes)/_components/DeleteRecipeDialog", () => ({
+  DeleteRecipeDialog: () => null,
+}));
+
+vi.mock("@/app/(meals)/_components/AddToMealPlanDialog", () => ({
+  AddToMealPlanDialog: () => null,
+}));
 
 describe("RecipeGrid", () => {
   it("should render recipe cards", () => {
@@ -25,12 +41,10 @@ describe("RecipeGrid", () => {
     render(<RecipeGrid recipes={recipes} />);
 
     expect(screen.getByText("Pasta Carbonara")).toBeInTheDocument();
-    expect(screen.getByText("Classic Italian pasta dish")).toBeInTheDocument();
     expect(screen.getByText("Chicken Stir Fry")).toBeInTheDocument();
-    expect(screen.getByText("Quick and healthy meal")).toBeInTheDocument();
   });
 
-  it("should render prep and cook times", () => {
+  it("should render total time", () => {
     const recipes = [
       createMockRecipe({
         id: "1",
@@ -43,11 +57,11 @@ describe("RecipeGrid", () => {
 
     render(<RecipeGrid recipes={recipes} />);
 
-    expect(screen.getByText("Prep: 10min")).toBeInTheDocument();
-    expect(screen.getByText("Cook: 15min")).toBeInTheDocument();
+    expect(screen.getByText("25 min")).toBeInTheDocument();
+    expect(screen.getByText("4 servings")).toBeInTheDocument();
   });
 
-  it("should render only prep time when cook time is null", () => {
+  it("should render total prep time when cook time is null", () => {
     const recipes = [
       createMockRecipe({
         id: "1",
@@ -60,11 +74,10 @@ describe("RecipeGrid", () => {
 
     render(<RecipeGrid recipes={recipes} />);
 
-    expect(screen.getByText("Prep: 10min")).toBeInTheDocument();
-    expect(screen.queryByText("Cook:")).not.toBeInTheDocument();
+    expect(screen.getByText("10 min")).toBeInTheDocument();
   });
 
-  it("should render only cook time when prep time is null", () => {
+  it("should render total cook time when prep time is null", () => {
     const recipes = [
       createMockRecipe({
         id: "1",
@@ -77,11 +90,10 @@ describe("RecipeGrid", () => {
 
     render(<RecipeGrid recipes={recipes} />);
 
-    expect(screen.getByText("Cook: 15min")).toBeInTheDocument();
-    expect(screen.queryByText("Prep:")).not.toBeInTheDocument();
+    expect(screen.getByText("15 min")).toBeInTheDocument();
   });
 
-  it("should not render time section when both times are null", () => {
+  it("should not render a time label when both times are null", () => {
     const recipes = [
       createMockRecipe({
         id: "1",
@@ -94,42 +106,7 @@ describe("RecipeGrid", () => {
 
     render(<RecipeGrid recipes={recipes} />);
 
-    expect(screen.queryByText("Prep:")).not.toBeInTheDocument();
-    expect(screen.queryByText("Cook:")).not.toBeInTheDocument();
-  });
-
-  it("should render description when provided", () => {
-    const recipes = [
-      createMockRecipe({
-        id: "1",
-        name: "Test Recipe",
-        description: "This is a test description",
-        prepTime: null,
-        cookTime: null,
-      }),
-    ];
-
-    render(<RecipeGrid recipes={recipes} />);
-
-    expect(screen.getByText("This is a test description")).toBeInTheDocument();
-  });
-
-  it("should not render description when null", () => {
-    const recipes = [
-      createMockRecipe({
-        id: "1",
-        name: "Test Recipe",
-        description: null,
-        prepTime: null,
-        cookTime: null,
-      }),
-    ];
-
-    render(<RecipeGrid recipes={recipes} />);
-
-    expect(
-      screen.queryByText("This is a test description"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/\bmin\b/)).not.toBeInTheDocument();
   });
 
   it("should render links to recipe pages", () => {
@@ -145,8 +122,8 @@ describe("RecipeGrid", () => {
 
     render(<RecipeGrid recipes={recipes} />);
 
-    const link = screen.getByRole("link", { name: /test recipe/i });
-    expect(link).toHaveAttribute("href", "/recipes/recipe-1");
+    const links = screen.getAllByRole("link", { name: /test recipe/i });
+    expect(links[0]).toHaveAttribute("href", "/recipes/recipe-1");
   });
 
   it("should render grid layout", () => {

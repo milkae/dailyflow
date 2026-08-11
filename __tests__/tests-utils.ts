@@ -11,7 +11,26 @@ export const MOCK_RECIPE_ID = "recipe-1";
 export const MOCK_HABIT_ID = "habit-1";
 export const MOCK_MEAL_ID = "meal-1";
 
-export const createMockRecipe = (overrides = {}) => ({
+export const createMockRecipe = (
+  overrides: Partial<{
+    id: string;
+    name: string;
+    description: string | null;
+    prepTime: number | null;
+    cookTime: number | null;
+    imageUrl: string | null;
+    sourceUrl: string | null;
+    category: string | null;
+    ingredients: string;
+    instructions: string;
+    servings: number;
+    mealTypes: MealType[];
+    categories: { id: string; name: string; userId: string; slug: string }[];
+    createdAt: Date;
+    updatedAt: Date;
+    userId: string;
+  }> = {},
+) => ({
   id: MOCK_RECIPE_ID,
   name: "Pesto Pasta",
   description: "Classic Italian pasta",
@@ -23,6 +42,8 @@ export const createMockRecipe = (overrides = {}) => ({
   ingredients: "pasta, pesto, cream, parmesan",
   instructions: "Boil pasta, mix with pesto and cream",
   servings: 4,
+  mealTypes: [] as MealType[],
+  categories: [],
   createdAt: new Date(),
   updatedAt: new Date(),
   userId: MOCK_USER_ID,

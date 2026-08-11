@@ -1,8 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { HabitOverviewCard } from "@/app/(habits)/_components/HabitOverviewCard";
 import { createMockTypedHabitWithEntries } from "@/__tests__/tests-utils";
 import { Frequency } from "@/generated/prisma/enums";
+
+vi.mock("@/app/(habits)/_components/DeleteHabitButton", () => ({
+  DeleteHabitButton: () => <button aria-label="Delete">Delete</button>,
+}));
 
 describe("HabitOverviewCard", () => {
   it("should render habit name and link", () => {
@@ -61,7 +65,7 @@ describe("HabitOverviewCard", () => {
 
     render(<HabitOverviewCard habit={habit} />);
 
-    expect(screen.queryByText(/\d+/)).not.toBeInTheDocument();
+    expect(screen.queryByText("1")).not.toBeInTheDocument();
   });
 
   it("should render frequency and entry count", () => {

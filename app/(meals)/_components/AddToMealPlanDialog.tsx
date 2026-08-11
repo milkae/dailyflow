@@ -31,7 +31,7 @@ import { Textarea } from "@/app/_components/ui/textarea";
 type Props = {
   recipe: Recipe;
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChangeAction: (open: boolean) => void;
 };
 
 const mealTypes = [
@@ -60,7 +60,11 @@ function getToday() {
   return today.toISOString().split("T")[0];
 }
 
-export function AddToMealPlanDialog({ recipe, open, onOpenChange }: Props) {
+export function AddToMealPlanDialog({
+  recipe,
+  open,
+  onOpenChangeAction,
+}: Props) {
   const [date, setDate] = useState(getToday);
   const [type, setType] = useState<MealType>(MealType.DINNER);
   const [notes, setNotes] = useState("");
@@ -87,13 +91,13 @@ export function AddToMealPlanDialog({ recipe, open, onOpenChange }: Props) {
         return;
       }
 
-      onOpenChange(false);
+      onOpenChangeAction(false);
       setNotes("");
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChangeAction}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add to meal plan</DialogTitle>
@@ -169,7 +173,7 @@ export function AddToMealPlanDialog({ recipe, open, onOpenChange }: Props) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={() => onOpenChangeAction(false)}
               disabled={isPending}
             >
               Cancel

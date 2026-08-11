@@ -7,12 +7,20 @@ import { createMockTypedHabitWithEntries } from "@/__tests__/tests-utils";
 
 // Mock the server action
 const mockCreateOrUpdateHabit = vi.fn();
-vi.mock("@/features/habits/actions", () => ({
-  createOrUpdateHabit: () => mockCreateOrUpdateHabit(),
+vi.mock("@/app/(habits)/actions", () => ({
+  createOrUpdateHabit: (...args: unknown[]) => mockCreateOrUpdateHabit(...args),
 }));
 
 describe("HabitForm", () => {
   const user = userEvent.setup();
+
+  const openHabitForm = async () => {
+    render(<HabitForm />);
+
+    await user.click(screen.getByRole("button", { name: /create new habit/i }));
+
+    await screen.findByPlaceholderText("Habit name");
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -72,11 +80,14 @@ describe("HabitForm", () => {
   });
 
   it("should submit form with valid daily habit data", async () => {
-    render(<HabitForm />);
+    await openHabitForm();
 
-    await user.type(screen.getByLabelText(/name/i), "Morning Run");
-    await user.type(screen.getByLabelText(/description/i), "5km run");
-    await user.click(screen.getByRole("button", { name: /create habit/i }));
+    await user.type(screen.getByPlaceholderText("Habit name"), "Morning Run");
+    await user.type(
+      screen.getByPlaceholderText("Habit description"),
+      "5km run",
+    );
+    await user.click(screen.getByRole("button", { name: /^add$/i }));
 
     await waitFor(() => {
       expect(mockCreateOrUpdateHabit).toHaveBeenCalledWith(
@@ -92,45 +103,45 @@ describe("HabitForm", () => {
   });
 
   it("should show frequency-specific fields for weekly habits", async () => {
-    render(<HabitForm />);
+    await openHabitForm();
 
-    const frequencySelect = screen.getByLabelText(/frequency/i);
+    const frequencySelect = screen.getByRole("combobox");
     await user.click(frequencySelect);
     await user.click(screen.getByText("Weekly"));
 
-    expect(screen.getByText("Select day of week")).toBeInTheDocument();
+    expect(screen.getByText("Day of week")).toBeInTheDocument();
   });
 
   it("should show frequency-specific fields for monthly habits", async () => {
-    render(<HabitForm />);
+    await openHabitForm();
 
-    const frequencySelect = screen.getByLabelText(/frequency/i);
+    const frequencySelect = screen.getByRole("combobox");
     await user.click(frequencySelect);
     await user.click(screen.getByText("Monthly"));
 
-    expect(screen.getByText("Select day of month")).toBeInTheDocument();
+    expect(screen.getByText("Day of the month")).toBeInTheDocument();
   });
 
   it("should show frequency-specific fields for specific days", async () => {
-    render(<HabitForm />);
+    await openHabitForm();
 
-    const frequencySelect = screen.getByLabelText(/frequency/i);
+    const frequencySelect = screen.getByRole("combobox");
     await user.click(frequencySelect);
-    await user.click(screen.getByText("Specific Days"));
+    await user.click(screen.getByText(/specific/i));
 
-    expect(screen.getByText("Select days of week")).toBeInTheDocument();
-    expect(screen.getByLabelText("Monday")).toBeInTheDocument();
-    expect(screen.getByLabelText("Friday")).toBeInTheDocument();
+    expect(screen.getByText("Select days")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Mon" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Fri" })).toBeInTheDocument();
   });
 
   it("should show frequency-specific fields for interval habits", async () => {
-    render(<HabitForm />);
+    await openHabitForm();
 
-    const frequencySelect = screen.getByLabelText(/frequency/i);
+    const frequencySelect = screen.getByRole("combobox");
     await user.click(frequencySelect);
     await user.click(screen.getByText("Interval"));
 
-    expect(screen.getByText("Every X days")).toBeInTheDocument();
+    expect(screen.getByText("Repeat every (days)")).toBeInTheDocument();
   });
 
   it("should display validation errors", async () => {
@@ -140,9 +151,11 @@ describe("HabitForm", () => {
       fieldErrors: { name: ["Name is required"] },
     });
 
-    render(<HabitForm />);
+    await openHabitForm();
 
-    await user.click(screen.getByRole("button", { name: /create habit/i }));
+    await user.type(screen.getByPlaceholderText("Habit name"), "Morning Run");
+
+    await user.click(screen.getByRole("button", { name: /^add$/i }));
 
     await waitFor(() => {
       expect(screen.getByText("Name is required")).toBeInTheDocument();

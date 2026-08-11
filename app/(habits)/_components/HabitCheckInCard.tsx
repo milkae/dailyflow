@@ -112,6 +112,7 @@ export function HabitCheckInCard({ habit }: Props) {
             size="icon"
             variant="ghost"
             onClick={() => setDialogOpen(true)}
+            aria-label={hasNote ? "Edit note" : "Add note"}
             className={cn(hasNote && "text-primary hover:text-primary/50")}
           >
             <MessageSquare
