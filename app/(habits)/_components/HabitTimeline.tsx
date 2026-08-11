@@ -6,7 +6,11 @@ import { Entry } from "@/generated/prisma/browser";
 import { Empty, EmptyDescription } from "@/app/_components/ui/empty";
 
 export const HabitTimeline = ({ habit }: { habit: TypedHabitWithEntries }) => {
-  const entriesByMonth = habit.entries.reduce(
+  const sortedEntries = [...habit.entries].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  const entriesByMonth = sortedEntries.reduce(
     (acc, entry) => {
       const date = new Date(entry.date);
       const key = date.toLocaleDateString("en-US", {
@@ -25,7 +29,7 @@ export const HabitTimeline = ({ habit }: { habit: TypedHabitWithEntries }) => {
     <Card className="p-6">
       <Heading as="h3">History</Heading>
 
-      {habit.entries.length === 0 ? (
+      {sortedEntries.length === 0 ? (
         <Empty>
           <EmptyDescription>
             No entries yet. Start tracking this habit!
