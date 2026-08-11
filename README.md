@@ -134,6 +134,26 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 └── utils/                     # Shared helpers
 ```
 
+## Contributor Notes
+
+### Feature Ownership by Route Group
+
+- `app/(habits)`: habits routes, server actions, and UI
+- `app/(meals)`: meals planning routes, actions, and meal-related UI
+- `app/(recipes)`: recipes pages, parsing flow, and recipe CRUD
+- `app/(todos)`: todos routes and server actions
+- `app/actions.ts`: shared dashboard aggregation used by `app/page.tsx`
+
+### Cache Invalidation Convention
+
+- Mutations that impact dashboard cards should invalidate both:
+	- the `dashboard` cache tag
+	- the dashboard route (`/`)
+- Feature pages should also revalidate their own route (for example `/habits`, `/meals`, `/todos`, `/recipes`) when list/detail surfaces depend on changed data.
+- Prefer the shared helper in `lib/cache-invalidation.ts` to keep invalidation behavior consistent:
+	- `invalidateDashboard()` for dashboard-only refresh
+	- `invalidateDashboardAndPaths([...])` for dashboard + feature routes
+
 ## Available Scripts
 
 ```bash
