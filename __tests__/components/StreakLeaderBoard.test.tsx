@@ -33,6 +33,7 @@ describe("StreakLeaderboard", () => {
 
     const link = screen.getByRole("link", { name: /morning run/i });
 
+    expect(link).toHaveTextContent("1 total entry");
     expect(link).toHaveTextContent("day");
     expect(link).not.toHaveTextContent("days");
   });

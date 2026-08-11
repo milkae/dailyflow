@@ -54,7 +54,8 @@ export const StreakLeaderboard = ({
               {habit.name}
             </p>
             <p className="text-xs text-muted-foreground">
-              {habit.entries.length} total entries
+              {habit.entries.length} total{" "}
+              {habit.entries.length === 1 ? "entry" : "entries"}
             </p>
           </div>
 
