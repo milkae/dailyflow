@@ -4,9 +4,11 @@ import userEvent from "@testing-library/user-event";
 import type { Todo } from "@/generated/prisma/client";
 import { TodayTodos } from "@/app/_components/TodayTodos";
 
+const mockCreateTodo = vi.fn();
 const mockToggleTodoStatus = vi.fn();
 
 vi.mock("@/app/(todos)/actions", () => ({
+  createTodo: (...args: unknown[]) => mockCreateTodo(...args),
   toggleTodoStatus: (...args: unknown[]) => mockToggleTodoStatus(...args),
 }));
 
@@ -22,6 +24,28 @@ const createTodo = (overrides: Partial<Todo> = {}): Todo => ({
 });
 
 describe("TodayTodos", () => {
+  it("allows quick add from the dashboard", async () => {
+    const user = userEvent.setup();
+    mockCreateTodo.mockResolvedValue({
+      status: "SUCCESS",
+      formErrors: [],
+      fieldErrors: {},
+    });
+
+    render(<TodayTodos todos={[]} pendingTodosCount={0} />);
+
+    await user.type(
+      screen.getByPlaceholderText(/what needs attention\?/i),
+      "Reply to client",
+    );
+    await user.click(screen.getByRole("button", { name: /add todo/i }));
+
+    expect(mockCreateTodo).toHaveBeenCalledWith(null, expect.any(FormData));
+
+    const formData = mockCreateTodo.mock.calls[0][1] as FormData;
+    expect(formData.get("name")).toBe("Reply to client");
+  });
+
   it("allows quick completion from the dashboard preview", async () => {
     const user = userEvent.setup();
     mockToggleTodoStatus.mockResolvedValue({ status: "success" });

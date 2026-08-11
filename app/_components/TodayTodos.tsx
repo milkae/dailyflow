@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, CircleAlert, ListTodo } from "lucide-react";
 import type { Todo } from "@/generated/prisma/client";
@@ -8,9 +8,10 @@ import { Heading } from "@/app/_components/ui/typography";
 import { buttonVariants } from "@/app/_components/ui/buttonVariants";
 import { Badge } from "@/app/_components/ui/badge";
 import { Button } from "@/app/_components/ui/button";
+import { Input } from "@/app/_components/ui/input";
 import { Spinner } from "@/app/_components/ui/spinner";
 import { withCallbacks } from "@/utils/action-state";
-import { toggleTodoStatus } from "@/app/(todos)/actions";
+import { createTodo, toggleTodoStatus } from "@/app/(todos)/actions";
 import { toast } from "sonner";
 import {
   Empty,
@@ -69,7 +70,65 @@ export function TodayTodos({
           </EmptyHeader>
         </Empty>
       )}
+
+      <DashboardTodoQuickAdd />
     </section>
+  );
+}
+
+function DashboardTodoQuickAdd() {
+  const [name, setName] = useState("");
+  const [state, formAction, pending] = useActionState(
+    withCallbacks(createTodo, {
+      onSuccess: () => {
+        setName("");
+        toast.success("Todo created successfully!");
+      },
+      onError: () => {
+        toast.error("Failed to save todo. Please try again.");
+      },
+    }),
+    null,
+  );
+
+  return (
+    <div className="rounded-xl border border-border/70 bg-muted/25 p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-sm font-medium text-foreground">Quick add</p>
+          <p className="text-sm text-muted-foreground">
+            Capture the next task without leaving the dashboard.
+          </p>
+        </div>
+      </div>
+
+      <form action={formAction} className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex-1 space-y-1">
+          <Input
+            name="name"
+            placeholder="What needs attention?"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            disabled={pending}
+            aria-invalid={!!state?.fieldErrors?.name?.length}
+          />
+          {state?.fieldErrors?.name?.[0] ? (
+            <p role="alert" className="text-sm text-destructive">
+              {state.fieldErrors.name[0]}
+            </p>
+          ) : null}
+        </div>
+        <Button type="submit" disabled={pending} className="sm:min-w-28">
+          {pending ? "Adding..." : "Add Todo"}
+        </Button>
+      </form>
+
+      {state?.formErrors?.[0] ? (
+        <p role="alert" className="mt-2 text-sm text-destructive">
+          {state.formErrors[0]}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
