@@ -20,6 +20,26 @@ vi.mock("@/app/(meals)/_components/AddToMealPlanDialog", () => ({
 }));
 
 describe("RecipeGrid", () => {
+  it("should render default empty state when no recipes", () => {
+    render(<RecipeGrid recipes={[]} />);
+
+    expect(screen.getByText("No recipes yet")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Start building your recipe collection to simplify meal planning.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("should render category-specific empty state when a filter is active", () => {
+    render(<RecipeGrid recipes={[]} selectedCategory="Breakfast" />);
+
+    expect(screen.getByText("No Breakfast recipes")).toBeInTheDocument();
+    expect(
+      screen.getByText("Add a recipe in this category to plan meals faster."),
+    ).toBeInTheDocument();
+  });
+
   it("should render recipe cards", () => {
     const recipes = [
       createMockRecipe({
