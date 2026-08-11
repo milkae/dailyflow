@@ -277,7 +277,7 @@ describe("Habit Utilities", () => {
     it("should ignore time portion when matching today", () => {
       const today = new Date();
       const todayWithDifferentTime = new Date(today);
-      todayWithDifferentTime.setHours(23, 59, 59, 999);
+      todayWithDifferentTime.setUTCHours(23, 59, 59, 999);
 
       const entry = createMockEntry(todayWithDifferentTime);
       const habit = createMockTypedHabitWithEntries(Frequency.DAILY, null, [
