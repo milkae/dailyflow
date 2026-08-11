@@ -147,12 +147,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### Cache Invalidation Convention
 
 - Mutations that impact dashboard cards should invalidate both:
-	- the `dashboard` cache tag
-	- the dashboard route (`/`)
+  - the `dashboard` cache tag
+  - the dashboard route (`/`)
 - Feature pages should also revalidate their own route (for example `/habits`, `/meals`, `/todos`, `/recipes`) when list/detail surfaces depend on changed data.
 - Prefer the shared helper in `lib/cache-invalidation.ts` to keep invalidation behavior consistent:
-	- `invalidateDashboard()` for dashboard-only refresh
-	- `invalidateDashboardAndPaths([...])` for dashboard + feature routes
+  - `invalidateDashboard()` for dashboard-only refresh
+  - `invalidateDashboardAndPaths([...])` for dashboard + feature routes
 
 ## Available Scripts
 

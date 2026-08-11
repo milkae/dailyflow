@@ -36,24 +36,20 @@ describe("TodosList", () => {
   });
 
   it("shows completed terminology for completed todos", () => {
-    render(
-      <TodosList todos={[createTodo({ id: "todo-2", isDone: true })]} />,
-    );
+    render(<TodosList todos={[createTodo({ id: "todo-2", isDone: true })]} />);
 
     expect(screen.getByText("Completed")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /mark as open/i })).toHaveTextContent(
-      "Reopen",
-    );
+    expect(
+      screen.getByRole("button", { name: /mark as open/i }),
+    ).toHaveTextContent("Reopen");
   });
 
   it("shows pending terminology for open todos", () => {
-    render(
-      <TodosList todos={[createTodo({ id: "todo-3", isDone: false })]} />,
-    );
+    render(<TodosList todos={[createTodo({ id: "todo-3", isDone: false })]} />);
 
     expect(screen.getByText("Pending")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /mark as complete/i })).toHaveTextContent(
-      "Complete",
-    );
+    expect(
+      screen.getByRole("button", { name: /mark as complete/i }),
+    ).toHaveTextContent("Complete");
   });
 });
