@@ -2,13 +2,13 @@
 
 import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { revalidatePath, updateTag } from "next/cache";
 import { MealType } from "@/generated/prisma/enums";
 import { verifySession } from "@/lib/dal";
 import { MealWithRecipeName } from "@/app/(meals)/types";
 import { normalizeDate } from "@/utils/date";
 import { createMealSchema } from "@/lib/validators";
 import { ActionState, Status } from "@/utils/action-state";
+import { invalidateDashboardAndPaths } from "@/lib/cache-invalidation";
 
 export async function addOrUpdateMeal(
   { date, type, id }: { date: Date; type: MealType; id?: string },
@@ -43,9 +43,7 @@ export async function addOrUpdateMeal(
     },
   });
 
-  updateTag("dashboard");
-  revalidatePath("/");
-  revalidatePath("/meals");
+  invalidateDashboardAndPaths(["/meals"]);
   return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
 }
 
@@ -56,9 +54,7 @@ export async function deleteMeal(mealId: string) {
     where: { id: mealId, userId: session.userId },
   });
 
-  updateTag("dashboard");
-  revalidatePath("/");
-  revalidatePath("/meals");
+  invalidateDashboardAndPaths(["/meals"]);
 }
 
 function getWeekBounds(today: Date) {
@@ -154,6 +150,7 @@ export async function addRecipeToMealPlan(
   }
 
   const { recipeId, date, type, notes, name } = result.data;
+  const normalizedDate = normalizeDate(date);
 
   // Make sure the recipe belongs to the current user.
   const recipe = await prisma.recipe.findFirst({
@@ -178,15 +175,14 @@ export async function addRecipeToMealPlan(
     data: {
       name,
       type,
-      date,
+      date: normalizedDate,
       recipeId: recipe.id,
       notes: notes?.trim() || null,
       userId: session.userId,
     },
   });
 
-  revalidatePath("/meal-planner");
-  revalidatePath("/recipes");
+  invalidateDashboardAndPaths(["/meals", "/recipes"]);
 
   return {
     success: true,

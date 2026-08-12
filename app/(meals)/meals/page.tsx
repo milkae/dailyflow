@@ -22,7 +22,7 @@ export default async function MealsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <Heading>Weekly meals plan</Heading>
+          <Heading>Weekly meal plan</Heading>
           <p className="text-muted-foreground mt-2">
             Plan your week and manage your recipes
           </p>
@@ -31,7 +31,7 @@ export default async function MealsPage() {
           href="/recipes"
           className={
             buttonVariants() +
-            "bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
+            " bg-tertiary hover:bg-tertiary/90 text-tertiary-foreground"
           }
         >
           <BookOpen className="h-4 w-4 mr-2" />

@@ -31,18 +31,19 @@ export default async function RecipesPage({
   }
 
   const { category } = await searchParams;
+  const recipeWhere = category
+    ? {
+        categories: {
+          some: {
+            slug: category,
+          },
+        },
+      }
+    : undefined;
 
   const [recipes, totalRecipes] = await prisma.$transaction([
     prisma.recipe.findMany({
-      where: category
-        ? {
-            categories: {
-              some: {
-                slug: category,
-              },
-            },
-          }
-        : undefined,
+      where: recipeWhere,
       include: {
         categories: true,
       },
@@ -50,7 +51,9 @@ export default async function RecipesPage({
         createdAt: "desc",
       },
     }),
-    prisma.recipe.count(),
+    prisma.recipe.count({
+      where: recipeWhere,
+    }),
   ]);
   const categories = await prisma.recipeCategory.findMany({
     orderBy: {

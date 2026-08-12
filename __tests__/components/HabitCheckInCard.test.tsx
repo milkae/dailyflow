@@ -9,10 +9,12 @@ import {
 import { Frequency } from "@/generated/prisma/enums";
 
 // Mock server actions
-const mockToggleCompletion = vi.fn();
-const mockSubmitForm = vi.fn();
+const { mockToggleCompletion, mockSubmitForm } = vi.hoisted(() => ({
+  mockToggleCompletion: vi.fn(),
+  mockSubmitForm: vi.fn(),
+}));
 
-vi.mock("@/features/habits/actions", () => ({
+vi.mock("@/app/(habits)/actions", () => ({
   toggleHabitCompletion: mockToggleCompletion,
   submitHabitEntryForm: mockSubmitForm,
 }));
@@ -80,7 +82,7 @@ describe("HabitCheckInCard", () => {
     await user.click(completeButton);
 
     await waitFor(() => {
-      expect(mockToggleCompletion).toHaveBeenCalledWith({
+      expect(mockToggleCompletion).toHaveBeenCalledWith(null, {
         id: habit.id,
         completion: true,
       });
@@ -128,13 +130,13 @@ describe("HabitCheckInCard", () => {
     render(<HabitCheckInCard habit={habit} />);
 
     // The message square icon should have fill when there's a note
-    const noteButton = screen.getByRole("button", { name: /add note/i });
+    const noteButton = screen.getByRole("button", { name: /edit note/i });
     const messageIcon = noteButton.querySelector("svg");
     expect(messageIcon).toHaveClass("fill-current");
   });
 
   it("should handle toggle completion errors gracefully", async () => {
-    mockToggleCompletion.mockRejectedValue(new Error("Network error"));
+    mockToggleCompletion.mockResolvedValue({ status: "ERROR" });
 
     const habit = createMockTypedHabitWithEntries(Frequency.DAILY);
 

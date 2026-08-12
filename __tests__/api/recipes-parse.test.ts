@@ -11,20 +11,14 @@ vi.mock("@/lib/logger", () => ({
   logError: vi.fn(),
 }));
 
-// // Mock JSDOM
-// vi.mock("jsdom", () => ({
-//   JSDOM: {
-//     fromURL: vi.fn(),
-//   },
-// }));
-
 import { JSDOM } from "jsdom";
 
 describe("Recipe Parse API", () => {
-  const mockJSDOM = vi.mocked(JSDOM, { deep: true });
+  const fromURLSpy = vi.spyOn(JSDOM, "fromURL");
 
   beforeEach(() => {
     vi.clearAllMocks();
+    fromURLSpy.mockReset();
   });
 
   it("should return 400 when URL is missing", async () => {
@@ -86,7 +80,7 @@ describe("Recipe Parse API", () => {
       },
     };
 
-    mockJSDOM.fromURL.mockResolvedValue(mockDom as unknown as JSDOM);
+    fromURLSpy.mockResolvedValue(mockDom as unknown as JSDOM);
 
     const request = new NextRequest("http://localhost/api/recipes/parse", {
       method: "POST",
@@ -99,8 +93,8 @@ describe("Recipe Parse API", () => {
     expect(response.status).toBe(200);
     expect(data.name).toBe("Test Recipe");
     expect(data.description).toBe("A test recipe");
-    expect(data.ingredients).toEqual(["ingredient 1", "ingredient 2"]);
-    expect(data.instructions).toEqual(["Step 1", "Step 2"]);
+    expect(data.ingredients).toBe("ingredient 1\ningredient 2");
+    expect(data.instructions).toBe("Step 1\nStep 2");
     expect(data.prepTime).toBe(10);
     expect(data.cookTime).toBe(20);
     expect(data.servings).toBe(4);
@@ -115,7 +109,7 @@ describe("Recipe Parse API", () => {
       },
     };
 
-    mockJSDOM.fromURL.mockResolvedValue(mockDom as unknown as JSDOM);
+    fromURLSpy.mockResolvedValue(mockDom as unknown as JSDOM);
 
     const request = new NextRequest("http://localhost/api/recipes/parse", {
       method: "POST",
@@ -130,7 +124,7 @@ describe("Recipe Parse API", () => {
   });
 
   it("should handle network errors gracefully", async () => {
-    mockJSDOM.fromURL.mockRejectedValue(new Error("Network timeout"));
+    fromURLSpy.mockRejectedValue(new Error("Network timeout"));
 
     const request = new NextRequest("http://localhost/api/recipes/parse", {
       method: "POST",
@@ -157,7 +151,7 @@ describe("Recipe Parse API", () => {
       },
     };
 
-    mockJSDOM.fromURL.mockResolvedValue(mockDom as unknown as JSDOM);
+    fromURLSpy.mockResolvedValue(mockDom as unknown as JSDOM);
 
     const request = new NextRequest("http://localhost/api/recipes/parse", {
       method: "POST",
@@ -192,7 +186,7 @@ describe("Recipe Parse API", () => {
       },
     };
 
-    mockJSDOM.fromURL.mockResolvedValue(mockDom as unknown as JSDOM);
+    fromURLSpy.mockResolvedValue(mockDom as unknown as JSDOM);
 
     const request = new NextRequest("http://localhost/api/recipes/parse", {
       method: "POST",
@@ -204,7 +198,7 @@ describe("Recipe Parse API", () => {
 
     expect(response.status).toBe(200);
     expect(data.name).toBe("Actual Recipe");
-    expect(data.ingredients).toEqual(["flour", "eggs"]);
+    expect(data.ingredients).toBe("flour\neggs");
   });
 
   it("should handle different instruction formats", async () => {
@@ -233,7 +227,7 @@ describe("Recipe Parse API", () => {
       },
     };
 
-    mockJSDOM.fromURL.mockResolvedValue(mockDom as unknown as JSDOM);
+    fromURLSpy.mockResolvedValue(mockDom as unknown as JSDOM);
 
     const request = new NextRequest("http://localhost/api/recipes/parse", {
       method: "POST",
@@ -243,11 +237,8 @@ describe("Recipe Parse API", () => {
     const response = await POST(request);
     const data = await response.json();
 
-    expect(data.instructions).toEqual([
-      "Simple string instruction",
-      "Object with text",
-      "Nested instruction 1",
-      "Nested instruction 2",
-    ]);
+    expect(data.instructions).toBe(
+      "Simple string instruction\nObject with text\nNested instruction 1\nNested instruction 2",
+    );
   });
 });

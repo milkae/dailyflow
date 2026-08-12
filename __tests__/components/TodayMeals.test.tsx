@@ -29,6 +29,10 @@ describe("TodayMeals", () => {
   it("should render plan meals button when no meals", () => {
     render(<TodayMeals meals={[]} />);
 
+    expect(screen.getByText("No meals planned today")).toBeInTheDocument();
+    expect(
+      screen.getByText("Plan your meals to keep today simple and intentional."),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /plan meals/i }),
     ).toBeInTheDocument();

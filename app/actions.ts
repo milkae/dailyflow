@@ -5,17 +5,20 @@ import { getHabitsForUser } from "@/app/(habits)/actions";
 import { normalizeDate } from "@/utils/date";
 import type { TypedHabitWithEntries } from "@/app/(habits)/types";
 import type { MealWithRecipeName } from "@/app/(meals)/types";
+import type { Todo } from "@/generated/prisma/client";
 
 export type DashboardStats = {
   total: number;
   completed: number;
   rate: number;
   mealsCount: number;
+  pendingTodos: number;
 };
 
 export type DashboardData = {
   habits: TypedHabitWithEntries[];
   meals: MealWithRecipeName[];
+  todos: Todo[];
   stats: DashboardStats;
 };
 
@@ -28,7 +31,7 @@ const getDashboardDataCached = async (userId: string) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  const [habits, meals] = await Promise.all([
+  const [habits, meals, todos, pendingTodos] = await Promise.all([
     getHabitsForUser({ userId }),
     prisma.meal.findMany({
       where: {
@@ -36,6 +39,20 @@ const getDashboardDataCached = async (userId: string) => {
         date: { gte: today, lt: tomorrow },
       },
       include: { recipe: { select: { id: true, name: true } } },
+    }),
+    prisma.todo.findMany({
+      where: {
+        userId,
+        isDone: false,
+      },
+      orderBy: [{ urgent: "desc" }, { createdAt: "asc" }],
+      take: 3,
+    }),
+    prisma.todo.count({
+      where: {
+        userId,
+        isDone: false,
+      },
     }),
   ]);
 
@@ -54,11 +71,13 @@ const getDashboardDataCached = async (userId: string) => {
   return {
     habits: todayHabits,
     meals,
+    todos,
     stats: {
       total: todayHabits.length,
       completed: completedToday,
       rate: completionRate,
       mealsCount: meals.length,
+      pendingTodos,
     },
   };
 };

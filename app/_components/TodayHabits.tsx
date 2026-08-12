@@ -63,7 +63,7 @@ function EmptyState() {
         </EmptyMedia>
         <EmptyTitle>No habits for today</EmptyTitle>
         <EmptyDescription>
-          Create your first habit to start tracking your progress
+          Create your first habit to stay consistent today.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>

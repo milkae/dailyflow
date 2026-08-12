@@ -1,21 +1,24 @@
 import { Entry, Frequency, Habit, Prisma } from "@/generated/prisma/browser";
 import { habitFrequencySchema } from "../lib/validators";
-import { TypedHabitWithEntries } from "../app/(habits)/types";
 import { normalizeDate } from "./date";
 import { logError } from "@/lib/logger";
+import type { TypedHabitWithEntries } from "@/app/(habits)/types";
 
-export function isHabitActiveOnDate(habit: TypedHabitWithEntries, date: Date) {
+export function isHabitActiveOnDate(
+  habit: Habit & { entries: Entry[] },
+  date: Date,
+) {
   switch (habit.frequency) {
     case Frequency.DAILY:
       return true;
     case Frequency.WEEKLY: {
       const config = habit.frequencyConfig as { day: number } | null;
-      if (!config?.day) return false;
+      if (!config || typeof config.day !== "number") return false;
       return date.getDay() === config.day;
     }
     case Frequency.MONTHLY: {
       const config = habit.frequencyConfig as { day: number } | null;
-      if (!config?.day) return false;
+      if (!config || typeof config.day !== "number") return false;
       return date.getDate() === config.day;
     }
     case Frequency.SPECIFIC_DAYS: {
@@ -84,41 +87,63 @@ export function getLastWeekHabits(
   });
 }
 
-export const calculateStreak = (habit: Habit & { entries: Entry[] }) => {
-  if (!habit.entries.length) return 0;
-
-  // Sort entries by date descending (most recent first)
-  const sortedEntries = [...habit.entries].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
-
-  let streak = 0;
+export const calculateStreak = (habit: TypedHabitWithEntries) => {
   const today = normalizeDate(new Date());
 
-  // Check if most recent entry is today or yesterday
-  const mostRecentEntry = sortedEntries[0];
-  const mostRecentDate = normalizeDate(mostRecentEntry.date);
+  const entries = habit.entries
+    .map((entry) => normalizeDate(entry.date))
+    .filter((entryDate) => entryDate.getTime() <= today.getTime());
 
-  // If most recent entry is in the future or more than 1 day ago, no current streak
-  const daysDiff = Math.floor(
-    (today.getTime() - mostRecentDate.getTime()) / (1000 * 60 * 60 * 24),
-  );
-  if (daysDiff > 1) return 0;
+  if (!entries.length) return 0;
 
-  // Count consecutive days backwards from most recent
-  for (let i = 0; i < sortedEntries.length; i++) {
-    const entryDate = normalizeDate(sortedEntries[i].date);
-    const expectedDate = new Date(today);
-    expectedDate.setDate(today.getDate() - i);
+  const earliestEntryTime = Math.min(...entries.map((date) => date.getTime()));
+  const entryDates = new Set(entries.map((date) => date.toISOString()));
 
-    if (
-      normalizeDate(entryDate).getTime() ===
-      normalizeDate(expectedDate).getTime()
-    ) {
-      streak++;
-    } else {
-      break;
+  const hasEntryOnDate = (date: Date) =>
+    entryDates.has(normalizeDate(date).toISOString());
+
+  const getPreviousDate = (date: Date) => {
+    const previous = new Date(date);
+    previous.setDate(previous.getDate() - 1);
+    return previous;
+  };
+
+  let currentDate = today;
+  let mostRecentActiveWithEntry: Date | null = null;
+
+  while (currentDate.getTime() >= earliestEntryTime) {
+    if (isHabitActiveOnDate(habit, currentDate)) {
+      if (hasEntryOnDate(currentDate)) {
+        mostRecentActiveWithEntry = new Date(currentDate);
+        break;
+      }
+
+      if (currentDate.getTime() === earliestEntryTime) {
+        break;
+      }
     }
+
+    currentDate = getPreviousDate(currentDate);
+  }
+
+  if (!mostRecentActiveWithEntry) return 0;
+
+  let streak = 0;
+  let streakDate = new Date(mostRecentActiveWithEntry);
+
+  while (streakDate.getTime() >= earliestEntryTime) {
+    if (!isHabitActiveOnDate(habit, streakDate)) {
+      streakDate = getPreviousDate(streakDate);
+      continue;
+    }
+
+    if (hasEntryOnDate(streakDate)) {
+      streak++;
+      streakDate = getPreviousDate(streakDate);
+      continue;
+    }
+
+    break;
   }
 
   return streak;

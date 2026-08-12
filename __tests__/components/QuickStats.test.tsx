@@ -9,6 +9,7 @@ describe("QuickStats", () => {
       completed: 3,
       rate: 60,
       mealsCount: 2,
+      pendingTodos: 4,
     };
 
     render(<QuickStats stats={stats} />);
@@ -19,6 +20,8 @@ describe("QuickStats", () => {
     expect(screen.getByText("3")).toBeInTheDocument();
     expect(screen.getByText("Completion")).toBeInTheDocument();
     expect(screen.getByText("60%")).toBeInTheDocument();
+    expect(screen.getByText("Open Todos")).toBeInTheDocument();
+    expect(screen.getByText("4")).toBeInTheDocument();
   });
 
   it("should render progress bar for completion rate", () => {
@@ -27,13 +30,14 @@ describe("QuickStats", () => {
       completed: 3,
       rate: 60,
       mealsCount: 2,
+      pendingTodos: 4,
     };
 
     render(<QuickStats stats={stats} />);
 
     const progressBar = screen.getByRole("progressbar");
     expect(progressBar).toBeInTheDocument();
-    expect(progressBar).toHaveStyle({ width: "60%" });
+    expect(progressBar.firstChild).toHaveStyle({ width: "60%" });
   });
 
   it("should not render progress bar when no habits", () => {
@@ -42,6 +46,7 @@ describe("QuickStats", () => {
       completed: 0,
       rate: 0,
       mealsCount: 2,
+      pendingTodos: 0,
     };
 
     render(<QuickStats stats={stats} />);

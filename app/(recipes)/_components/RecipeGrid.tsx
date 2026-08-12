@@ -41,7 +41,7 @@ export function RecipeGrid({ recipes, selectedCategory }: Props) {
           </EmptyMedia>
           <EmptyTitle>No {selectedCategory} recipes</EmptyTitle>
           <EmptyDescription>
-            You don&apos;t have any recipes in this category yet.
+            Add a recipe in this category to plan meals faster.
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
@@ -55,9 +55,9 @@ export function RecipeGrid({ recipes, selectedCategory }: Props) {
           <EmptyMedia variant="icon">
             <BookOpen className="h-10 w-10 text-tertiary" />
           </EmptyMedia>
-          <EmptyTitle> No recipes yet</EmptyTitle>
+          <EmptyTitle>No recipes yet</EmptyTitle>
           <EmptyDescription>
-            Start building your recipe collection
+            Start building your recipe collection to simplify meal planning.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -114,7 +114,7 @@ export function RecipeGrid({ recipes, selectedCategory }: Props) {
           <AddToMealPlanDialog
             recipe={selectedRecipe}
             open={!!selectedRecipe && dialog === "meal-plan"}
-            onOpenChange={(open: boolean) => {
+            onOpenChangeAction={(open: boolean) => {
               if (!open) {
                 setSelectedRecipe(null);
                 setDialog(null);

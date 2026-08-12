@@ -1,6 +1,6 @@
-# DailyFlow - Habits, Meals & Recipes Tracker
+# DailyFlow - Habits, Meals, Recipes & Todos Tracker
 
-A modern full-stack web application for tracking daily habits, meals, and recipes. Built with **Next.js 16**, **React 19**, **Prisma**, and **TailwindCSS**.
+A modern full-stack web application for tracking daily habits, meals, recipes, and todos. Built with **Next.js 16**, **React 19**, **Prisma**, and **TailwindCSS**.
 
 ## Features
 
@@ -29,6 +29,11 @@ A modern full-stack web application for tracking daily habits, meals, and recipe
 - Create custom recipes with ingredients and instructions
 - Parse recipes from URLs (auto-extraction of recipe data)
 
+### ✅ Todos
+
+- Create and track personal tasks
+- Mark items complete and keep the dashboard focused on the current day
+
 ### 🔐 Authentication
 
 - Secure authentication with Google OAuth
@@ -48,7 +53,7 @@ A modern full-stack web application for tracking daily habits, meals, and recipe
 
 **Backend:**
 
-- [Next.js API Routes](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) - Server endpoints
+- [Next.js Route Handlers and Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations) - Server mutations and HTTP endpoints
 - [Prisma ORM](https://www.prisma.io) - Database management
 - [Better Auth](https://www.better-auth.com) - Authentication
 
@@ -113,27 +118,41 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Project Structure
 
 ```
-├── app/                    # Next.js App Router
-│   ├── api/               # API routes
-│   ├── (auth)/            # Authentication pages
-│   ├── habits/            # Habits feature
-│   ├── meals/             # Meals feature
-│   └── layout.tsx         # Root layout
-├── components/            # Reusable components
-│   ├── layout/            # Navigation, header, footer
-│   ├── ui/                # shadcn/ui components
-│   └── providers/         # Context providers
-├── features/              # Feature-specific logic
-│   ├── habits/            # Habits feature (components, actions)
-│   ├── meals/             # Meals feature
-│   └── recipes/           # Recipes feature
-├── lib/                   # Utilities and configuration
-│   ├── auth.ts            # Auth setup
-│   ├── prisma.ts          # Prisma client
-│   └── validators.ts      # Zod schemas
-├── prisma/                # Database schema and migrations
-└── utils/                 # Helper functions
+├── app/                       # Next.js App Router
+│   ├── (auth)/                # Sign-in flow
+│   ├── (habits)/              # Habits feature routes, actions, components
+│   ├── (meals)/               # Meals feature routes, actions, components
+│   ├── (recipes)/             # Recipes feature routes, actions, components
+│   ├── (todos)/               # Todos feature routes and actions
+│   ├── _components/           # Shared app-level UI
+│   ├── api/                   # Route handlers
+│   ├── actions.ts             # Shared dashboard data
+│   └── layout.tsx             # Root layout
+├── generated/                 # Prisma client output
+├── lib/                       # Utilities and configuration
+├── prisma/                    # Database schema and migrations
+└── utils/                     # Shared helpers
 ```
+
+## Contributor Notes
+
+### Feature Ownership by Route Group
+
+- `app/(habits)`: habits routes, server actions, and UI
+- `app/(meals)`: meals planning routes, actions, and meal-related UI
+- `app/(recipes)`: recipes pages, parsing flow, and recipe CRUD
+- `app/(todos)`: todos routes and server actions
+- `app/actions.ts`: shared dashboard aggregation used by `app/page.tsx`
+
+### Cache Invalidation Convention
+
+- Mutations that impact dashboard cards should invalidate both:
+  - the `dashboard` cache tag
+  - the dashboard route (`/`)
+- Feature pages should also revalidate their own route (for example `/habits`, `/meals`, `/todos`, `/recipes`) when list/detail surfaces depend on changed data.
+- Prefer the shared helper in `lib/cache-invalidation.ts` to keep invalidation behavior consistent:
+  - `invalidateDashboard()` for dashboard-only refresh
+  - `invalidateDashboardAndPaths([...])` for dashboard + feature routes
 
 ## Available Scripts
 
@@ -152,13 +171,13 @@ pnpm test             # Run tests with Vitest
 
 - Form submissions use Next.js Server Actions for type-safe mutations
 - Input validation with Zod schemas
-- Automatic cache revalidation with `revalidatePath()`
+- Automatic cache revalidation with `revalidatePath()` and cache tags
 
 ### Data Fetching
 
 - Server components for initial data loading
-- React Query for client-side data management
-- Optimistic updates in UI
+- React Query in the narrow client-side slice that needs it
+- Shared cache tags and route revalidation for fresh dashboard data
 
 ### Authentication Flow
 
@@ -170,7 +189,7 @@ pnpm test             # Run tests with Vitest
 
 - Prisma ORM with PostgreSQL
 - User data relationships (Habits, Meals, Recipes per user)
-- Soft deletion support for data safety
+- User-scoped reads and writes across feature actions
 
 ## Deployment
 

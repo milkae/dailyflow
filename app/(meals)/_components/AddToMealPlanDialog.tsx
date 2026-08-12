@@ -27,11 +27,12 @@ import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
 import { Label } from "@/app/_components/ui/label";
 import { Textarea } from "@/app/_components/ui/textarea";
+import { toast } from "sonner";
 
 type Props = {
   recipe: Recipe;
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChangeAction: (open: boolean) => void;
 };
 
 const mealTypes = [
@@ -55,18 +56,42 @@ const mealTypes = [
 
 function getToday() {
   const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
 
-  // Format for <input type="date">
-  return today.toISOString().split("T")[0];
+  // Format local calendar date for <input type="date"> to avoid UTC day shifts.
+  return `${year}-${month}-${day}`;
 }
 
-export function AddToMealPlanDialog({ recipe, open, onOpenChange }: Props) {
+export function AddToMealPlanDialog({
+  recipe,
+  open,
+  onOpenChangeAction,
+}: Props) {
   const [date, setDate] = useState(getToday);
   const [type, setType] = useState<MealType>(MealType.DINNER);
   const [notes, setNotes] = useState("");
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setDate(getToday());
+    setType(MealType.DINNER);
+    setNotes("");
+    setError(null);
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      resetForm();
+    } else {
+      setError(null);
+    }
+
+    onOpenChangeAction(nextOpen);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -87,13 +112,14 @@ export function AddToMealPlanDialog({ recipe, open, onOpenChange }: Props) {
         return;
       }
 
-      onOpenChange(false);
-      setNotes("");
+      toast.success(`Added ${recipe.name} to your meal plan.`);
+
+      handleOpenChange(false);
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Add to meal plan</DialogTitle>
@@ -125,14 +151,14 @@ export function AddToMealPlanDialog({ recipe, open, onOpenChange }: Props) {
 
           {/* Meal type */}
           <div className="space-y-2">
-            <Label>Meal</Label>
+            <Label htmlFor="meal-type">Meal</Label>
 
             <Select
               value={type}
               onValueChange={(value) => setType(value as MealType)}
               disabled={isPending}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger id="meal-type" className="w-full">
                 <SelectValue />
               </SelectTrigger>
 
@@ -163,13 +189,21 @@ export function AddToMealPlanDialog({ recipe, open, onOpenChange }: Props) {
             />
           </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && (
+            <p
+              role="alert"
+              aria-live="polite"
+              className="text-sm text-destructive"
+            >
+              {error}
+            </p>
+          )}
 
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
+              onClick={() => handleOpenChange(false)}
               disabled={isPending}
             >
               Cancel

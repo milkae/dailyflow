@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 import { z } from "zod";
-import { revalidatePath, updateTag } from "next/cache";
 import { Frequency } from "@/generated/prisma/enums";
 import { parseHabit } from "@/utils/habits";
 import { cache } from "react";
@@ -11,22 +10,31 @@ import { normalizeDate } from "@/utils/date";
 import { createHabitSchema } from "@/lib/validators";
 import { ActionState, Status } from "@/utils/action-state";
 import { JsonNull } from "@prisma/client/runtime/client";
+import {
+  invalidateDashboard,
+  invalidateDashboardAndPaths,
+} from "@/lib/cache-invalidation";
 
-const getFrequencyConfig = (
-  frequency?: Frequency,
-  config?: number | number[],
-) => {
+const getFrequencyConfig = (frequency?: Frequency, config?: unknown) => {
   switch (frequency) {
     case Frequency.DAILY:
       return null;
     case Frequency.WEEKLY:
-      return { day: config };
+      return typeof config === "object" && config !== null
+        ? { day: (config as { day: number }).day }
+        : null;
     case Frequency.INTERVAL:
-      return { interval: config };
+      return typeof config === "object" && config !== null
+        ? { interval: (config as { interval: number }).interval }
+        : null;
     case Frequency.SPECIFIC_DAYS:
-      return { days: config };
+      return typeof config === "object" && config !== null
+        ? { days: (config as { days: number[] }).days }
+        : null;
     case Frequency.MONTHLY:
-      return { day: config };
+      return typeof config === "object" && config !== null
+        ? { day: (config as { day: number }).day }
+        : null;
   }
 };
 
@@ -73,9 +81,7 @@ export async function createOrUpdateHabit(
     },
   });
 
-  updateTag("dashboard");
-  revalidatePath("/");
-  revalidatePath("/habits");
+  invalidateDashboardAndPaths(["/habits"]);
 
   return { formErrors: [], fieldErrors: {}, status: Status.SUCCESS };
 }
@@ -117,8 +123,7 @@ export async function createHabitEntry(
     create: { habitId: id, date: entryDate, note },
   });
 
-  updateTag("dashboard");
-  revalidatePath("/");
+  invalidateDashboard();
   return { status: Status.SUCCESS };
 }
 
@@ -130,8 +135,7 @@ export async function deleteHabitEntry(id: string, date = new Date()) {
     where: { habitId: id, date: entryDate, habit: { userId: session.userId } },
   });
 
-  updateTag("dashboard");
-  revalidatePath("/");
+  invalidateDashboard();
   return { status: Status.SUCCESS };
 }
 
@@ -150,9 +154,7 @@ export async function deleteHabit(id: string) {
   const session = await verifySession();
 
   await prisma.habit.delete({ where: { id, userId: session.userId } });
-  updateTag("dashboard");
-  revalidatePath("/");
-  revalidatePath("/habits");
+  invalidateDashboardAndPaths(["/habits"]);
 }
 
 export const getHabits = cache(async () => {

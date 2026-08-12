@@ -17,6 +17,7 @@ describe("DashboardHeader", () => {
       completed: 4,
       rate: 80,
       mealsCount: 3,
+      pendingTodos: 2,
     };
 
     render(<DashboardHeader stats={stats} />);
@@ -46,6 +47,7 @@ describe("DashboardHeader", () => {
       completed: 0,
       rate: 0,
       mealsCount: 3,
+      pendingTodos: 2,
     };
 
     render(<DashboardHeader stats={stats} />);
@@ -68,6 +70,7 @@ describe("DashboardHeader", () => {
       completed: 5,
       rate: 80,
       mealsCount: 0,
+      pendingTodos: 2,
     };
 
     render(<DashboardHeader stats={stats} />);
@@ -94,6 +97,7 @@ describe("DashboardHeader", () => {
       completed: 0,
       rate: 0,
       mealsCount: 0,
+      pendingTodos: 0,
     };
 
     render(<DashboardHeader stats={stats} />);

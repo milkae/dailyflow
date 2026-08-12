@@ -54,7 +54,8 @@ export const StreakLeaderboard = ({
               {habit.name}
             </p>
             <p className="text-xs text-muted-foreground">
-              {habit.entries.length} total entries
+              {habit.entries.length} total{" "}
+              {habit.entries.length === 1 ? "entry" : "entries"}
             </p>
           </div>
 
@@ -64,7 +65,9 @@ export const StreakLeaderboard = ({
           >
             <Flame className="h-3.5 w-3.5 mr-1" />
             <span className="font-bold">{habit.streak}</span>
-            <span className="ml-1 text-xs">days</span>
+            <span className="ml-1 text-xs">
+              {habit.streak === 1 ? "day" : "days"}
+            </span>
           </Badge>
         </Link>
       ))}
